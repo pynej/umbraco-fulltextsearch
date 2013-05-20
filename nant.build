@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" ?>
+<project name="umbraco" default="package" basedir=".">
+  <description>Umbraco Full Text Search</description>
+  <!-- Adapted from build scripts for Blog4Umbraco, all credit goes to the original authors -->
+    
+  <!-- global properties, generally won't change -->
+  <property name="nant.settings.currentframework" value="net-4.0" />
+  <property name="dist.name" value="FullTextSearch" />
+  <property name="dist.version" value="0.25" />
+
+  <property name="package.name" value="${dist.name}_${dist.version}" />
+
+  <!-- Directories storing the public package -->
+  <property name="public.dir" value="${directory::get-current-directory()}" />
+
+  <!-- windows folder reference -->
+  <property name="win.dir" value="c:\WINDOWS" />
+
+  <!-- root of the project -->
+  <property name="root.dir" value="${directory::get-current-directory()}" />
+
+  <!-- The sub-projects -->
+  <property name="core.dir" value="${root.dir}\FullTextSearch" />
+  <!-- Files to add to package-->
+  <property name="add.dir" value="${root.dir}\Packaging" />
+
+  <!-- Build related folders -->
+  <property name="package.dir" value="${root.dir}\package" />
+  <property name="zip.dir" value="${root.dir}\zip" />
+  <property name="dlls.dir" value="${root.dir}\Other Dlls" />
+
+
+  <!-- Applications -->
+  <property name="msbuild.app" value="${win.dir}\microsoft.net\framework\v4.0.30319\msbuild.exe" />
+  <property name="addfilestopackage.app" value="${root.dir}\AddFilesToPackage.exe" />
+
+  <target name="package" depends="zip">
+    <!-- here we won't do anything -->
+  </target>
+
+  <target name="compile" depends="init">
+    <attrib normal="true" readonly="false">
+      <fileset basedir="${root.dir}">
+        <include name="**/*" />
+      </fileset>
+    </attrib>
+
+    <exec program="${msbuild.app}" basedir="${root.dir}">
+      <arg value="FullTextSearch.sln" />
+      <arg value="/p:Configuration=Release"/>
+      <arg value="/p:Platform=&quot;Any CPU&quot;"/>
+    </exec>
+  </target>
+
+  
+  <target name="movefiles" depends="compile" description="Moves the build files into the right folders and prepares it for packaging">
+      <mkdir dir="${package.dir}\bin" />
+      <copy todir="${package.dir}\bin" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${core.dir}\bin">
+              <include name="FullTextSearch.dll" />
+          </fileset>
+      </copy>
+      <copy todir="${package.dir}\bin" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${dlls.dir}">
+              <include name="Highlighter.Net.dll" />
+          </fileset>
+      </copy>
+      
+    <!-- Scripts -->
+    <mkdir dir="${package.dir}\scripts\${dist.name}" />
+    <copy todir="${package.dir}\scripts\${dist.name}" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+      <fileset basedir="${add.dir}\scripts">
+        <include name="*.js" />
+      </fileset>
+    </copy>
+
+    <!-- Images -->
+    <mkdir dir="${package.dir}\images" />
+    <copy todir="${package.dir}\images" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+      <fileset basedir="${add.dir}\images">
+        <include name="*.*" />
+      </fileset>
+    </copy>
+
+    <!-- CSS Images -->
+    <mkdir dir="${package.dir}\css\images" />
+    <copy todir="${package.dir}\css\images" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+      <fileset basedir="${add.dir}\css\images">
+        <include name="*.*" />
+      </fileset>
+    </copy>
+    
+    <!-- Usercontrols -->
+    <mkdir dir="${package.dir}\usercontrols\${dist.name}" />
+    <copy todir="${package.dir}\usercontrols\${dist.name}" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+      <fileset basedir="${add.dir}\usercontrols">
+        <include name="*.ascx" />
+      </fileset>
+    </copy>
+
+    <!-- xslt -->
+    <mkdir dir="${package.dir}\xslt" />
+    <copy todir="${package.dir}\xslt" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+      <fileset basedir="${add.dir}\xslt">
+        <include name="*.xslt" />
+      </fileset>
+    </copy>
+    <!-- config -->
+      <mkdir dir="${package.dir}\config" />
+      <copy todir="${package.dir}\config" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${add.dir}\config">
+              <include name="*.config" />
+          </fileset>
+      </copy>
+      <!--
+      <mkdir dir="${package.dir}\umbraco\webservices" />
+      <copy todir="${package.dir}\umbraco\webservices" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${core.dir}\Admin">
+              <include name="FullTextService.asmx" />
+          </fileset>
+      </copy>
+      -->
+      <mkdir dir="${package.dir}\umbraco\dashboard" />
+      <copy todir="${package.dir}\umbraco\dashboard" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${core.dir}\Admin">
+              <include name="FullTextSearch.ascx" />
+          </fileset>
+      </copy>
+      <!-- Clean up -->
+    <delete>
+      <fileset>
+        <include name="${package.dir}/**/*.cs" />
+        <include name="${package.dir}/**/*.build" />
+        <include name="${package.dir}/**/*.csproj" />
+        <include name="${package.dir}/**/*.vspscc" />
+        <include name="${package.dir}/**/*.scc" />
+        <include name="${package.dir}/**/*.sln" />
+        <include name="${package.dir}/**/*.compiled" />
+        <include name="${package.dir}/**/*.resx" />
+        <include name="${package.dir}/PrecompiledApp.config" />
+        <include name="${package.dir}/Umbraco.Forms.Core.dll.config" />
+      </fileset>
+    </delete>
+
+
+    <!-- Copy the base package file to the package dir -->
+    <copy file="${add.dir}\package.xml" tofile="${package.dir}\package.xml" failonerror="false" overwrite="true"/> 
+  </target>
+
+  
+  <target name="manifest" depends="movefiles">
+    <!-- here we will append files in the package directory to the package file-->
+    <!-- args: manifest, folder with files in correct structure, folder to send to for zipping-->
+    <exec program="${addfilestopackage.app}">
+      <arg value="${package.dir}\package.xml" />
+      <arg value="${package.dir}" />
+      <arg value="${zip.dir}" />
+    </exec>
+
+    <!-- Poke the version number -->
+    <xmlpoke file="${zip.dir}\package.xml" xpath="/umbPackage/info/package/version" value="${dist.version}" />
+    
+    <!-- Load the template files into properties -->
+    <loadfile file="${add.dir}\templates\FullTextSearchPage.master" property="FullTextSearchPage.master" />
+
+    <xmlpoke file="${zip.dir}\package.xml" xpath="/umbPackage/Templates/Template [Alias = 'FullTextSearchPage']/Design" value="&lt;![CDATA[${FullTextSearchPage.master}]]&gt;" />
+    
+    <!-- Load the css files into properties -->
+    <loadfile file="${add.dir}\css\FullTextSearch.css" property="FullTextSearch.css" />
+    <xmlpoke file="${zip.dir}\package.xml" xpath="/umbPackage/Stylesheets/Stylesheet [Name = 'FullTextSearch']/Content" value="&lt;![CDATA[ ${FullTextSearch.css} ]]&gt;" />
+  </target>
+  
+  
+  <target name="zip" description="zip the release" depends="manifest">
+
+    <!-- Zip everything -->
+    <zip zipfile="${root.dir}\package.zip" includeemptydirs="true" >
+      <fileset basedir="${zip.dir}">
+        <include name="*" />
+        <include name="**/*" />
+      </fileset>
+    </zip>
+
+    <!-- Zip hotfix -->
+    <zip zipfile="${root.dir}\hotfix.zip" includeemptydirs="true" >
+      <fileset basedir="${package.dir}">
+        <include name="*" />
+        <include name="**/*" />
+        <exclude name="package.xml" />
+      </fileset>
+    </zip>
+
+  </target>
+
+
+  <target name="publish" depends="zip" description="Moves the Zips to a public location">
+    <!-- Move the zip file to the public web directory for sharing with the world -->
+    <mkdir dir="${public.dir}\${dist.version}" />
+
+    <copy file="${root.dir}\package.zip" tofile="${public.dir}\${dist.version}\${dist.name}_${dist.version}.zip" />
+    <copy file="${root.dir}\hotfix.zip" tofile="${public.dir}\${dist.version}\${dist.name}_${dist.version}_update.zip" />
+  </target>
+  
+  
+  <target name="init" description="init tasks for the build">
+    <delete dir="${package.dir}" />
+    <delete dir="${zip.dir}" />
+
+    <mkdir dir="${package.dir}" />
+    <mkdir dir="${zip.dir}" />
+  </target>
+
+</project>

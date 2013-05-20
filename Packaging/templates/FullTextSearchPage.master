@@ -1,0 +1,7 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+<asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
+  <div id="content" class="searchPage">
+    <umbraco:Item runat="server" field="bodyText"/>
+    <umbraco:Macro queryType="MultiRelevance" titleProperties="" bodyProperties="" titleLinkProperties="" summaryProperties="" rootNodes="" contextHighlighting="1" summaryLength="" pageLength="" fuzzyness="" useWildcards="0" Alias="FullTextSearch" runat="server"></umbraco:Macro>
+  </div>
+</asp:Content>

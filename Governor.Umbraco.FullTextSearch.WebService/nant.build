@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" ?>
+<project name="umbraco" default="package" basedir=".">
+  <description>Umbraco FullTextSearch Web Service</description>
+  <!-- Adapted from build scripts for Blog4Umbraco, all credit goes to the original authors -->
+    <!-- This just builds the package for the web service. The only reason this is separate is
+    because umbraco don't bundle the webservices dll and I don't want to ovewrite anybody's dlls if they installed
+    this already. -->
+  <!-- global properties, generally won't change -->
+  <property name="nant.settings.currentframework" value="net-4.0" />
+  <property name="dist.name" value="FullTextWebService" />
+  <property name="dist.version" value="0.25" />
+
+  <property name="package.name" value="${dist.name}_${dist.version}" />
+
+  <!-- Directories storing the public package -->
+  <property name="public.dir" value="${directory::get-current-directory()}" />
+
+  <!-- windows folder reference -->
+  <property name="win.dir" value="c:\WINDOWS" />
+
+  <!-- root of the project -->
+  <property name="root.dir" value="${directory::get-current-directory()}" />
+
+  <!-- The sub-projects -->
+  <property name="core.dir" value="${root.dir}" />
+  
+
+  <!-- Build related folders -->
+  <property name="package.dir" value="${root.dir}\package" />
+  <property name="zip.dir" value="${root.dir}\zip" />
+  <property name="dlls.dir" value="${root.dir}\..\Other Dlls" />
+
+
+  <!-- Applications -->
+  <property name="msbuild.app" value="${win.dir}\microsoft.net\framework\v4.0.30319\msbuild.exe" />
+  <property name="addfilestopackage.app" value="${root.dir}\..\AddFilesToPackage.exe" />
+
+  <target name="package" depends="zip">
+    <!-- here we won't do anything -->
+  </target>
+
+  <target name="compile" depends="init">
+    <attrib normal="true" readonly="false">
+      <fileset basedir="${root.dir}">
+        <include name="**/*" />
+      </fileset>
+    </attrib>
+
+      <exec program="${msbuild.app}" basedir="${root.dir}">
+          <arg value="..\FullTextSearch.sln" />
+          <arg value="/p:Configuration=Release"/>
+          <arg value="/p:Platform=&quot;Any CPU&quot;"/>
+      </exec>
+  </target>
+
+  
+  <target name="movefiles" depends="compile" description="Moves the build files into the right folders and prepares it for packaging">
+      <mkdir dir="${package.dir}\bin" />
+      <copy todir="${package.dir}\bin" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${core.dir}\bin">
+              <include name="FullTextWebService.dll" />
+          </fileset>
+      </copy>
+      <mkdir dir="${package.dir}\umbraco\webservices" />
+      <copy todir="${package.dir}\umbraco\webservices" includeemptydirs="true" flatten="false" failonerror="false" overwrite="true">
+          <fileset basedir="${core.dir}">
+              <include name="FullTextService.asmx" />
+          </fileset>
+      </copy>
+      <!-- Clean up -->
+    <delete>
+      <fileset>
+        <include name="${package.dir}/**/*.cs" />
+        <include name="${package.dir}/**/*.build" />
+        <include name="${package.dir}/**/*.csproj" />
+        <include name="${package.dir}/**/*.vspscc" />
+        <include name="${package.dir}/**/*.scc" />
+        <include name="${package.dir}/**/*.sln" />
+        <include name="${package.dir}/**/*.compiled" />
+        <include name="${package.dir}/**/*.resx" />
+        <include name="${package.dir}/PrecompiledApp.config" />
+        <include name="${package.dir}/Umbraco.Forms.Core.dll.config" />
+      </fileset>
+    </delete>
+
+
+    <!-- Copy the base package file to the package dir -->
+    <copy file="${root.dir}\package.xml" tofile="${package.dir}\package.xml" failonerror="false" overwrite="true"/> 
+  </target>
+
+  
+  <target name="manifest" depends="movefiles">
+    <!-- here we will append files in the package directory to the package file-->
+    <!-- args: manifest, folder with files in correct structure, folder to send to for zipping-->
+    <exec program="${addfilestopackage.app}">
+      <arg value="${package.dir}\package.xml" />
+      <arg value="${package.dir}" />
+      <arg value="${zip.dir}" />
+    </exec>
+
+    <!-- Poke the version number -->
+    <xmlpoke file="${zip.dir}\package.xml" xpath="/umbPackage/info/package/version" value="${dist.version}" />
+  </target>
+  
+  
+  <target name="zip" description="zip the release" depends="manifest">
+
+    <!-- Zip everything -->
+    <zip zipfile="${root.dir}\package.zip" includeemptydirs="true" >
+      <fileset basedir="${zip.dir}">
+        <include name="*" />
+        <include name="**/*" />
+      </fileset>
+    </zip>
+
+    <!-- Zip hotfix -->
+    <zip zipfile="${root.dir}\hotfix.zip" includeemptydirs="true" >
+      <fileset basedir="${package.dir}">
+        <include name="*" />
+        <include name="**/*" />
+        <exclude name="package.xml" />
+      </fileset>
+    </zip>
+
+  </target>
+
+
+  <target name="publish" depends="zip" description="Moves the Zips to a public location">
+    <!-- Move the zip file to the public web directory for sharing with the world -->
+    <mkdir dir="${public.dir}\${dist.version}" />
+
+    <copy file="${root.dir}\package.zip" tofile="${public.dir}\${dist.version}\${dist.name}_${dist.version}.zip" />
+    <copy file="${root.dir}\hotfix.zip" tofile="${public.dir}\${dist.version}\${dist.name}_${dist.version}_update.zip" />
+  </target>
+  
+  
+  <target name="init" description="init tasks for the build">
+    <delete dir="${package.dir}" />
+    <delete dir="${zip.dir}" />
+
+    <mkdir dir="${package.dir}" />
+    <mkdir dir="${zip.dir}" />
+  </target>
+
+</project>

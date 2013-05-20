@@ -1,0 +1,155 @@
+﻿<h1>Umbraco Full Text Search</h1>
+
+<h2>Installation Instructions</h2>
+
+<h4>Requirements</h4>
+<p>Umbraco 4.7 and .NET 4</p>
+<h4>Pre Installation</h4>
+<p>Make sure Umbraco is properly set up and configured, and that your database user has rights to 
+create tables (this should certainly be the case if you've gone through the default install procedure).
+The package creates a table called fullTextCache, you may want to check that doesn't 
+already exist, in the unlikely event that some other package uses that name. Backup your database
+and files.</p>
+
+<h4>Install Package</h4>
+<p>Download <a href="FullTextSearch_025.zip">FullTextSearch_025.zip</a>, login to Umbraco, go to the developer tab -> packages ->Install 
+local package, upload the file and go through the installation prompts.</p>
+
+<h4>Indexing Configuration</h4>
+<p>There's a few things you'll have to set up for indexing to work. </p>
+<p>Firstly, you'll need to customise the config file at ~/config/FullTextSearch.config .
+There's a lot of options here, most of which can be ignored for now.</p>
+<p>There are a couple of options which need to be correctly set for basic indexing to function. 
+<br />
+Firstly, you need to set the correct URL/Hostname for your site in the config file. 
+IIS will need to be able to resolve this URL/Hostname combination to your site. 
+The easiest way to do this is to set the &lt;HttpUrl&gt; to point at default.aspx in your umbraco installations document root. 
+e.g. 
+<br />
+&lt;HttpUrl&gt;http://mysite.com/default.aspx&lt;/HttpUrl&gt; , or &lt;HttpUrl&gt;http://localhost:8080/default.aspx&lt;/HttpUrl&gt;
+</p>
+<p>
+Alternatively, If you're having problems with name resolution you can set the &lt;HttpHost&gt; field, 
+which sets the host header indpendently of the URL called. e.g. set 
+<br />
+&lt;HttpUrl&gt;http://127.0.0.1/default.aspx&lt;/HttpUrl&gt;<br />
+&lt;HttpHost&gt;mysite.com&lt;/HttpHost&gt;
+</p>
+<p>After setting the URL, set &lt;Enabled&gt; to true. There's a lot of other options here, the file is
+reasonably well commented, and some are described in more detail in the settings and customisation 
+part of this guide. </p>
+<p>Secondly, you'll need to set up Umbraco Examine to create the correct indexes for this package. 
+This is accomplished by editing the ~/config/ExamineSettings.config and ~/config/ExamineIndex.config files. 
+The basic settings to add to these are provided below. If you're familiar with examine feel free to customise
+to your taste...
+</p>
+<p><strong><em>ExamineSettings.config</em></strong></p>
+<p>Add the following under &lt;providers&gt; in the &lt;ExamineIndexProviders&gt; section
+<blockquote>
+&lt;add name="FullTextIndexer" type="FullTextSearch.Providers.FullTextContentIndexer, FullTextSearch"<br/>
+           runAsync="true"<br/>
+           supportUnpublished="false"<br/>
+           supportProtected="false"<br/>
+           interval="10"<br/>
+           analyzer="Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net"<br/>
+           enableDefaultEventHandler="true"<br/>
+           indexSet="FullTextIndexSet"/&gt;<br/>
+</blockquote>
+</p>
+<p>Note that Full Text Search does not currently support indexing unpublished or protected pages. So leave these settings at false.</p>
+<p>Add the following under &lt;providers&gt; in the &lt;ExamineSearchProviders&gt; section
+<blockquote>
+&lt;add name="FullTextSearcher" type="UmbracoExamine.UmbracoExamineSearcher, UmbracoExamine"<br/>
+           analyzer="Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net"<br/>
+           indexSet="FullTextIndexSet"/&gt;<br/>
+</blockquote>
+</p>
+<p><strong><em>ExamineIndex.config</em></strong></p>
+<p>Add the following under &lt;ExamineLuceneIndexSets&gt;
+	<blockquote>
+	&lt;IndexSet SetName="FullTextIndexSet" IndexPath="~/App_Data/TEMP/ExamineIndexes/FullText/"&gt;<br/>
+	    &lt;IndexAttributeFields&gt;<br/>
+	      &lt;add Name="id" /&gt;<br/>
+	      &lt;add Name="nodeName"/&gt;<br/>
+	      &lt;add Name="nodeTypeAlias"/&gt;<br/>
+	    &lt;/IndexAttributeFields&gt;<br/>
+	    &lt;IndexUserFields&gt;<br/>
+          &lt;add Name="bodyText" /&gt;<br/>
+	    &lt;/IndexUserFields&gt;<br/>
+	    &lt;IncludeNodeTypes/&gt;<br/>
+	    &lt;ExcludeNodeTypes /&gt;<br/>
+	&lt;/IndexSet&gt;<br/>
+	</blockquote>
+</p>
+<p>Feel free to customise these settings to suit your site. Consult the <a href="http://examine.codeplex.com/wikipage?title=UmbracoExamine">Umbraco examine documentation
+for the meaning of the various settings</a>. Briefly, "IndexUserFields" tells examine which user fields 
+from the node to add to the index. "ExcludeNodeTypes" allows you to set a list of node type aliases to exclude. </p>
+
+<p>Once you've done that indexing should basically work. You'll need to publish a page on  the site
+to actually add your content to the index, as indexing is triggered on publish events.</p>
+
+<p>
+	There's a lot more settings that control indexing, most of these are detailed in 
+	<a href="settings.html">the settings and basic customisation guide</a>. 
+	One thing we'd definitely recommend you do is to change all your common macros ( stuff that
+	appears on every page, main navigation, search box, etc. ) so that they don't output on 
+	search indexing. That prevents searches for common terms turning up irrelevant results. 
+	See the linked guide for more details
+</p>
+	
+<p>If you're having problems with indexing, the following ideas could help with debugging...
+<ol>
+	<li>Re-create the index by using the full text search tab in the developer section of the back office</li>
+	<li>Delete the index at ~/App_Data/TEMP/ExamineIndexes/FullText/ and republish to re-create</li>
+	<li>Use a tool like <a href="http://www.getopt.org/luke/">Luke</a> to examine the index directly</li>
+	<li>Consult the Umbraco error log in the database. Indexing errors should show up there</li>
+</ol>
+</p>
+
+<h4>Setting up your search form</h4>
+
+<p>
+    An actual search page is not added by the package. But a template and a document type ( both alias "FullTextSearchPage") 
+    are added to your site. 
+</p>
+<p>
+    In order to get a basic search up and running on your site, all you need to do is add a page of type "Full Text Search Page" somewhere
+    underneath your home page. The search form is automatically added to that page by the FullTextSearch macro present in the template. The 
+    template is not a complete HTML page, so you'll probably want to put it under whatever master page you're using. 
+    In order to have the search results correctly formatted you will also need to reference the FullTextSearch.css stylesheet. 
+</p>
+<p>
+	The package adds a FullTextSearch macro and XSLT file, this uses helper functions from the 
+	FullTextSearch XSLT extenstions to query the Lucene index and return results/errors. The results and 
+	errors are then formatted for display by the XSLT.
+</p>
+
+<p>
+    The only thing that really needs to be present in your template for search to function is the macro FullTextSearch. You may also 
+    want to reference the FullTextSearch stylesheet, or copy its contents into your own.
+</p>
+<p>
+	There's a number of macro parameters that control how the search works and what gets output. 
+	These are documented in the XSLT file as well as the Settings and basic Customisation section.
+</p>
+<p>
+	If you're supplying search terms from a search box that's not on the search page, supply 
+    the search terms as a GET or POST parameter named "Search" (this is editable in the XSLT).
+</p>
+<p>
+	The default HTML for the form should be OK for most purposes, if it doesn't work for you it's entirely editable
+	in the FullTextSearch.xslt without having to touch any code. 
+</p>
+<p>
+	The actual text displayed on the search page("Your search did not match any documents" etc.) is controlled 
+	by several dictionary entries, placed under "FullTextSearch" in the dictionary. Currently only English is included. 
+    Feel free to edit dictionary entries to your taste. Note that some of them use formatted strings 
+	in the c# string.Format	style. What this means is that the numbers in curly brackets ( {1} etc. )
+	are replaced with a variable piece of information. It should be pretty obvious from the text what that info 
+	is. Remove these if you don't want/need that info. 
+</p>
+
+<p><a href="intro.html">Intro</a></p>
+<p><a href="settings.html">Settings and basic Customisation</a></p>
+<p><a href="advanced.html">Advanced Customisation</a></p>	
+<p><a href="FullTextSearch_025.zip">download</a></p>

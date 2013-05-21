@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Governor.Umbraco.FullTextSearch.Interfaces;
-using UmbracoExamine;
 using Examine;
 using System.IO;
+using UmbracoExamine;
 
 namespace Governor.Umbraco.FullTextSearch.Providers
 {

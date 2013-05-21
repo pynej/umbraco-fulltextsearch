@@ -1,7 +1,5 @@
 #Ignore files build by Visual Studio
 *.obj
-*.exe
-*.pdb
 *.user
 *.aps
 *.pch
@@ -16,12 +14,9 @@
 *.cache
 *.ilk
 *.log
-*.dll
-[Bb]in
-[Dd]ebug*/
 *.lib
 *.sbr
 obj/
-[Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+Governor.Umbraco.FullTextSearch.Console/bin/

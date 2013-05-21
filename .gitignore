@@ -24,3 +24,7 @@ Governor.Umbraco.FullTextSearch.dll
 Governor.Umbraco.FullTextSearch.UI.dll
 Governor.Umbraco.FullTextSearch.Installer.dll
 Governor.Umbraco.FullTextSearch.WebService.dll
+Governor.Umbraco.FullTextSearch.pdb
+Governor.Umbraco.FullTextSearch.UI.pdb
+Governor.Umbraco.FullTextSearch.Installer.pdb
+Governor.Umbraco.FullTextSearch.WebService.pdb

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch.Interfaces;
+﻿using System.Collections.Generic;
+using Governor.Umbraco.FullTextSearch.Interfaces;
+using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco.cms.businesslogic.web;
-using Examine;
-using FullTextSearch.Utilities;
 
-namespace FullTextSearch.FullTextIndexers
+namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
 {
     /// <summary>
     /// Default indexer class. Used for all indexers in this project

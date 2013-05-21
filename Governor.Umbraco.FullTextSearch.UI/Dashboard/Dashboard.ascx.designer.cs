@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FullTextSearch.Admin {
+namespace Governor.Umbraco.FullTextSearch.UI.Dashboard {
     
     
-    public partial class WebUserControl1 {
+    public partial class Dashboard {
         
         /// <summary>
         /// reIndex control.

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Governor.Umbraco.FullTextSearch.Interfaces;
+using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco;
 using umbraco.cms.businesslogic;
 using umbraco.cms.businesslogic.web;
-using umbraco.NodeFactory;
 
-using FullTextSearch.Utilities;
-using FullTextSearch.Interfaces;
-
-namespace FullTextSearch.EventHandlers
+namespace Governor.Umbraco.FullTextSearch.EventHandlers
 {
     public class PublishingHandlers : umbraco.BusinessLogic.ApplicationBase
     {
-        
-
         /// <summary>
         /// Constructor subscribes to umbraco publishing events to build a database containing current HTML for
         /// each page using the umbraco core when publisheventrendering is active
@@ -22,19 +16,20 @@ namespace FullTextSearch.EventHandlers
         {
             if (!checkConfig())
                 return;
-            Document.BeforePublish += new Document.PublishEventHandler(Document_BeforePublish);
-            content.AfterUpdateDocumentCache += new content.DocumentCacheEventHandler(content_AfterUpdateDocumentCache);
-            Document.AfterDelete += new Document.DeleteEventHandler(Document_AfterDelete);
-            Document.AfterMoveToTrash += new Document.MoveToTrashEventHandler(Document_AfterMoveToTrash);
-            Document.AfterUnPublish += new Document.UnPublishEventHandler(Document_AfterUnPublish);
+            Document.BeforePublish += Document_BeforePublish;
+            content.AfterUpdateDocumentCache += content_AfterUpdateDocumentCache;
+            Document.AfterDelete += Document_AfterDelete;
+            Document.AfterMoveToTrash += Document_AfterMoveToTrash;
+            Document.AfterUnPublish += Document_AfterUnPublish;
         }
+
         /// <summary>
         /// Republishing all nodes tends to throw timeouts if you have enough of them. This 
         /// should prevent that without modifying the default for the whole site...
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Document_BeforePublish(Document sender, PublishEventArgs e)
+        private void Document_BeforePublish(Document sender, PublishEventArgs e)
         {
             Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
         }
@@ -50,7 +45,7 @@ namespace FullTextSearch.EventHandlers
         /// whereas this event always should, hence this method rather than doing both rendering and indexing
         /// in the same thread
         /// </remarks>
-        void content_AfterUpdateDocumentCache(Document sender, DocumentCacheEventArgs e)
+        private void content_AfterUpdateDocumentCache(Document sender, DocumentCacheEventArgs e)
         {
             if (sender == null || sender.Id < 1)
                 return;
@@ -69,29 +64,29 @@ namespace FullTextSearch.EventHandlers
                 HtmlCache.Store(id, ref fullHtml);
             else
                 HtmlCache.Remove(id);
-            
-            return;
         }
+
         /// <summary>
         /// Make sure HTML is deleted from storage when the node is
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Document_AfterDelete(Document sender, DeleteEventArgs e)
+        private void Document_AfterDelete(Document sender, DeleteEventArgs e)
         {
             //FIXME: what happens when entire trees are deleted? does this get called multiple times?
             if (!checkConfig())
                 return;
-            int id = sender.Id;
-            if(id > 0)
+            var id = sender.Id;
+            if (id > 0)
                 HtmlCache.Remove(sender.Id);
         }
+
         /// <summary>
         /// Make sure HTML is deleted from storage when the node is moved to trash
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Document_AfterMoveToTrash(Document sender, MoveToTrashEventArgs e)
+        private void Document_AfterMoveToTrash(Document sender, MoveToTrashEventArgs e)
         {
             if (!checkConfig())
                 return;
@@ -99,19 +94,21 @@ namespace FullTextSearch.EventHandlers
             if (id > 0)
                 HtmlCache.Remove(sender.Id);
         }
+
         /// <summary>
         /// Delete HTML on unpublish
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void Document_AfterUnPublish(Document sender, UnPublishEventArgs e)
+        private void Document_AfterUnPublish(Document sender, UnPublishEventArgs e)
         {
             if (!checkConfig())
                 return;
-            int id = sender.Id;
+            var id = sender.Id;
             if (id > 0)
                 HtmlCache.Remove(sender.Id);
         }
+
         /// <summary>
         /// Check that the config exists and rendering to cache on publish events is enabled
         /// </summary>

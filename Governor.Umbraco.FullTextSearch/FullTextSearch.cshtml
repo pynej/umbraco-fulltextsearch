@@ -1,0 +1,309 @@
+@using System
+@using System.Xml.XPath
+@using Governor.Umbraco.FullTextSearch.Extensions
+@using Lucene.Net.Util
+
+@{
+    /*
+                            FullTextSearch.cshtml
+    ======================================================================
+                            Full Text Search 
+                                  V0.25
+    ======================================================================
+    
+    This Razor file sets up queries and sends them off to FullTextSearch's 
+    Razor helpers.
+    
+    Feel free to modify any part of it to your own needs. HTML is near
+    the bottom in a couple of templates. 
+    
+    PARAMETERS:
+    
+    queryType 
+    
+    Type of search to perform. Possible values are:
+    
+    MultiRelevance ->
+      The default.
+      The index is searched for, in order of decreasing relevance
+        1) the exact phrase entered in any of the title properties
+        2) any of the terms entered in any of the title properties
+        3) a fuzzy match for any of the terms entered in any of the title properties
+        4) the exact phrase entered in any of the body properties
+        5) any of the terms entered in any of the body properties
+        6) a fuzzy match for any of the terms entered in any of the body properties
+    
+    MultiAnd ->
+      Similar to MultiRelevance, but requires all terms be present
+    
+    SimpleOr->
+      Similar to MultiRelevance again, but the exact phrase does not
+      get boosted, we just search for any term
+      
+    AsEntered->
+      Search for the exact phrase entered, if more than one term is present
+    ______________________________________________________________________    
+    
+    titleProperties
+    
+    A comma separated list of properties that are part of the page title,
+    these will have their relevance boosted by a factor of 10
+    defaults to nodeName. Set to "ignore" not to search titles.
+    ______________________________________________________________________    
+    
+    bodyProperties 
+    
+    A comma separtated list of properties that are part of the page body.
+    These properties and the titleProperties will be searched. 
+    
+    defaults to using the full text index only
+    ______________________________________________________________________
+    
+    summaryProperties
+    
+    The list of properties, comma separated, in order of preference,
+    that you wish to use to create the summary to appear under
+    the title. All properties selected must be in the index, cos that's
+    where we pull the data from.
+    
+    Defaults to Full Text
+    ______________________________________________________________________    
+    titleLinkProperties
+    
+    The list of properties, comma separated, in order of preference,that you 
+    wish to use to create the title link for each search result. 
+    
+    Defaults to titleProperties, or if that isn't set nodeName
+    ______________________________________________________________________            
+    rootNodes
+    
+    Comma separated list of root node ids
+    Only nodes which have one of these nodes as a parent will be returned.
+    Default is to search all nodes
+    ______________________________________________________________________
+    
+    contextHighlighting
+    
+    Set this to false to disable context highlighting
+    in the summary/title. You may wish to do this if you are having
+    performance issues as context highlighting is (relatively)
+    slow.
+    Defaults to on.
+    
+    ______________________________________________________________________
+    
+    summaryLength
+    
+    The maximum number of characters to show in the summary.
+    Defaults to 300
+    
+    ______________________________________________________________________
+    
+    pageLength
+    
+    Number of results on a page. Defaults to 20. Set to zero to disable paging.
+    
+    ______________________________________________________________________
+
+    fuzzyness
+    
+    Lucene Queries can be "fuzzy" or exact.
+    A fuzzy query will match close variations of the search terms, such as 
+    plurals etc. This sets how close the search term must be to a term in
+    the index. Values from zero to one. 1.0 = exact matching.
+    Note that fuzzy matching is slow compared to exact or even wildcard
+    matching, if you're having performance issues this is the first thing
+    to switch off.
+    
+    Defaults to 0.8
+    ______________________________________________________________________
+    
+    useWildcards
+    
+    Add a wildcard "*" to the end of every search term to make it match 
+    anything starting with the search term. This is a slightly faster, but
+    less accurate way of achieving the same ends as fuzzy matching. 
+    Note that fuzzyness is automatically set to 1.0 if a wildcards are enabled.
+    
+    Defaults to off
+    ______________________________________________________________________
+ */
+
+    /* Variables */
+    const string fullTextIndexName = "FullTextSearch";
+    const string getPostTerms = "Search";
+    const string getPostPage = "Page";
+    const int numNumbers = 15;
+
+    /* Parameters */
+    var titleProperties = String.IsNullOrEmpty(Parameter.titleProperties) ? "nodeName" : Parameter.titleProperties;
+    if (titleProperties == "ignore")
+    {
+        titleProperties = "";
+    }
+    var bodyProperties = String.IsNullOrEmpty(Parameter.bodyProperties) ? fullTextIndexName : Parameter.bodyProperties;
+    var summaryProperties = String.IsNullOrEmpty(Parameter.summaryProperties) ? fullTextIndexName : Parameter.summaryProperties;
+    var titleLinkProperties = String.IsNullOrEmpty(Parameter.titleLinkProperties) ? (String.IsNullOrEmpty(titleProperties) ? "nodeName" : titleProperties) : Parameter.titleLinkProperties;
+    var rootNodes = Parameter.rootNodes;
+    var contextHighlighting = Parameter.contextHighlighting == "0" ? 0 : 1;
+    int summaryLength;
+    if (!int.TryParse(Parameter.summaryLength, out summaryLength) || summaryLength <= 0)
+    {
+        summaryLength = 300;
+    }
+    int pageLength;
+    if (!int.TryParse(Parameter.pageLength, out pageLength) || pageLength <= 0)
+    {
+        pageLength = 20;
+    }
+    var queryType = String.IsNullOrEmpty(Parameter.queryType) ? "MultiRelevance" : Parameter.queryType;
+    var fuzzyness = String.IsNullOrEmpty(Parameter.fuzzyness) ? "0.8" : Parameter.fuzzyness;
+    var useWildcards = Parameter.useWildcards == "1" ? 1 : 0;
+
+    /* Call Helpers */
+    var pageNumber = String.IsNullOrEmpty(umbraco.library.RequestQueryString(getPostPage)) ? (String.IsNullOrEmpty(umbraco.library.Request(getPostPage)) ? 1 : int.Parse(umbraco.library.Request(getPostPage))) : int.Parse(umbraco.library.RequestQueryString(getPostPage));
+    var searchTerms = String.IsNullOrEmpty(umbraco.library.RequestQueryString(getPostTerms)) ? (String.IsNullOrEmpty(umbraco.library.Request(getPostTerms)) ? "" : umbraco.library.Request(getPostTerms)) : umbraco.library.RequestQueryString(getPostTerms);
+    var searchTermsUrlEncoded = umbraco.library.UrlEncode(searchTerms);
+
+
+    /* Run Search */
+    var results = SearchExtension.Search(queryType, searchTerms, titleProperties, bodyProperties, rootNodes, titleLinkProperties, summaryProperties, contextHighlighting, summaryLength, pageNumber, pageLength, fuzzyness, useWildcards);
+
+    var searchBox = String.IsNullOrEmpty(searchTerms) ? "" : searchTerms;
+}
+<div class="fulltextsearch">
+    <div class="fulltextsearch_searchboxcontainer">
+        <form class="fulltextsearch_form" method="get" action="@umbraco.library.NiceUrl(Model.Id)">
+            <input class="fulltextsearch_searchbox" name="@getPostTerms" type="text" value="@searchTerms" />
+            <input class="fulltextsearch_searchbutton" type="submit" value="@GeneralExtension.DictionaryHelper("SearchButton")" />
+        </form>
+    </div>
+
+    @if ((int) results.Current.Evaluate("count(/results)") == 1)
+    {
+        var resultsItem = results.Current.Select("/results");
+        <div class="fulltextsearch_results">
+            <h4 class="fulltextsearch_results_heading">@String.Format(GeneralExtension.DictionaryHelper("SearchResultsFor"), searchTerms)</h4>
+            @{
+        var numPages = (int)resultsItem.Current.Evaluate("number(/results/summary/@numPages)");
+            }
+            @if (numPages > 1)
+            {
+                @Pagination(numPages, pageNumber, getPostTerms, searchTermsUrlEncoded, getPostPage, numNumbers)
+            }
+
+            @foreach (var searchResult in resultsItem.Current.Select("/results/nodes/*"))
+            {
+                var fullTextId = searchResult.Evaluate("string(./@id)");
+                var fullTextTitle = searchResult.Evaluate("string(./data [@alias='FullTextTitle'])");
+                var fullTextSummary = searchResult.Evaluate("string(./data [@alias='FullTextSummary'])");
+    
+                <div class="fulltextsearch_result">
+                    <p class="fulltextsearch_title">
+                        <a class="fulltextsearch_titlelink" href="@umbraco.library.NiceUrl(int.Parse(fullTextId))">@Html.Raw(fullTextTitle)</a>
+                    </p>
+                    <p class="fulltextsearch_summary">@Html.Raw(fullTextSummary)</p>
+                </div>
+            }
+            @if (numPages > 1)
+            {
+                @Pagination(numPages, pageNumber, getPostTerms, searchTermsUrlEncoded, getPostPage, numNumbers)
+            }
+            <p class="fulltextsearch_info">
+                @{var summary = String.Format(GeneralExtension.DictionaryHelper("SummaryInfoFormat"),
+                                        resultsItem.Current.Evaluate("string(/results/summary/@firstResult)"),
+                                        resultsItem.Current.Evaluate("string(/results/summary/@lastResult)"),
+                                        resultsItem.Current.Evaluate("string(/results/summary/@numResults)"),
+                                        resultsItem.Current.Evaluate("string(/results/summary/@timeTaken)"));
+            var swinfo = resultsItem.Current.Evaluate("string(/results/summary/swinfo)");
+                }
+                @summary
+                @Html.Raw(swinfo)
+            </p>
+        </div>
+    }
+    else
+    {
+        var errorType = (string)results.Current.Evaluate("string(/error/@type)");
+        var error = (string)results.Current.Evaluate("string(/error)");
+        string dictionaryError = String.IsNullOrEmpty(errorType) ? "" : String.Format(GeneralExtension.DictionaryHelper(errorType), searchTerms, pageNumber);
+        var errormsg = String.IsNullOrEmpty(dictionaryError) ? (String.IsNullOrEmpty(error) ? GeneralExtension.DictionaryHelper("UnknownError") : error) : dictionaryError;
+        <div class="fulltextsearch_error">
+            <p>@errormsg</p>
+        </div>
+    }
+</div>
+
+@helper Pagination(int numPages, int pageNumber, string getPostTerms, string searchTermsUrlEncoded, string getPostPage, int numNumbers)
+{
+    var langPrevious = GeneralExtension.DictionaryHelper("NavPrevious");
+    var langNext = GeneralExtension.DictionaryHelper("NavNext");
+    var startPage = (numNumbers / 2);
+    startPage = (pageNumber < startPage + 1) ? 1 : pageNumber - startPage;
+ 
+    <div class="fulltextsearch_pagination">
+        <ul class="fulltextsearch_pagination_ul">
+            @if (pageNumber > 1)
+            {
+                <li class="fulltextsearch_previous">
+                    <a class="fulltextsearch_pagination_link" href="?@getPostTerms=@searchTermsUrlEncoded&@getPostPage=@(pageNumber - 1)">@langPrevious</a>
+                </li>
+            }
+            else
+            {
+                <li class="fulltextsearch_previous fulltextsearch_previous_inactive">
+                    <a class="fulltextsearch_pagination_link">@langPrevious</a>
+                </li>
+            }
+
+            @for (int curPage = startPage; curPage <= numPages - 1 && curPage < startPage + numNumbers; curPage++)
+            {
+                if (curPage == pageNumber)
+                {
+                <li class="fulltextsearch_page fulltextsearch_thispage">@curPage</li>
+                }
+                else
+                {
+                <li class="fulltextsearch_page">
+                    <a class="fulltextsearch_pagination_link" href="?@getPostTerms=@searchTermsUrlEncoded&@getPostPage=@curPage">@curPage</a>
+                </li>
+                }
+            }
+
+            @if (pageNumber < numPages - 1)
+            {
+                <li class="fulltextsearch_next">
+                    <a class="fulltextsearch_pagination_link" href="?@getPostTerms=@searchTermsUrlEncoded&@getPostPage=@(pageNumber + 1)">@langNext</a>
+                </li>
+            }
+            else
+            {
+                <li class="fulltextsearch_next fulltextsearch_next_inactive">
+                    <a class="fulltextsearch_pagination_link">@langNext</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@helper ShowErrors(XPathNodeIterator results, string searchTerms, int pageNumber)
+{
+    var errorType = (string)results.Current.Evaluate("string(/error/@type)");
+    var error = (string)results.Current.Evaluate("string(/error)");
+    string dictionaryError = String.IsNullOrEmpty(errorType) ? "" : String.Format(GeneralExtension.DictionaryHelper(errorType), searchTerms, pageNumber);
+    var errormsg = String.IsNullOrEmpty(dictionaryError) ? (String.IsNullOrEmpty(error) ? GeneralExtension.DictionaryHelper("UnknownError") : error) : dictionaryError;
+ 
+    <div class="fulltextsearch_error">
+        <p>@errormsg</p>
+    </div>
+}
+
+@helper SearchBox(string searchTerms, string getPostTerms)
+{
+    var searchString = GeneralExtension.DictionaryHelper("SearchButton");
+ 
+    <form class="fulltextsearch_form" method="get" action="@umbraco.library.NiceUrl(Model.Id)">
+        <input class="fulltextsearch_searchbox" name="@getPostTerms" type="text" value="@searchTerms" />
+        <input class="fulltextsearch_searchbutton" type="submit" value="@searchString" />
+    </form> 
+}

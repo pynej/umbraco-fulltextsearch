@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Examine;
+using Governor.Umbraco.FullTextSearch.SearchTools;
 using Lucene.Net.Analysis;
 using Lucene.Net.Highlight;
 using Lucene.Net.Search;
@@ -11,9 +12,8 @@ using Examine.LuceneEngine.Providers;
 using Lucene.Net.QueryParsers;
 using System.IO;
 using System.Text;
-using FullTextSearch.SearchTools;
 
-namespace FullTextSearch.HighlightTools
+namespace Governor.Umbraco.FullTextSearch.HighlightTools
 {
     /// <summary>
     /// Retrieve summary (the title link and the bit of context that goes under it) for search results

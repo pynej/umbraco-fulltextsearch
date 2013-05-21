@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
-namespace FullTextSearch
+namespace Governor.Umbraco.FullTextSearch
 {
     /// <summary>
     /// Allows different classes implementing the same interfaces to be mapped to strings, 

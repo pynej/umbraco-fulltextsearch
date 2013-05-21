@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using HtmlAgilityPack;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace FullTextSearch.Utilities
+namespace Governor.Umbraco.FullTextSearch.Utilities
 {
     /// <summary>
     /// Uses HTML agility pack to do custom tag stripping

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Text.RegularExpressions;
 using Lucene.Net.QueryParsers;
 
-namespace FullTextSearch.SearchTools
+namespace Governor.Umbraco.FullTextSearch.SearchTools
 {
     /// <summary>
     /// Helper functions for search stuff

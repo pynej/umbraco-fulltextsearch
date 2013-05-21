@@ -2,10 +2,9 @@
 using System.Linq;
 using System.Web.Services;
 using System.ComponentModel;
-using FullTextSearch.Utilities;
-using FullTextSearch.Admin;
+using Governor.Umbraco.FullTextSearch.Admin;
 
-namespace FullTextWebService
+namespace Governor.Umbraco.FullTextSearch.WebService
 {
     [WebService(Namespace = "http://umbraco.org/webservices/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]

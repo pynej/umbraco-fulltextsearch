@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Net;
-using System.IO;
-using System.Collections.Specialized;
-using umbraco.NodeFactory;
-using FullTextSearch.Utilities;
+using Governor.Umbraco.FullTextSearch.Utilities;
 
-namespace FullTextSearch.Renderers
+namespace Governor.Umbraco.FullTextSearch.Renderers
 {
     /// <summary>
     /// This needs to be used when the umbraco core is active. It uses HttpWebReqeust and

@@ -5,10 +5,10 @@ using System.Xml.XPath;
 using System.Xml.Linq;
 using System.Diagnostics;
 using Examine;
-using FullTextSearch.HighlightTools;
-using FullTextSearch.SearchTools;
+using Governor.Umbraco.FullTextSearch.HighlightTools;
+using Governor.Umbraco.FullTextSearch.SearchTools;
 
-namespace FullTextSearch.XsltExtensions
+namespace Governor.Umbraco.FullTextSearch.Extensions
 {
     /// <summary>
     /// Retrieve search results as Xml node objects for users to use in their own XSLT
@@ -78,16 +78,12 @@ namespace FullTextSearch.XsltExtensions
             {
                 case "MultiAnd":
                     return resultsAsXml(search.ResultsMultiAnd(), summariser, pageNumber, pageLength, stopwatch);
-                    break;
                 case "SimpleOr":
                     return resultsAsXml(search.ResultsSimpleOr(), summariser, pageNumber, pageLength, stopwatch);
-                    break;
                 case "AsEntered":
                     return resultsAsXml(search.ResultsAsEntered(), summariser, pageNumber, pageLength, stopwatch);
-                    break;
                 default:
                     return resultsAsXml(search.ResultsMultiRelevance(), summariser, pageNumber, pageLength, stopwatch);
-                    break;
             }
         }
         

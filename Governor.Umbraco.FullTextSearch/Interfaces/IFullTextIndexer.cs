@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using umbraco.cms.businesslogic.web;
-using Examine;
 
-namespace FullTextSearch.Interfaces
+namespace Governor.Umbraco.FullTextSearch.Interfaces
 {
     /// <summary>
     /// The Full text indexer retrieves the page HTML (either by using a renderer, or by retrieving from cache),

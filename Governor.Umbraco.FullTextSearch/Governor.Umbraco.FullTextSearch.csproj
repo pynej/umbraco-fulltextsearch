@@ -20,12 +20,16 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,7 +39,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -99,13 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AdminActions.cs" />
-    <Compile Include="Admin\FullTextSearch.ascx.cs">
-      <DependentUpon>FullTextSearch.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Admin\FullTextSearch.ascx.designer.cs">
-      <DependentUpon>FullTextSearch.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Config.cs" />
     <Compile Include="FullTextIndexers\CacheIndexer.cs" />
     <Compile Include="FullTextIndexers\DefaultIndexer.cs" />
@@ -113,8 +110,9 @@
     <Compile Include="HighlightTools\Highlight.cs" />
     <Compile Include="HighlightTools\Plain.cs" />
     <Compile Include="HighlightTools\Summariser.cs" />
-    <Compile Include="Installer\ExecuteSQL.cs" />
-    <Compile Include="XsltExtensions\ResultOutputEventArgs.cs" />
+    <Compile Include="Extensions\ResultOutputEventArgs.cs" />
+    <Compile Include="Properties\SolutionInfo.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="SearchTools\SearchParameters.cs" />
     <Compile Include="SearchTools\SearchUtilities.cs" />
     <Compile Include="HighlightTools\SummariserParameters.cs" />
@@ -129,15 +127,15 @@
     <Compile Include="Renderers\HttpPublishEventRenderer.cs" />
     <Compile Include="SearchTools\Search.cs" />
     <Compile Include="SearchTools\UmbracoProperty.cs" />
-    <Compile Include="XsltExtensions\SearchExtension.cs" />
+    <Compile Include="Extensions\SearchExtension.cs" />
     <Compile Include="Utilities\DBAccess.cs" />
     <Compile Include="EventHandlers\PublishingHandlers.cs" />
     <Compile Include="Utilities\HtmlStrip.cs" />
     <Compile Include="Utilities\Library.cs" />
-    <Compile Include="XsltExtensions\GeneralExtension.cs" />
+    <Compile Include="Extensions\GeneralExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Admin\FullTextSearch.ascx" />
+    <Content Include="FullTextSearch.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

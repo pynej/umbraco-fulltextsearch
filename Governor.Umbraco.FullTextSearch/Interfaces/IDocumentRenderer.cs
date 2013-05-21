@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using umbraco.NodeFactory;
-using FullTextSearch.EventHandlers;
-
-namespace FullTextSearch.Interfaces
+﻿namespace Governor.Umbraco.FullTextSearch.Interfaces
 {
     /// <summary>
     /// Any class implementing this interface can register itself

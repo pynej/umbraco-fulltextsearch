@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Examine;
+﻿using Examine;
 
-namespace FullTextSearch.HighlightTools
+namespace Governor.Umbraco.FullTextSearch.HighlightTools
 {
     public abstract class Summariser 
     {

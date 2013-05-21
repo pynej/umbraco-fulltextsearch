@@ -4,16 +4,8 @@ using System.Linq;
 using Examine;
 using System.Text;
 using Lucene.Net.QueryParsers;
-using System.Text.RegularExpressions;
-using Examine.Providers;
-using Lucene.Net.Highlight;
-using Lucene.Net.Search;
-using Lucene.Net.Index;
-using Lucene.Net.Analysis;
-using Examine.LuceneEngine.Providers;
-using System.IO;
 
-namespace FullTextSearch.SearchTools
+namespace Governor.Umbraco.FullTextSearch.SearchTools
 {
     /// <summary>
     /// This class constructs the actual lucene query from a bunch of 

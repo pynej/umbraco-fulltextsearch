@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Examine;
-using FullTextSearch.SearchTools;
+﻿using Examine;
 using System.Text.RegularExpressions;
+using Governor.Umbraco.FullTextSearch.SearchTools;
 
-namespace FullTextSearch.HighlightTools
+namespace Governor.Umbraco.FullTextSearch.HighlightTools
 {
     /// <summary>
     /// Retieve the summary info (title and summary text) for each search result. 

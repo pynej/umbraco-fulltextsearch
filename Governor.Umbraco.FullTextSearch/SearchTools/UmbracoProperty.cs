@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace FullTextSearch.SearchTools
+﻿namespace Governor.Umbraco.FullTextSearch.SearchTools
 {
     /// <summary>
     /// Some data indicating how to process a given document property from umbraco in search

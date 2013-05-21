@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="FullTextSearch.ascx.cs" Inherits="FullTextSearch.Admin.WebUserControl1" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.ascx.cs" Inherits="Governor.Umbraco.FullTextSearch.UI.Dashboard.Dashboard" %>
 <p>This page allows you to trigger the re-indexing of the site. </p>
 <p>Click here to re-index every node on the site</p>
 <asp:Button ID="reIndex" runat="server" onclick="reIndex_Click" 

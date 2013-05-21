@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco.interfaces;
-using FullTextSearch.Utilities;
 
-namespace FullTextSearch.Installer
+namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
 {
     /// <summary>
     /// This just executes a SQL statement. It's used by the installer to set up 
@@ -35,7 +32,6 @@ namespace FullTextSearch.Installer
                 return true;
             }
             throw new Exception("Database table could not be created. Install cannot proceed. Check database permissions");
-            return false;
         }
 
         public System.Xml.XmlNode SampleXml()

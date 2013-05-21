@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch.Interfaces;
+using Governor.Umbraco.FullTextSearch.Interfaces;
+using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco.NodeFactory;
-using System.Collections.Specialized;
-using FullTextSearch.Utilities;
 using umbraco.cms.businesslogic.web;
 
-namespace FullTextSearch.Renderers
+namespace Governor.Umbraco.FullTextSearch.Renderers
 {
     /// <summary>
     /// This needs to be used when the umbraco core is active. It uses the current
@@ -129,7 +126,7 @@ namespace FullTextSearch.Renderers
             Dictionary<string,string> queryStringCollection = Library.getQueryStringCollection();
             try
             {
-                fullHtml = Utilities.Library.RenderTemplate(nodeId, templateId, queryStringCollection);
+                fullHtml = global::Governor.Umbraco.FullTextSearch.Utilities.Library.RenderTemplate(nodeId, templateId, queryStringCollection);
                 return true;
             }
             catch (Exception ex)

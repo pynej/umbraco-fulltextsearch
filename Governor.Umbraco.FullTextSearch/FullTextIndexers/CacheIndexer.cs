@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch.Utilities;
+﻿using Governor.Umbraco.FullTextSearch.Utilities;
 
-namespace FullTextSearch.FullTextIndexers
+namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
 {
     /// <summary>
     /// This is used when publisheventrendering is active. HTML is just retrieved from the DB.

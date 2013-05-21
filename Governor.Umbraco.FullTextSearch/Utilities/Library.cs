@@ -6,13 +6,12 @@ using umbraco;
 using System.Text;
 using System.IO;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Web.UI;
 using umbraco.cms.businesslogic.web;
 using umbraco.NodeFactory;
 using System.Net;
 
-namespace FullTextSearch.Utilities
+namespace Governor.Umbraco.FullTextSearch.Utilities
 {
     public class Library
     {
@@ -280,7 +279,6 @@ namespace FullTextSearch.Utilities
             if (ex is AppDomainUnloadedException) return true;
             if (ex is BadImageFormatException) return true;
             if (ex is CannotUnloadAppDomainException) return true;
-            if (ex is ExecutionEngineException) return true;
             if (ex is InvalidProgramException) return true;
             if (ex is StackOverflowException) return true;
             if (ex is System.Threading.ThreadAbortException)

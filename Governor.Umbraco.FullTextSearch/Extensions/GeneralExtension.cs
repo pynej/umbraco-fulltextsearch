@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace FullTextSearch.XsltExtensions
+namespace Governor.Umbraco.FullTextSearch.Extensions
 {
     /// <summary>
     /// Contains a few helper methods we call from FullTextSearch.xslt

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using Governor.Umbraco.FullTextSearch.Admin;
 
-namespace FullTextSearch.Admin
+namespace Governor.Umbraco.FullTextSearch.UI.Dashboard
 {
-    public partial class WebUserControl1 : System.Web.UI.UserControl
+    public partial class Dashboard : System.Web.UI.UserControl
     {
         protected void Page_Load(object sender, EventArgs e)
         {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch.Utilities;
-
-namespace FullTextSearch.Utilities
+﻿namespace Governor.Umbraco.FullTextSearch.Utilities
 {
     public class HtmlCache
     {

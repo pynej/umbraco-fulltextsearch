@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Examine;
+using Governor.Umbraco.FullTextSearch.Interfaces;
+using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco.cms.businesslogic.web;
 using UmbracoExamine;
 using System.Xml.Linq;
-using FullTextSearch.Interfaces;
-using FullTextSearch.Utilities;
 using Examine.Providers;
-namespace FullTextSearch.Admin
+
+namespace Governor.Umbraco.FullTextSearch.Admin
 {
     public class AdminActions
     {
@@ -136,7 +135,7 @@ namespace FullTextSearch.Admin
                     }
                     catch (Exception ex)
                     {
-                        if (FullTextSearch.Utilities.Library.IsCritical(ex))
+                        if (global::Governor.Umbraco.FullTextSearch.Utilities.Library.IsCritical(ex))
                             throw;
                     }
                 }

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch.SearchTools;
+using Governor.Umbraco.FullTextSearch.SearchTools;
 
-namespace FullTextSearch.HighlightTools
+namespace Governor.Umbraco.FullTextSearch.HighlightTools
 {
     public class SummariserParameters
     {

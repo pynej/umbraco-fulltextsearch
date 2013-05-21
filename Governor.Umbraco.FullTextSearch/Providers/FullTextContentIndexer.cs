@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Governor.Umbraco.FullTextSearch.Interfaces;
 using UmbracoExamine;
 using Examine;
 using System.IO;
-using FullTextSearch.Interfaces;
-namespace FullTextSearch.Providers
+
+namespace Governor.Umbraco.FullTextSearch.Providers
 {
     /// <summary>
     /// We could probably just use the events built into the UmbracoContentIndexer for this, 
@@ -59,7 +58,7 @@ namespace FullTextSearch.Providers
                     catch (Exception ex)
                     {
                         umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error getting document: (" + ex.ToString() + ")");
-                        if (FullTextSearch.Utilities.Library.IsCritical(ex))
+                        if (global::Governor.Umbraco.FullTextSearch.Utilities.Library.IsCritical(ex))
                             throw;
                         currentDocument = null;
                     }

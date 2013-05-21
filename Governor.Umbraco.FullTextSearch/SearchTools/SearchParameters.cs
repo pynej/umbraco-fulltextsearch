@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch;
 
-namespace FullTextSearch.SearchTools
+namespace Governor.Umbraco.FullTextSearch.SearchTools
 {
     /// <summary>
     /// All the parameters needed by the Search class.

@@ -1,25 +1,14 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <umbPackage>
-    <files>
-        <file>
-            <guid>FullTextSearch.xslt</guid>
-            <orgPath>/xslt</orgPath>
-            <orgName>FullTextSearch.xslt</orgName>
-        </file>
-        <file>
-            <guid>FullTextSearch.config</guid>
-            <orgPath>/config</orgPath>
-            <orgName>FullTextSearch.config</orgName>
-        </file>
-    </files>
+  <files />
     <info>
         <package>
             <name>Full Text Search</name>
-            <version>0.25</version>
+            <version>0.0.0</version>
             <license url="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
             <url>http://fulltextsearch.dev.textor.com/intro.html</url>
             <requirements>
-                <major>3</major>
+                <major>0</major>
                 <minor>0</minor>
                 <patch>0</patch>
             </requirements>
@@ -28,13 +17,7 @@
             <name>Governor Technology</name>
             <website>http://www.governor.co.uk</website>
         </author>
-        <readme>
-            <![CDATA[Umbraco Full Text Search
-
-This package makes it easy to index and search the full content of Umbraco pages using the built in Lucene based Examine functionality.
-
-It reads the full HTML of pages after publishing, tag strips them, and adds them to the Lucune index. An editable XSLT macro for searching the index with a rich variety of options is provided. ]]>
-        </readme>
+        <readme><![CDATA[]]></readme>
     </info>
     <DocumentTypes>
         <DocumentType>
@@ -190,8 +173,6 @@ It reads the full HTML of pages after publishing, tag strips them, and adds them
 .fulltextsearch_result strong {
  background-color: #fdfddb;
 }
-
-
 ]]>
             </Content>
         </Stylesheet>
@@ -204,11 +185,10 @@ It reads the full HTML of pages after publishing, tag strips them, and adds them
             </scriptType>
             <scriptAssembly>
             </scriptAssembly>
-            <xslt>FullTextSearch.xslt</xslt>
+            <xslt></xslt>
             <useInEditor>False</useInEditor>
             <refreshRate>0</refreshRate>
-            <scriptingFile>
-            </scriptingFile>
+            <scriptingFile>FullTextSearch.cshtml</scriptingFile>
             <properties>
                 <property name="Query Type" alias="queryType" show="False" propertyType="text" />
                 <property name="Title Properties" alias="titleProperties" show="False" propertyType="text" />
@@ -265,8 +245,6 @@ It reads the full HTML of pages after publishing, tag strips them, and adds them
     <Languages />
     <DataTypes />
     <Actions>
-        <Action runat="install" alias="addXsltExtension" assembly="/bin/FullTextSearch" type="FullTextSearch.XsltExtensions.SearchExtension" extensionAlias="fulltextsearch.search" />
-        <Action runat="install" alias="addXsltExtension" assembly="/bin/FullTextSearch" type="FullTextSearch.XsltExtensions.GeneralExtension" extensionAlias="fulltextsearch.helper" />
         <Action runat="install" alias="addDashboardSection" dashboardAlias="FullTextSearchDashboardSection">
             <section>
                 <areas>
@@ -274,7 +252,7 @@ It reads the full HTML of pages after publishing, tag strips them, and adds them
                 </areas>
                 <tab caption="Full Text Search">
                     <control showOnce="true" addPanel="true" panelCaption="">
-                        /umbraco/dashboard/FullTextSearch.ascx
+                      /umbraco/plugins/FullTextSearch/Dashboard.ascx
                     </control>
                 </tab>
             </section>

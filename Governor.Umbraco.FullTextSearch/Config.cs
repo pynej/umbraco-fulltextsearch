@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using umbraco.BusinessLogic.Utils;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
 
-namespace FullTextSearch
+namespace Governor.Umbraco.FullTextSearch
 {
     /// <summary>
     /// Singleton configuration object for FullTextSearch

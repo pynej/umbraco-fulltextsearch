@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco.cms.businesslogic.web;
-using FullTextSearch.Utilities;
 
-namespace FullTextSearch.Renderers
+namespace Governor.Umbraco.FullTextSearch.Renderers
 {
     /// <summary>
     /// This can be used when the umbraco core is not active. 

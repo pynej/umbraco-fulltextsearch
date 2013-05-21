@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Examine;
 
-namespace FullTextSearch.XsltExtensions
+namespace Governor.Umbraco.FullTextSearch.Extensions
 {
     /// <summary>
     /// Allow modifying search results from code before they get sent to XSLT

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using FullTextSearch.Interfaces;
-using FullTextSearch.Renderers;
-using FullTextSearch.FullTextIndexers;
+﻿using Governor.Umbraco.FullTextSearch.FullTextIndexers;
+using Governor.Umbraco.FullTextSearch.Interfaces;
+using Governor.Umbraco.FullTextSearch.Renderers;
 
-namespace FullTextSearch
+namespace Governor.Umbraco.FullTextSearch
 {
     public sealed class Manager
     {

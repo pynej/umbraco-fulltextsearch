@@ -17,9 +17,9 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// </summary>
         /// <param name="searchTerm">the search term to split</param>
         /// <returns>list of terms properly escaped</returns> 
-        public static List<string> getSearchTermsSplit(string searchTerm)
+        public static List<string> GetSearchTermsSplit(string searchTerm)
         {
-            List<string> terms = new List<string>();
+            var terms = new List<string>();
             if (searchTerm.Contains('"'))
             {
                 // pull any quoted bits out of the query string, escape them, and add to our terms list
@@ -28,7 +28,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                 {
                     if (match.Success && match.Groups.Count >= 2)
                     {
-                        string term = QueryParser.Escape(match.Groups[1].Value);
+                        var term = QueryParser.Escape(match.Groups[1].Value);
                         if (!string.IsNullOrEmpty(term))
                             terms.Add('"' + term + '"');
                     }
@@ -36,7 +36,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                 });
             }
             // now handle simple spaces
-            foreach (string term in searchTerm.Split(' '))
+            foreach (var term in searchTerm.Split(' '))
             {
                 if (!string.IsNullOrEmpty(term))
                     terms.Add(QueryParser.Escape(term));
@@ -48,7 +48,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        public static List<string> getSearchTermQuoted(string searchTerm)
+        public static List<string> GetSearchTermQuoted(string searchTerm)
         {
             return new List<string> { '"' + QueryParser.Escape(searchTerm) + '"' };
         }
@@ -57,7 +57,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// </summary>
         /// <param name="searchTerm"></param>
         /// <returns></returns>
-        public static List<string> getSearchTermEscaped(string searchTerm)
+        public static List<string> GetSearchTermEscaped(string searchTerm)
         {
             return new List<string> { QueryParser.Escape(searchTerm) };
         }

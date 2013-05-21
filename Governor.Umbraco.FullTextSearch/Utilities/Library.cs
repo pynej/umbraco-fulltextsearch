@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using umbraco;
@@ -28,34 +29,33 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// them visible to the page being rendererd. Grrrrrrr. 
         /// </remarks>
         /// <param name="pageId"></param>
-        /// <param name="cookieCollection"></param>
+        /// <param name="cookieDictionary"></param>
         /// <param name="fullHtml"></param>
         /// <returns></returns>
         public static bool HttpRenderNode(int pageId, Dictionary<string, string> cookieDictionary, out string fullHtml)
         {
-            Config config = Config.Instance;
-            string defaultUrl = config.GetByKey("HttpUrl");
+            var config = Config.Instance;
+            var defaultUrl = config.GetByKey("HttpUrl");
             if (string.IsNullOrEmpty(defaultUrl))
                 throw new ArgumentException("RenderingURL must be set in FullTextSearch config file to use Http node rendering");
-            string firstSeparator = "?";
+            var firstSeparator = "?";
             if(defaultUrl.Contains('?'))
                 firstSeparator = "&";
-            string url;
-            url = string.Format("{0}{1}umbPageID={2}", defaultUrl, firstSeparator, pageId);
+            var url = string.Format("{0}{1}umbPageID={2}", defaultUrl, firstSeparator, pageId);
             //get timeout
             int timeout;
-            string httpTimeout = config.GetByKey("HttpTimeout");
+            var httpTimeout = config.GetByKey("HttpTimeout");
             if (string.IsNullOrEmpty(httpTimeout) || !Int32.TryParse(httpTimeout, out timeout))
             {
                 timeout = 120;
             }
             timeout *= 1000;
             //get host header
-            string host = config.GetByKey("HttpHost");
+            var host = config.GetByKey("HttpHost");
             // setup request
             try
             {
-                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
+                var webRequest = (HttpWebRequest)WebRequest.Create(url);
 
                 if (!string.IsNullOrEmpty(host))
                     webRequest.Host = host;
@@ -64,16 +64,16 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                 webRequest.UserAgent = "FullTextIndexer";
                 if (cookieDictionary != null && cookieDictionary.Count > 0)
                 {
-                    CookieContainer container = new CookieContainer();
-                    string domain = webRequest.Address.DnsSafeHost;
-                    foreach (KeyValuePair<string, string> cookie in cookieDictionary)
+                    var container = new CookieContainer();
+                    var domain = webRequest.Address.DnsSafeHost;
+                    foreach (var cookie in cookieDictionary)
                     {
                         container.Add(new Cookie(cookie.Key, cookie.Value,"/",domain));
                     }
                     webRequest.CookieContainer = container;
                 }
-                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
-                using (StreamReader sr = new StreamReader(webResponse.GetResponseStream()))
+                var webResponse = (HttpWebResponse)webRequest.GetResponse();
+                using (var sr = new StreamReader(webResponse.GetResponseStream()))
                 {
                     fullHtml = sr.ReadToEnd();
                 }
@@ -81,42 +81,43 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             }
             catch(WebException ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, pageId, "HTTP error in FullTextSearch retrieval: (" + ex.ToString() + ")");
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, pageId, "HTTP error in FullTextSearch retrieval: (" + ex + ")");
                 fullHtml = string.Empty;
             }
             return false;
         }
+
         /// <summary>
         /// RenderTemplate, shamelessly lifted from the umbraco library and modified
         /// to avoid passing the contents of request.form to the child page, and instead pass
         /// some parameters of our choice
         /// </summary>
-        /// <param name="PageId">Page ID</param>
+        /// <param name="pageId">Page ID</param>
+        /// <param name="templateId"></param>
         /// <param name="queryStringCollection">query strings to pass to child page</param>
         /// <returns>The page output HTML</returns>
-        public static string RenderTemplate(int PageId, int TemplateId, Dictionary<string,string> queryStringCollection)
+        public static string RenderTemplate(int pageId, int templateId, Dictionary<string,string> queryStringCollection)
         {
 
             if (UmbracoSettings.UseAspNetMasterPages)
             {
-                System.Collections.Generic.Dictionary<object, object> items = getCurrentContextItems();
+                var items = GetCurrentContextItems();
 
                 if (!umbraco.presentation.UmbracoContext.Current.LiveEditingContext.Enabled)
                 {
-                    HttpContext Context = HttpContext.Current;
-                    foreach (object key in Context.Request.QueryString)
+                    var context = HttpContext.Current;
+                    foreach (var key in context.Request.QueryString.Cast<object>().Where(key => ! queryStringCollection.ContainsKey(key.ToString())))
                     {
-                        if(! queryStringCollection.ContainsKey(key.ToString()))
-                            queryStringCollection.Add(key.ToString(),Context.Request.QueryString[key.ToString()]);
+                        queryStringCollection.Add(key.ToString(),context.Request.QueryString[key.ToString()]);
                     }
-                    string queryString = queryStringBuilder(queryStringCollection);
-                    using (StringWriter sw = new StringWriter())
+                    var queryString = QueryStringBuilder(queryStringCollection);
+                    using (var sw = new StringWriter())
                     {
-                        Context.Server.Execute(
+                        context.Server.Execute(
                             string.Format("/default.aspx?umbPageID={0}&alttemplate={1}&{2}",
-                            PageId, new template(TemplateId).TemplateAlias, queryString), sw, false);
+                            pageId, new template(templateId).TemplateAlias, queryString), sw, false);
                         // update the local page items again
-                        updateLocalContextItems(items, Context);
+                        UpdateLocalContextItems(items, context);
                         return sw.ToString();
                     }
                 }
@@ -127,12 +128,12 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             }
             else
             {
-                page p = new page(((System.Xml.IHasXmlNode)umbraco.library.GetXmlNodeById(PageId.ToString()).Current).GetNode());
-                p.RenderPage(TemplateId);
-                Control c = p.PageContentControl;
-                using (StringWriter sw = new StringWriter())
+                var p = new page(((System.Xml.IHasXmlNode)library.GetXmlNodeById(pageId.ToString(CultureInfo.InvariantCulture)).Current).GetNode());
+                p.RenderPage(templateId);
+                var c = p.PageContentControl;
+                using (var sw = new StringWriter())
                 {
-                    HtmlTextWriter hw = new HtmlTextWriter(sw);
+                    var hw = new HtmlTextWriter(sw);
                     c.RenderControl(hw);
 
                     return sw.ToString();
@@ -144,25 +145,25 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// From umbraco library
         /// </summary>
         /// <param name="items"></param>
-        /// <param name="Context"></param>
-        private static void updateLocalContextItems(IDictionary items, HttpContext Context)
+        /// <param name="context"></param>
+        private static void UpdateLocalContextItems(IDictionary items, HttpContext context)
         {
-            Context.Items.Clear();
-            IDictionaryEnumerator ide = items.GetEnumerator();
+            context.Items.Clear();
+            var ide = items.GetEnumerator();
             while (ide.MoveNext())
             {
-                Context.Items.Add(ide.Key, ide.Value);
+                context.Items.Add(ide.Key, ide.Value);
             }
         }
         /// <summary>
         /// From umbraco library
         /// </summary>
         /// <returns></returns>
-        private static Dictionary<object, object> getCurrentContextItems()
+        private static Dictionary<object, object> GetCurrentContextItems()
         {
-            IDictionary items = HttpContext.Current.Items;
-            Dictionary<object, object> currentItems = new Dictionary<object, object>();
-            IDictionaryEnumerator ide = items.GetEnumerator();
+            var items = HttpContext.Current.Items;
+            var currentItems = new Dictionary<object, object>();
+            var ide = items.GetEnumerator();
             while (ide.MoveNext())
             {
                 currentItems.Add(ide.Key, ide.Value);
@@ -174,25 +175,24 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// </summary>
         /// <param name="queryStringCollection"></param>
         /// <returns></returns>
-        public static string queryStringBuilder(Dictionary<string,string> queryStringCollection)
+        public static string QueryStringBuilder(Dictionary<string,string> queryStringCollection)
         {
-            StringBuilder queryString = new StringBuilder();
-            const string ONE_QS_PARAM = "&{0}={1}";
-            foreach (KeyValuePair<string,string> item in queryStringCollection)
+            var queryString = new StringBuilder();
+            const string oneQsParam = "&{0}={1}";
+            foreach (var item in queryStringCollection.Where(item => ! item.Key.ToLower().Equals("umbpageid")))
             {
-                if (! item.Key.ToLower().Equals("umbpageid"))
-                    queryString.Append(string.Format(ONE_QS_PARAM, item.Key, item.Value));
+                queryString.Append(string.Format(oneQsParam, item.Key, item.Value));
             }
             // remove leading &
             if(queryString.Length > 0)
                 queryString.Remove(0, 1);
             return queryString.ToString();
         }
+
         /// <summary>
         /// Given a string (from config) denoting number of minutes, set HTTP timout
         /// to the proper number of sectonds
         /// </summary>
-        /// <param name="minutes"></param>
         public static void SetTimeout(string secondsString)
         {
             int secondsInt;
@@ -200,8 +200,8 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             {
                 return;
             }
-            if (System.Web.HttpContext.Current != null && System.Web.HttpContext.Current.Server != null)
-                System.Web.HttpContext.Current.Server.ScriptTimeout = secondsInt;
+            if (HttpContext.Current != null)
+                HttpContext.Current.Server.ScriptTimeout = secondsInt;
         }
         /// <summary>
         /// We need to be able to check whether a given Node object, or Document object, dependant on 
@@ -216,29 +216,29 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                 return false;
             if (!(documentObject is Document || documentObject is Node))
                 throw new ArgumentException("documentObject must be umbraco.cms.businesslogic.web.Document or umbraco.NodeFactory.Node");
-            Config config = Config.Instance;
-            List<string> searchHides = config.GetMultiByKey("DisableSearchPropertyNames");
+            var config = Config.Instance;
+            var searchHides = config.GetMultiByKey("DisableSearchPropertyNames");
             if (searchHides != null)
             {
-                foreach (string searchHide in searchHides)
+                foreach (var searchHide in searchHides)
                 {
-                    string val = "0";
+                    var val = "0";
                     if (documentObject is Document)
                     {
-                        Document d = documentObject as Document;
+                        var d = documentObject as Document;
                         var property = d.getProperty(searchHide);
                         if (property != null)
                         {
                             val = property.Value.ToString().ToLower();
                         }
                     }
-                    else if(documentObject is Node)
+                    else
                     {
-                        Node n = documentObject as Node;
+                        var n = documentObject as Node;
                         var property = n.GetProperty(searchHide);
                         if (property != null)
                         {
-                            val = property.Value.ToString().ToLower();
+                            val = property.Value.ToLower();
                         }
                     }
                     // true/false property set to false in umbraco back office returns integer zero
@@ -253,11 +253,11 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// into a dictionary. Hardly needs it's own method, but it's used in a few places so...
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<string, string> getQueryStringCollection()
+        public static Dictionary<string, string> GetQueryStringCollection()
         {
-            Dictionary<string, string> queryString = new Dictionary<string, string>();
-            Config config = Config.Instance;
-            string getStringName = config.GetByKey("SearchActiveStringName");
+            var queryString = new Dictionary<string, string>();
+            var config = Config.Instance;
+            var getStringName = config.GetByKey("SearchActiveStringName");
             if (!string.IsNullOrWhiteSpace(getStringName))
             {
                 queryString.Add(getStringName, "1");

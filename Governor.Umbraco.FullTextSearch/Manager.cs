@@ -13,7 +13,7 @@ namespace Governor.Umbraco.FullTextSearch
         // a singleton so we can set up the default handlers here.
         private Manager()
         {
-            Config config = Config.Instance;
+            var config = Config.Instance;
             DocumentRendererFactory = new GenericFactory<IDocumentRenderer>();
             FullTextIndexerFactory = new GenericFactory<IFullTextIndexer>();
 

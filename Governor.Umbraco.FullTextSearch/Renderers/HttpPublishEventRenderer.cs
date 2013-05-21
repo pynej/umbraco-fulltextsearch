@@ -14,15 +14,15 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
         /// </summary>
         /// <param name="fullHtml">string to fill with HTML</param>
         /// <returns>success/failure</returns>
-        protected override bool retrieveHTML(ref string fullHtml)
+        protected override bool RetrieveHtml(ref string fullHtml)
         {
             try
             {
-                return Library.HttpRenderNode(nodeId, Library.getQueryStringCollection(), out fullHtml);
+                return Library.HttpRenderNode(NodeId, Library.GetQueryStringCollection(), out fullHtml);
             }
             catch (Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error rendering node using Http Renderer: (" + ex.ToString() + ")");
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, NodeId, "Error rendering node using Http Renderer: (" + ex + ")");
                 if (Library.IsCritical(ex))
                     throw;
                 fullHtml = string.Empty;

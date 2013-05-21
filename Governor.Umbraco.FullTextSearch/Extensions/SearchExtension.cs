@@ -43,29 +43,28 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         public static XPathNodeIterator Search(string searchType, string searchTerm, string titleProperties, string bodyProperties, string rootNodes, string titleLinkProperties, string summaryProperties, int useHighlighting, int summaryLength, int pageNumber = 0, int pageLength = 0, string fuzzieness = "1.0", int wildcard = 0)
         {
             // Measure time taken. This could be done more neatly, but this is more accurate
-            Stopwatch stopwatch = new Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
             // Check search terms were actually entered
             if (string.IsNullOrEmpty(searchTerm))
-                return returnError("NoTerms", "You must enter a search term");
+                return ReturnError("NoTerms", "You must enter a search term");
             // Setup search parameters
             double fuzzy;
             if(string.IsNullOrEmpty(fuzzieness) || ! double.TryParse(fuzzieness,out fuzzy))
                 fuzzy = 1.0;
-            bool wildcardBool = wildcard > 0 ? true : false;
-            SearchParameters searchParameters = new SearchParameters();
-            List<UmbracoProperty> searchProperties = getSearchProperties(titleProperties, bodyProperties, fuzzy, wildcardBool);
+            var wildcardBool = wildcard > 0;
+            var searchParameters = new SearchParameters();
+            var searchProperties = GetSearchProperties(titleProperties, bodyProperties, fuzzy, wildcardBool);
             if (searchProperties != null)
                 searchParameters.SearchProperties = searchProperties;
-            searchParameters.RootNodes = getRootNotes(rootNodes);
+            searchParameters.RootNodes = GetRootNotes(rootNodes);
             searchParameters.SearchTerm = searchTerm;
 
             //Setup summariser parameters
-            SummariserParameters summaryParameters = new SummariserParameters();
-            summaryParameters.SearchTerm = searchTerm;
+            var summaryParameters = new SummariserParameters {SearchTerm = searchTerm};
             if (summaryLength > 0)
                 summaryParameters.SummaryLength = summaryLength;
-            addSummaryProperties(summaryParameters, titleLinkProperties, summaryProperties, fuzzy, wildcardBool);
+            AddSummaryProperties(summaryParameters, titleLinkProperties, summaryProperties, fuzzy, wildcardBool);
             // Create summarizer according to highlighting option
             Summariser summariser;
             if (useHighlighting > 0)
@@ -73,17 +72,17 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
             else
                 summariser = new Plain(summaryParameters);
             //Finally create search object and pass ISearchResults to XML renderer
-            Search search = new Search(searchParameters);
+            var search = new Search(searchParameters);
             switch (searchType)
             {
                 case "MultiAnd":
-                    return resultsAsXml(search.ResultsMultiAnd(), summariser, pageNumber, pageLength, stopwatch);
+                    return ResultsAsXml(search.ResultsMultiAnd(), summariser, pageNumber, pageLength, stopwatch);
                 case "SimpleOr":
-                    return resultsAsXml(search.ResultsSimpleOr(), summariser, pageNumber, pageLength, stopwatch);
+                    return ResultsAsXml(search.ResultsSimpleOr(), summariser, pageNumber, pageLength, stopwatch);
                 case "AsEntered":
-                    return resultsAsXml(search.ResultsAsEntered(), summariser, pageNumber, pageLength, stopwatch);
+                    return ResultsAsXml(search.ResultsAsEntered(), summariser, pageNumber, pageLength, stopwatch);
                 default:
-                    return resultsAsXml(search.ResultsMultiRelevance(), summariser, pageNumber, pageLength, stopwatch);
+                    return ResultsAsXml(search.ResultsMultiRelevance(), summariser, pageNumber, pageLength, stopwatch);
             }
         }
         
@@ -94,7 +93,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         }
         public static XPathNodeIterator SearchMultiRelevance(string searchTerm, string rootNodes, int pageNumber = 0, int pageLength = 0)
         {
-            return Search("MultiRelevance", searchTerm, "nodeName", Config.Instance.GetLuceneFTField(), rootNodes, "nodeName",Config.Instance.GetLuceneFTField(), 1, 0, pageNumber, pageLength, "0.8", 0);
+            return Search("MultiRelevance", searchTerm, "nodeName", Config.Instance.GetLuceneFtField(), rootNodes, "nodeName",Config.Instance.GetLuceneFtField(), 1, 0, pageNumber, pageLength, "0.8");
         }
         public static XPathNodeIterator SearchMultiAnd(string searchTerm, string titleProperties, string bodyProperties, string rootNodes, string titleLinkProperties, string summaryProperties, int useHighlighting, int summaryLength, int pageNumber = 0, int pageLength = 0, string fuzzieness = "1.0", int wildcard = 0)
         {
@@ -102,7 +101,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         }
         public static XPathNodeIterator SearchMultiAnd(string searchTerm, string rootNodes, int pageNumber = 0, int pageLength = 0)
         {
-            return Search("MultiAnd", searchTerm, "nodeName", Config.Instance.GetLuceneFTField(), rootNodes, "nodeName", Config.Instance.GetLuceneFTField(), 1, 0, pageNumber, pageLength, "0.8",0);
+            return Search("MultiAnd", searchTerm, "nodeName", Config.Instance.GetLuceneFtField(), rootNodes, "nodeName", Config.Instance.GetLuceneFtField(), 1, 0, pageNumber, pageLength, "0.8");
         }
         public static XPathNodeIterator SearchSimpleOr(string searchTerm, string titleProperties, string bodyProperties, string rootNodes, string titleLinkProperties, string summaryProperties, int useHighlighting, int summaryLength, int pageNumber = 0, int pageLength = 0, string fuzzieness = "1.0", int wildcard = 0)
         {
@@ -110,7 +109,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         }
         public static XPathNodeIterator SearchSimpleOr(string searchTerm, string rootNodes, int pageNumber = 0, int pageLength = 0)
         {
-            return Search("SimpleOr", searchTerm, "nodeName", Config.Instance.GetLuceneFTField(), rootNodes, "nodeName", Config.Instance.GetLuceneFTField(), 1, 0, pageNumber, pageLength,"0.8",0);
+            return Search("SimpleOr", searchTerm, "nodeName", Config.Instance.GetLuceneFtField(), rootNodes, "nodeName", Config.Instance.GetLuceneFtField(), 1, 0, pageNumber, pageLength,"0.8");
         }
         public static XPathNodeIterator SearchAsEntered(string searchTerm, string titleProperties, string bodyProperties, string rootNodes, string titleLinkProperties, string summaryProperties, int useHighlighting, int summaryLength, int pageNumber = 0, int pageLength = 0, string fuzzieness = "1.0", int wildcard = 0)
         {
@@ -118,7 +117,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         }
         public static XPathNodeIterator SearchAsEntered(string searchTerm, string rootNodes, int pageNumber = 0, int pageLength = 0)
         {
-            return Search("AsEntered", searchTerm, "nodeName", Config.Instance.GetLuceneFTField(), rootNodes, "nodeName", Config.Instance.GetLuceneFTField(), 1, 0, pageNumber, pageLength, "0.8", 0);
+            return Search("AsEntered", searchTerm, "nodeName", Config.Instance.GetLuceneFtField(), rootNodes, "nodeName", Config.Instance.GetLuceneFtField(), 1, 0, pageNumber, pageLength, "0.8");
         }
         
         //Private methods
@@ -128,13 +127,14 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         /// <param name="commaSeparated"></param>
         /// <param name="boost"></param>
         /// <param name="fuzzy"></param>
+        /// <param name="wildcard"></param>
         /// <returns></returns>
-        static List<UmbracoProperty> getProperties(string commaSeparated, double boost, double fuzzy, bool wildcard)
+        static List<UmbracoProperty> GetProperties(string commaSeparated, double boost, double fuzzy, bool wildcard)
         {
-            List<UmbracoProperty> properties = new List<UmbracoProperty>();
+            var properties = new List<UmbracoProperty>();
             if (!string.IsNullOrEmpty(commaSeparated))
             {
-                foreach (string propName in commaSeparated.Split(','))
+                foreach (var propName in commaSeparated.Split(','))
                 {
                     if (!string.IsNullOrEmpty(propName))
                     {
@@ -144,42 +144,40 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
             }
             return properties;
         }
+
         /// <summary>
         /// Add a list of properties to use in summary text/body to supplied SummariserParameters object
         /// </summary>
         /// <param name="summaryParameters"></param>
         /// <param name="titleLinkProperties"></param>
         /// <param name="summaryProperties"></param>
-        static void addSummaryProperties(SummariserParameters summaryParameters, string titleLinkProperties, string summaryProperties, double fuzzieness, bool wildcard)
+        /// <param name="fuzzieness"></param>
+        /// <param name="wildcard"></param>
+        static void AddSummaryProperties(SummariserParameters summaryParameters, string titleLinkProperties, string summaryProperties, double fuzzieness, bool wildcard)
         {
-            double titleBoost = Config.Instance.GetSearchTitleBoost();
-            List<UmbracoProperty> titleSummary = getProperties(titleLinkProperties, titleBoost, fuzzieness, wildcard);
-            if (titleSummary.Count > 0)
-                summaryParameters.TitleLinkProperties = titleSummary;
-            else
-                summaryParameters.TitleLinkProperties = new List<UmbracoProperty> { new UmbracoProperty("nodeName", titleBoost, fuzzieness, wildcard) };
+            var titleBoost = Config.Instance.GetSearchTitleBoost();
+            var titleSummary = GetProperties(titleLinkProperties, titleBoost, fuzzieness, wildcard);
+            summaryParameters.TitleLinkProperties = titleSummary.Count > 0 ? titleSummary : new List<UmbracoProperty> { new UmbracoProperty("nodeName", titleBoost, fuzzieness, wildcard) };
 
-            List<UmbracoProperty> bodySummary = getProperties(summaryProperties, 1.0, fuzzieness, wildcard);
-            if (bodySummary.Count > 0)
-                summaryParameters.BodySummaryProperties = bodySummary;
-            else
-                summaryParameters.BodySummaryProperties = new List<UmbracoProperty> { new UmbracoProperty(Config.Instance.GetLuceneFTField(), 1.0, fuzzieness, wildcard) };
+            var bodySummary = GetProperties(summaryProperties, 1.0, fuzzieness, wildcard);
+            summaryParameters.BodySummaryProperties = bodySummary.Count > 0 ? bodySummary : new List<UmbracoProperty> { new UmbracoProperty(Config.Instance.GetLuceneFtField(), 1.0, fuzzieness, wildcard) };
         }
+
         /// <summary>
         /// private function, called by Search to populate a list of umbraco properties to pass to the Search class
         /// </summary>
         /// <param name="titleProperties"></param>
         /// <param name="bodyProperties"></param>
+        /// <param name="fuzzieness"></param>
+        /// <param name="wildcard"></param>
         /// <returns></returns>
-        static List<UmbracoProperty> getSearchProperties(string titleProperties, string bodyProperties, double fuzzieness, bool wildcard)
+        static List<UmbracoProperty> GetSearchProperties(string titleProperties, string bodyProperties, double fuzzieness, bool wildcard)
         {
-            List<UmbracoProperty> searchProperties = new List<UmbracoProperty>();
-            double titleBoost = Config.Instance.GetSearchTitleBoost();
-            searchProperties.AddRange(getProperties(titleProperties, titleBoost, fuzzieness, wildcard));
-            searchProperties.AddRange(getProperties(bodyProperties, 1.0, fuzzieness, wildcard));
-            if(searchProperties.Count > 0)
-                return searchProperties;
-            return null;
+            var searchProperties = new List<UmbracoProperty>();
+            var titleBoost = Config.Instance.GetSearchTitleBoost();
+            searchProperties.AddRange(GetProperties(titleProperties, titleBoost, fuzzieness, wildcard));
+            searchProperties.AddRange(GetProperties(bodyProperties, 1.0, fuzzieness, wildcard));
+            return searchProperties.Count > 0 ? searchProperties : null;
         }
         
         /// <summary>
@@ -187,12 +185,12 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         /// </summary>
         /// <param name="rootNodes">Comma separated string from XSLT</param>
         /// <returns>List of integers</returns>
-        static List<int> getRootNotes(string rootNodes)
+        static List<int> GetRootNotes(string rootNodes)
         {
             if (string.IsNullOrEmpty(rootNodes))
                 return null;
-            List<int> rootNodesList = new List<int>();
-            foreach (string nodeString in rootNodes.Split(','))
+            var rootNodesList = new List<int>();
+            foreach (var nodeString in rootNodes.Split(','))
             {
                 int node;
                 if (Int32.TryParse(nodeString, out node))
@@ -206,15 +204,15 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         /// broadly compatible, that seems best...
         /// </summary>
         /// <returns>XPathNodeIterator to return to Umbraco XSLT foreach</returns>
-        static XPathNodeIterator resultsAsXml(ISearchResults searchResults, Summariser summariser, int pageNumber = 0, int pageLength = 0, Stopwatch stopwatch = null)
+        static XPathNodeIterator ResultsAsXml(ISearchResults searchResults, Summariser summariser, int pageNumber = 0, int pageLength = 0, Stopwatch stopwatch = null)
         {
-            XDocument output = new XDocument();
-            int numNodesInSet = 0;
-            int numResults = searchResults.TotalItemCount;
+            var output = new XDocument();
+            var numNodesInSet = 0;
+            var numResults = searchResults.TotalItemCount;
             if(numResults < 1)
-                return returnError("NoResults", "Your search returned no results");
+                return ReturnError("NoResults", "Your search returned no results");
             IEnumerable<SearchResult> results;
-            int toSkip = 0;
+            var toSkip = 0;
             if (pageLength > 0)
             {
                 if (pageNumber > 1)
@@ -227,23 +225,23 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
             {
                 results = searchResults.AsEnumerable();
             }
-            XElement rootNode = new XElement("results");
-            XElement nodesNode = new XElement("nodes");
-            bool ReturnAllFieldsInXSLT = Config.Instance.GetBooleanByKey("ReturnAllFieldsInXSLT");
-            foreach (SearchResult result in results)
+            var rootNode = new XElement("results");
+            var nodesNode = new XElement("nodes");
+            var returnAllFieldsInXslt = Config.Instance.GetBooleanByKey("ReturnAllFieldsInXSLT");
+            foreach (var result in results)
             {
-                int resultNumber = toSkip + numNodesInSet + 1;
+                var resultNumber = toSkip + numNodesInSet + 1;
                 OnResultOutput(new ResultOutputEventArgs(result, pageNumber, resultNumber, numNodesInSet + 1));
-                XElement node = new XElement("node",
+                var node = new XElement("node",
                     new XAttribute("id", result.Id),
                     new XAttribute("score", result.Score),
                     new XAttribute("number", resultNumber)
                 );
-                if (ReturnAllFieldsInXSLT)
+                if (returnAllFieldsInXslt)
                 {
                     //Add all fields from index, you would think this would slow things
                     //down, but it doesn't (that much) really, could be useful
-                    foreach (KeyValuePair<string, string> field in result.Fields)
+                    foreach (var field in result.Fields)
                     {
                         node.Add(
                             new XElement("data",
@@ -275,19 +273,19 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
             if (numNodesInSet > 0)
             {
                 rootNode.Add(nodesNode);
-                XElement summary = new XElement("summary");
+                var summary = new XElement("summary");
                 summary.Add(new XAttribute("numResults", numResults));
-                int numPages = (int)Math.Floor((double)(numResults / pageLength)) + 1;
+                var numPages = (int)Math.Floor((double)(numResults / pageLength)) + 1;
                 summary.Add(new XAttribute("numPages", numPages));
                 if (stopwatch != null)
                 {
                     stopwatch.Stop();
                     double millisecs = stopwatch.ElapsedMilliseconds;
-                    double numSecs = Math.Round((millisecs / 1000),3);
+                    var numSecs = Math.Round((millisecs / 1000),3);
                     summary.Add(new XAttribute("timeTaken", numSecs));
                 }
                 summary.Add(new XAttribute("firstResult", toSkip + 1));
-                int lastResult = toSkip + pageLength;
+                var lastResult = toSkip + pageLength;
                 if(lastResult > numResults)
                     lastResult = numResults;
                 summary.Add(new XAttribute("lastResult", lastResult));
@@ -295,7 +293,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
                 output.Add(rootNode);
             }
             else
-                return returnError("NoPage", "Pagination incorrectly set up, no results on page "+ pageNumber);
+                return ReturnError("NoPage", "Pagination incorrectly set up, no results on page "+ pageNumber);
 
             return output.CreateNavigator().Select("/");
         }
@@ -305,9 +303,9 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         /// <param name="shortMessage">A code that can be checked for in the XSLT and replaced with appropriate dictionary entry</param>
         /// <param name="longMessage">Some text that will be used if dictionary entry is not available/for debugging</param>
         /// <returns></returns>
-        static XPathNodeIterator returnError(string shortMessage, string longMessage)
+        static XPathNodeIterator ReturnError(string shortMessage, string longMessage)
         {
-            XDocument output = new XDocument();
+            var output = new XDocument();
             output.Add(new XElement("error",
                 new XAttribute("type", shortMessage),
                 new XCData(longMessage)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Web;
 using HtmlAgilityPack;
 using System.Text;
@@ -11,42 +12,44 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
     /// </summary>
     class HtmlStrip
     {
-        private string[] tagsToStripContentsOf;
-        private string[] idsToStripContentsOf;
+        private readonly string[] _tagsToStripContentsOf;
+        private readonly string[] _idsToStripContentsOf;
 
-        private bool continueOnAgilityException;
+        private readonly bool _continueOnAgilityException;
         /// <summary>
         /// Default constructor, set up sane values
         /// </summary>
         public HtmlStrip()
         {
-            this.tagsToStripContentsOf = new string[] { "head", "script" };
-            this.idsToStripContentsOf = new string[] { };
-            this.continueOnAgilityException = true;
+            _tagsToStripContentsOf = new[] { "head", "script" };
+            _idsToStripContentsOf = new string[] { };
+            _continueOnAgilityException = true;
         }
+
         /// <summary>
         /// Overloaded Constructor, allows specifying which tags get stripped
         /// </summary>
         /// <param name="tagsToStripContentsOf">an array of tags the FULL contents of which will be removed, not just the tags themselves</param>
         /// <param name="idsToStripContentsOf">an array of HTML element IDs to fully remove</param>
+        /// <param name="continueOnAgilityException"></param>
         public HtmlStrip(string[] tagsToStripContentsOf, string[] idsToStripContentsOf, bool continueOnAgilityException = true)
         {
-            this.tagsToStripContentsOf = tagsToStripContentsOf;
-            this.idsToStripContentsOf = idsToStripContentsOf;
-            this.continueOnAgilityException = continueOnAgilityException;
+            _tagsToStripContentsOf = tagsToStripContentsOf;
+            _idsToStripContentsOf = idsToStripContentsOf;
+            _continueOnAgilityException = continueOnAgilityException;
         }
         /// <summary>
         /// Strips HTML according to the parameters set in the constructor
         /// </summary>
-        /// <param name="fullHTML">HTML to strip</param>
+        /// <param name="fullHtml">HTML to strip</param>
         /// <returns>Text</returns>
-        public string TextFromHTML(ref string fullHTML)
+        public string TextFromHtml(ref string fullHtml)
         {
-            if (fullHTML.Length < 1)
+            if (fullHtml.Length < 1)
             {
                 return "";
             }
-            string fullText = AgilityTagStrip(fullHTML);
+            var fullText = AgilityTagStrip(fullHtml);
             // the above leaves some residual tags. Search me why, probably the HTML input isn't perfectly
             // formed and the parser is choking on it. Help it along
             fullText = Regex.Replace(fullText, "<[^>]*>", String.Empty);
@@ -59,47 +62,41 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// <summary>
         /// Run a tag stripper based on the HTML Agility pack
         /// </summary>
-        /// <param name="fullHTML">Html to strip</param>
+        /// <param name="fullHtml">Html to strip</param>
         /// <returns>Text. Hopefully.</returns>
-        private string AgilityTagStrip(string fullHTML)
+        private string AgilityTagStrip(string fullHtml)
         {
-            HtmlDocument doc = new HtmlDocument();
+            var doc = new HtmlDocument();
             try
             {
                 //Does this break stuff?
                 doc.OptionReadEncoding = false;
-                doc.LoadHtml(fullHTML);
+                doc.LoadHtml(fullHtml);
             }
             catch (Exception ex)
             {
-                if(System.Web.HttpContext.Current != null)
-                    System.Web.HttpContext.Current.Trace.Warn("Search", "There was an exception cleaning HTML: " + ex.ToString());
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "HTML Strip exception: " + ex.ToString());
+                if(HttpContext.Current != null)
+                    HttpContext.Current.Trace.Warn("Search", "There was an exception cleaning HTML: " + ex);
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "HTML Strip exception: " + ex);
                 // swallow the exception and run the regex based tag stripper on it anyway. Won't be perfect but better than nothing. 
-                if(continueOnAgilityException)
-                    return fullHTML;
-                return string.Empty;
+                return _continueOnAgilityException ? fullHtml : string.Empty;
             }
-            foreach (string tag in tagsToStripContentsOf)
+            foreach (var tag in _tagsToStripContentsOf)
             {
-                HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//" + tag);
+                var nodes = doc.DocumentNode.SelectNodes("//" + tag);
                 if (nodes != null)
                 {
-                    foreach (HtmlNode h in nodes)
+                    foreach (var h in nodes)
                     {
                         h.ParentNode.RemoveChild(h, false);
                     }
                 }
             }
-            foreach (string id in idsToStripContentsOf)
+            foreach (var h in _idsToStripContentsOf.Select(doc.GetElementbyId).Where(h => h != null))
             {
-                var h = doc.GetElementbyId(id);
-                if (h != null)
-                {
-                    h.ParentNode.RemoveChild(h, false);
-                }
+                h.ParentNode.RemoveChild(h, false);
             }
-            StringBuilder fullTextBuilder = new StringBuilder();
+            var fullTextBuilder = new StringBuilder();
             TagStripHTML(doc.DocumentNode, fullTextBuilder);
             return fullTextBuilder.ToString();
         }

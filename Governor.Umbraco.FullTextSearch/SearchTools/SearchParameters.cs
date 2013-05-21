@@ -32,13 +32,14 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         //Set some default values
         public SearchParameters()
         {
-            SearchProperties = new List<UmbracoProperty> { new UmbracoProperty(Config.Instance.GetLuceneFTField(), 1.0, 1.0) };
+            SearchProperties = new List<UmbracoProperty> { new UmbracoProperty(Config.Instance.GetLuceneFtField()) };
             IndexTypes = new List<string> { "content" };
-            SearchProvider = getSearchProvider();
+            SearchProvider = GetSearchProvider();
         }
-        string getSearchProvider()
+
+        string GetSearchProvider()
         {
-            string searchProvider = Config.Instance.GetByKey("SearchProvider");
+            var searchProvider = Config.Instance.GetByKey("SearchProvider");
             if (string.IsNullOrEmpty(searchProvider))
                 throw new ArgumentException("SearchProvider must be set in FullTextSearch.Config");
             return searchProvider;

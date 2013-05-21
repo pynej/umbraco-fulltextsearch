@@ -176,7 +176,7 @@
         </form>
     </div>
 
-    @if (results.Current.Evaluate("count(/results)") == 1)
+    @if ((int)results.Current.Evaluate("count(/results)") == 1)
     {
         var resultsItem = results.Current.Select("/results");
         <div class="fulltextsearch_results">
@@ -212,10 +212,10 @@
                                         resultsItem.Current.Evaluate("string(/results/summary/@lastResult)"),
                                         resultsItem.Current.Evaluate("string(/results/summary/@numResults)"),
                                         resultsItem.Current.Evaluate("string(/results/summary/@timeTaken)"));
-            var swinfo = resultsItem.Current.Evaluate("string(/results/summary/swinfo)");
+                  var swinfo = resultsItem.Current.Evaluate("string(/results/summary/swinfo)");
                 }
                 @summary
-                @Html.Raw(swinfo)
+                @Html.Raw(swinfo.ToString())
             </p>
         </div>
     }
@@ -223,7 +223,7 @@
     {
         var errorType = (string)results.Current.Evaluate("string(/error/@type)");
         var error = (string)results.Current.Evaluate("string(/error)");
-        string dictionaryError = String.IsNullOrEmpty(errorType) ? "" : String.Format(GeneralExtension.DictionaryHelper(errorType), searchTerms, pageNumber);
+        var dictionaryError = String.IsNullOrEmpty(errorType) ? "" : String.Format(GeneralExtension.DictionaryHelper(errorType), searchTerms, pageNumber);
         var errormsg = String.IsNullOrEmpty(dictionaryError) ? (String.IsNullOrEmpty(error) ? GeneralExtension.DictionaryHelper("UnknownError") : error) : dictionaryError;
         <div class="fulltextsearch_error">
             <p>@errormsg</p>
@@ -253,7 +253,7 @@
                 </li>
             }
 
-            @for (int curPage = startPage; curPage <= numPages - 1 && curPage < startPage + numNumbers; curPage++)
+            @for (var curPage = startPage; curPage <= numPages - 1 && curPage < startPage + numNumbers; curPage++)
             {
                 if (curPage == pageNumber)
                 {
@@ -287,7 +287,7 @@
 {
     var errorType = (string)results.Current.Evaluate("string(/error/@type)");
     var error = (string)results.Current.Evaluate("string(/error)");
-    string dictionaryError = String.IsNullOrEmpty(errorType) ? "" : String.Format(GeneralExtension.DictionaryHelper(errorType), searchTerms, pageNumber);
+    var dictionaryError = String.IsNullOrEmpty(errorType) ? "" : String.Format(GeneralExtension.DictionaryHelper(errorType), searchTerms, pageNumber);
     var errormsg = String.IsNullOrEmpty(dictionaryError) ? (String.IsNullOrEmpty(error) ? GeneralExtension.DictionaryHelper("UnknownError") : error) : dictionaryError;
  
     <div class="fulltextsearch_error">

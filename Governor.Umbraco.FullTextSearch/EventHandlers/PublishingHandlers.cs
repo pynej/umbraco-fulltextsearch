@@ -49,15 +49,15 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         {
             if (sender == null || sender.Id < 1)
                 return;
-            int id = sender.Id;
+            var id = sender.Id;
             // get config and check we're enabled and good to go
             if (!checkConfig())
                 return;
             // this can take a while...
             Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
-            string nodeTypeAlias = sender.ContentType.Alias;
+            var nodeTypeAlias = sender.ContentType.Alias;
 
-            IDocumentRenderer renderer = Manager.Instance.DocumentRendererFactory.CreateNew(nodeTypeAlias);
+            var renderer = Manager.Instance.DocumentRendererFactory.CreateNew(nodeTypeAlias);
             string fullHtml;
 
             if (renderer.Render(id, out fullHtml))
@@ -90,7 +90,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         {
             if (!checkConfig())
                 return;
-            int id = sender.Id;
+            var id = sender.Id;
             if (id > 0)
                 HtmlCache.Remove(sender.Id);
         }
@@ -115,12 +115,10 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// <returns></returns>
         private bool checkConfig()
         {
-            Config config = Config.Instance;
+            var config = Config.Instance;
             if (config == null)
                 return false;
-            if (!Config.Instance.GetBooleanByKey("Enabled") || !Config.Instance.GetBooleanByKey("PublishEventRendering"))
-                return false;
-            return true;
+            return Config.Instance.GetBooleanByKey("Enabled") && Config.Instance.GetBooleanByKey("PublishEventRendering");
         }
     }
 }

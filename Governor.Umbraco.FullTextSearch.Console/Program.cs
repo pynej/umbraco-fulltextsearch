@@ -12,19 +12,19 @@ namespace Governor.Umbraco.FullTextSearch.Console
         {
             if (args == null || args.Length < 1)
             {
-                showInstructions();
+                ShowInstructions();
                 return;
             }
-            string fnName = args[0].ToLower();
-            string username = System.Configuration.ConfigurationManager.AppSettings["username"];
-            string password = System.Configuration.ConfigurationManager.AppSettings["password"];
+            var fnName = args[0].ToLower();
+            var username = System.Configuration.ConfigurationManager.AppSettings["username"];
+            var password = System.Configuration.ConfigurationManager.AppSettings["password"];
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
-                showInstructions();
+                ShowInstructions();
                 System.Console.WriteLine("Error: Username or password not found");
                 return;
             }
-            FullTextServiceSoapClient client = new FullTextServiceSoapClient();
+            var client = new FullTextServiceSoapClient();
             try
             {
                 switch (fnName)
@@ -35,11 +35,11 @@ namespace Governor.Umbraco.FullTextSearch.Console
                     case "reindexfulltextnodes":
                         if (string.IsNullOrWhiteSpace(args[1]))
                         {
-                            showInstructions();
+                            ShowInstructions();
                             System.Console.WriteLine("Error: No nodes input");
                             return;
                         }
-                        ArrayOfInt nodes = getNodesFromString(args[1]);
+                        var nodes = GetNodesFromString(args[1]);
                         if (nodes.Count > 0)
                             client.ReindexFullTextNodes(username, password, nodes);
                         break;
@@ -49,16 +49,16 @@ namespace Governor.Umbraco.FullTextSearch.Console
                     case "reindexfulltextnodesandchildren":
                         if (string.IsNullOrWhiteSpace(args[1]))
                         {
-                            showInstructions();
+                            ShowInstructions();
                             System.Console.WriteLine("Error: No nodes input");
                             return;
                         }
-                        ArrayOfInt nodesm = getNodesFromString(args[1]);
+                        var nodesm = GetNodesFromString(args[1]);
                         if (nodesm.Count > 0)
                             client.ReindexFullTextNodesAndChildren(username, password, nodesm);
                         break;
                     default:
-                        showInstructions();
+                        ShowInstructions();
                         System.Console.WriteLine("Error: Function name not recognised");
                         return;
                 }
@@ -66,14 +66,14 @@ namespace Governor.Umbraco.FullTextSearch.Console
             catch (System.ServiceModel.ProtocolException ex)
             {
                 // URL Not Found? 
-                System.Console.WriteLine("Error: " + ex.ToString());
+                System.Console.WriteLine("Error: " + ex);
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine("Error: " + ex.ToString());
+                System.Console.WriteLine("Error: " + ex);
             }
         }
-        static void showInstructions()
+        static void ShowInstructions()
         {
             System.Console.WriteLine("FullTextConsole");
             System.Console.WriteLine("Usage: FullTextConsole RebuildFullTextIndex - Rebuild the entire full text index");
@@ -82,11 +82,11 @@ namespace Governor.Umbraco.FullTextSearch.Console
             System.Console.WriteLine("Usage: FullTextConsole ReindexFullTextNodesAndChildren \"1000,1240,...\" - rebuild the specified list of document ids and all children");
             System.Console.WriteLine("Add the webservice URL, your username and your password to the .exe.config file.");
         }
-        static ArrayOfInt getNodesFromString(string nodeString)
+        static ArrayOfInt GetNodesFromString(string nodeString)
         {
-            string[] txts = nodeString.Split(',');
-            ArrayOfInt nodes = new ArrayOfInt();
-            foreach (string t in txts)
+            var txts = nodeString.Split(',');
+            var nodes = new ArrayOfInt();
+            foreach (var t in txts)
             {
                 int i;
                 if (Int32.TryParse(t, out i))

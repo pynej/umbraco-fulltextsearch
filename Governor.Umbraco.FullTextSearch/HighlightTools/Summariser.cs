@@ -4,11 +4,11 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
 {
     public abstract class Summariser 
     {
-        protected SummariserParameters parameters;
+        protected SummariserParameters Parameters;
 
-        public Summariser(SummariserParameters parameters)
+        protected Summariser(SummariserParameters parameters)
         {
-            this.parameters = parameters;
+            Parameters = parameters;
         }
         
         public abstract void GetTitle(SearchResult result, out string title);

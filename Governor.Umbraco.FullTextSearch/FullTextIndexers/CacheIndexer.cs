@@ -7,9 +7,9 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
     /// </summary>
     public class CacheIndexer : DefaultIndexer
     {
-        protected override bool getHtml(out string fullHtml)
+        protected override bool GetHtml(out string fullHtml)
         {
-            return HtmlCache.Retrieve(currentDocument.Id, out fullHtml);
+            return HtmlCache.Retrieve(CurrentDocument.Id, out fullHtml);
         }
     }
 }

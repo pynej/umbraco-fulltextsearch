@@ -1,6 +1,6 @@
-﻿using Examine;
+﻿using System.Linq;
+using Examine;
 using System.Text.RegularExpressions;
-using Governor.Umbraco.FullTextSearch.SearchTools;
 
 namespace Governor.Umbraco.FullTextSearch.HighlightTools
 {
@@ -9,52 +9,46 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
     /// </summary>
     public class Plain : Summariser
     {
-        protected string noSummary;
-        protected string noTitle;
+        protected string NoSummary;
+        protected string NoTitle;
 
         public Plain(SummariserParameters parameters) : base(parameters) {
-            noSummary = umbraco.library.GetDictionaryItem("FullTextSearch__NoSummary");
-            if (string.IsNullOrEmpty(noSummary))
-                noSummary = "Read More";
-            noTitle = umbraco.library.GetDictionaryItem("FullTextSearch__NoTitle");
-            if (string.IsNullOrEmpty(noTitle))
-                noTitle = "Unknown Page";
+            NoSummary = umbraco.library.GetDictionaryItem("FullTextSearch__NoSummary");
+            if (string.IsNullOrEmpty(NoSummary))
+                NoSummary = "Read More";
+            NoTitle = umbraco.library.GetDictionaryItem("FullTextSearch__NoTitle");
+            if (string.IsNullOrEmpty(NoTitle))
+                NoTitle = "Unknown Page";
         }
         
         public override void GetTitle(SearchResult result, out string title)
         {
-            foreach (UmbracoProperty prop in parameters.TitleLinkProperties)
+            foreach (var prop in Parameters.TitleLinkProperties.Where(prop => result.Fields.ContainsKey(prop.PropertyName)))
             {
-                if (result.Fields.ContainsKey(prop.PropertyName))
-                {
-                    title = result.Fields[prop.PropertyName];
-                    if (!string.IsNullOrEmpty(title))
-                        return;
-                }
+                title = result.Fields[prop.PropertyName];
+                if (!string.IsNullOrEmpty(title))
+                    return;
             }
-            title = noTitle;
+            title = NoTitle;
         }
 
         public override void GetSummary(SearchResult result, out string summary)
         {
-            foreach (UmbracoProperty prop in parameters.BodySummaryProperties)
+            foreach (var prop in Parameters.BodySummaryProperties.Where(prop => result.Fields.ContainsKey(prop.PropertyName)))
             {
-                if (result.Fields.ContainsKey(prop.PropertyName))
-                {
-                    summary = getSummaryText(result, prop.PropertyName);
-                    if (!string.IsNullOrEmpty(summary))
-                        return;
-                }
+                summary = GetSummaryText(result, prop.PropertyName);
+                if (!string.IsNullOrEmpty(summary))
+                    return;
             }
-            summary = noSummary;
+            summary = NoSummary;
         }
 
-        protected string getSummaryText(SearchResult result, string propertyName)
+        protected string GetSummaryText(SearchResult result, string propertyName)
         {
             string summary;
-            if (result.Fields[propertyName].Length > parameters.SummaryLength)
+            if (result.Fields[propertyName].Length > Parameters.SummaryLength)
             {
-                summary = result.Fields[propertyName].Substring(0, parameters.SummaryLength);
+                summary = result.Fields[propertyName].Substring(0, Parameters.SummaryLength);
                 summary = Regex.Replace(summary, @"\S*$", string.Empty, RegexOptions.Compiled);
             }
             else

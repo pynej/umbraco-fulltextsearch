@@ -39,8 +39,8 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         public int SummaryLength { get; set; }
         public SummariserParameters()
         {
-            string luceneFTField = Config.Instance.GetLuceneFTField();
-            BodySummaryProperties = new List<UmbracoProperty> { new UmbracoProperty(luceneFTField) };
+            var luceneFtField = Config.Instance.GetLuceneFtField();
+            BodySummaryProperties = new List<UmbracoProperty> { new UmbracoProperty(luceneFtField) };
             TitleLinkProperties = new List<UmbracoProperty> { new UmbracoProperty("nodeName", Config.Instance.GetSearchTitleBoost()) };
             HighlightPreTag = "<strong>";
             HighlightPostTag = "</strong>";
@@ -49,7 +49,7 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         }
         string getSearchProvider()
         {
-            string searchProvider = Config.Instance.GetByKey("SearchProvider");
+            var searchProvider = Config.Instance.GetByKey("SearchProvider");
             if (string.IsNullOrEmpty(searchProvider))
                 throw new ArgumentException("SearchProvider must be set in FullTextSearch.Config");
             return searchProvider;

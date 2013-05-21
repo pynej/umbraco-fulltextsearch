@@ -14,23 +14,20 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         /// <returns></returns>
         public static string DictionaryHelper(string key)
         {
-            if (!string.IsNullOrEmpty(key))
-            {
-                return umbraco.library.GetDictionaryItem("FullTextSearch__" + key);
-            }
-            return string.Empty;
+            return !string.IsNullOrEmpty(key) ? umbraco.library.GetDictionaryItem("FullTextSearch__" + key) : string.Empty;
         }
+
         /// <summary>
         /// This is budget. But params are not supported by MS XSLT, so we create a real method and a bunch of overloads. 
         /// As far as I'm aware, no, there isn't any way of doing this that is less painful and ugly
         /// than, say, root canal without anasthetic performed by the elephant man.
         /// </summary>
         /// <param name="format"></param>
-        /// <param name="strings"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
         static string StringFormatInternal(string format, params string[] args)
         {
-            string result = string.Empty;
+            string result;
             try
             {
                 result = string.Format(format, args);
@@ -76,7 +73,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
         /// <returns>true if being indexed</returns>
         public static bool IsIndexingActive()
         {
-            string searchActiveStringName = Config.Instance.GetByKey("SearchActiveStringName");
+            var searchActiveStringName = Config.Instance.GetByKey("SearchActiveStringName");
             if (!string.IsNullOrEmpty(searchActiveStringName))
             {
                 if (!string.IsNullOrEmpty(umbraco.library.RequestQueryString(searchActiveStringName)))

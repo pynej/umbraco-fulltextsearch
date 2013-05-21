@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Governor.Umbraco.FullTextSearch.Interfaces;
 using Examine;
 using System.IO;
 using UmbracoExamine;
@@ -18,7 +17,7 @@ namespace Governor.Umbraco.FullTextSearch.Providers
         /// Default constructor
         /// </summary>
         public FullTextContentIndexer()
-            : base() { }
+        { }
 
         /// <summary>
         /// Constructor to allow for creating an indexer at runtime
@@ -43,7 +42,7 @@ namespace Governor.Umbraco.FullTextSearch.Providers
             if( type == IndexTypes.Content && Config.Instance.GetBooleanByKey("Enabled")) 
             {
                 // running this sync causes HORRIBLE issues when DefaultHttpRender is in use
-                if (this.RunAsync != true && !Config.Instance.GetBooleanByKey("PublishEventRendering"))
+                if (RunAsync != true && !Config.Instance.GetBooleanByKey("PublishEventRendering"))
                 {
                     umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "FullTextSearch Cowardly refusing to break your site by firing up Http Render while indexer is in sync mode. If you see nothing in the index this is why!");
                 }
@@ -57,19 +56,19 @@ namespace Governor.Umbraco.FullTextSearch.Providers
                     }
                     catch (Exception ex)
                     {
-                        umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error getting document: (" + ex.ToString() + ")");
-                        if (global::Governor.Umbraco.FullTextSearch.Utilities.Library.IsCritical(ex))
+                        umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error getting document: (" + ex + ")");
+                        if (Utilities.Library.IsCritical(ex))
                             throw;
                         currentDocument = null;
                     }
                     if (currentDocument != null && currentDocument.Id > 0)
                     {
                         // check if document is protected
-                        string path = currentDocument.Path;
+                        var path = currentDocument.Path;
                         if (!DataService.ContentService.IsProtected(nodeId, path))
                         {
                             bool cancel;
-                            IFullTextIndexer indexer = Manager.Instance.FullTextIndexerFactory.CreateNew(currentDocument.ContentType.Alias);
+                            var indexer = Manager.Instance.FullTextIndexerFactory.CreateNew(currentDocument.ContentType.Alias);
                             indexer.NodeProcessor(currentDocument, fields, out cancel);
                             if (cancel)
                                 return;

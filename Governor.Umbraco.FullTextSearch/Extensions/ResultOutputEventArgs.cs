@@ -15,10 +15,10 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
 
         public ResultOutputEventArgs(SearchResult searchResult, int pageNumber, int resultNumber, int numberOnPage)
         {
-            this.SearchResult = searchResult;
-            this.PageNumber = pageNumber;
-            this.ResultNumber = resultNumber;
-            this.NumberOnPage = numberOnPage;
+            SearchResult = searchResult;
+            PageNumber = pageNumber;
+            ResultNumber = resultNumber;
+            NumberOnPage = numberOnPage;
         }
     }
 }

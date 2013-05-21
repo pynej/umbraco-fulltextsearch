@@ -10,13 +10,15 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
     /// </summary>
     public class DefaultIndexer : IFullTextIndexer
     {
-        protected Document currentDocument;
+        protected Document CurrentDocument;
 
         /// <summary>
         /// Fully process the current node, check whether to cancel indexing, check whether to index the node
         /// retrieve the HTML and add it to the index. Then make a cup of tea. This is tiring. 
         /// </summary>
-        /// <param name="e">IndexingNodeDataEventArgs from examine</param>
+        /// <param name="currentDocument"></param>
+        /// <param name="fields"></param>
+        /// <param name="cancelIndexing"></param>
         public virtual void NodeProcessor(Document currentDocument, Dictionary<string,string> fields, out bool cancelIndexing)
         {
             cancelIndexing = false;
@@ -24,42 +26,40 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
             Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
             if (currentDocument == null)
                 return;
-            this.currentDocument = currentDocument;
+            CurrentDocument = currentDocument;
             string fullHtml;
-            if (checkCancelIndexing())
+            if (CheckCancelIndexing())
             {
                 cancelIndexing = true;
                 return;
             }
-            fields.Add(Config.Instance.GetPathPropertyName(), getPath());
-            if(isIndexable())
-                if(getHtml(out fullHtml))
-                    fields.Add(Config.Instance.GetLuceneFTField(), getTextFromHtml(ref fullHtml));
+            fields.Add(Config.Instance.GetPathPropertyName(), GetPath());
+            if(IsIndexable())
+                if(GetHtml(out fullHtml))
+                    fields.Add(Config.Instance.GetLuceneFtField(), GetTextFromHtml(ref fullHtml));
         }
         /// <summary>
         /// Check whether to cancel indexing or not(generally if umbraco(Search/Navi/etc)Hide is set)
         /// </summary>
         /// <returns></returns>
-        protected virtual bool checkCancelIndexing()
+        protected virtual bool CheckCancelIndexing()
         {
-            if (Library.IsSearchDisabledByProperty(currentDocument))
-                return true;
-            return false;
+            return Library.IsSearchDisabledByProperty(CurrentDocument);
         }
+
         /// <summary>
         /// I'm pretty much assuming if we're here and we have a valid document object we should be
         /// trying to index, 
         /// </summary>
         /// <returns></returns>
-        protected virtual bool isIndexable()
+        protected virtual bool IsIndexable()
         {
-            if (currentDocument == null)
-                return false;
-            return true;
+            return CurrentDocument != null;
         }
-        protected virtual string getPath()
+
+        protected virtual string GetPath()
         {
-            string path = currentDocument.Path.Replace(',', ' ');
+            var path = CurrentDocument.Path.Replace(',', ' ');
             path = System.Text.RegularExpressions.Regex.Replace(path, @"^-1 ", string.Empty);
             return path;
         }
@@ -69,13 +69,10 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
         /// </summary>
         /// <param name="fullHtml"></param>
         /// <returns></returns>
-        protected virtual bool getHtml(out string fullHtml)
+        protected virtual bool GetHtml(out string fullHtml)
         {
-            IDocumentRenderer renderer = Manager.Instance.DocumentRendererFactory.CreateNew(currentDocument.ContentType.Alias);
-            fullHtml = "";
-            if (renderer.Render(currentDocument.Id, out fullHtml))
-                return true;
-            return false;
+            var renderer = Manager.Instance.DocumentRendererFactory.CreateNew(CurrentDocument.ContentType.Alias);
+            return renderer.Render(CurrentDocument.Id, out fullHtml);
         }
         /// <summary>
         /// Use Html Tag stripper to get text from the passed HTML. Certain tags specified in the
@@ -83,14 +80,14 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
         /// </summary>
         /// <param name="fullHtml"></param>
         /// <returns>Text to add to index</returns>
-        protected virtual string getTextFromHtml(ref string fullHtml)
+        protected virtual string GetTextFromHtml(ref string fullHtml)
         {
-            Config config = Config.Instance;
-            string[] tagsToStrip = config.GetMultiByKey("TagsToRemove").ToArray();
-            string[] idsToStrip = config.GetMultiByKey("IdsToRemove").ToArray();
+            var config = Config.Instance;
+            var tagsToStrip = config.GetMultiByKey("TagsToRemove").ToArray();
+            var idsToStrip = config.GetMultiByKey("IdsToRemove").ToArray();
 
-            HtmlStrip tagStripper = new HtmlStrip(tagsToStrip, idsToStrip,true);
-            return tagStripper.TextFromHTML(ref fullHtml);
+            var tagStripper = new HtmlStrip(tagsToStrip, idsToStrip);
+            return tagStripper.TextFromHtml(ref fullHtml);
         }
     }
 }

@@ -3,46 +3,46 @@ using umbraco.DataLayer;
 
 namespace Governor.Umbraco.FullTextSearch.Utilities
 {
-    public class DBAccess
+    public class DbAccess
     {
         /// <summary>
         /// Retrieve HTML from the database cache for the given node
         /// </summary>
         /// <param name="nodeId">Id of the node</param>
-        /// <param name="fullHTML">string to fill with HTML</param>
+        /// <param name="fullHtml">string to fill with HTML</param>
         /// <returns>bool indicating success/failure</returns>
-        public static bool GetRecord(int nodeId, out string fullHTML)
+        public static bool GetRecord(int nodeId, out string fullHtml)
         {
-            fullHTML = "";
+            fullHtml = "";
             
             if (nodeId < 1)
                 return false;
             
-            bool success = false;
-            ISqlHelper SqlHelper = null;
+            var success = false;
+            ISqlHelper sqlHelper = null;
             IRecordsReader result = null;
             try
             {
-                string sqlQuery = "SELECT fullHTML FROM fullTextCache WHERE nodeId = @nodeId";
-                SqlHelper = DataLayerHelper.CreateSqlHelper(umbraco.GlobalSettings.DbDSN);
-                result = SqlHelper.ExecuteReader(sqlQuery,SqlHelper.CreateParameter("@nodeId", nodeId));
+                const string sqlQuery = "SELECT fullHTML FROM fullTextCache WHERE nodeId = @nodeId";
+                sqlHelper = DataLayerHelper.CreateSqlHelper(umbraco.GlobalSettings.DbDSN);
+                result = sqlHelper.ExecuteReader(sqlQuery,sqlHelper.CreateParameter("@nodeId", nodeId));
                 if (result != null && result.HasRecords && result.Read() && result.ContainsField("fullHTML"))
                 {
-                    fullHTML = result.GetString("fullHTML");
+                    fullHtml = result.GetString("fullHTML");
                     success = true;
                 }
             }
             catch (umbraco.UmbracoException ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error In Database Query to fullTextCache: (" + ex.ToString() + ")");
-                fullHTML = "";
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error In Database Query to fullTextCache: (" + ex + ")");
+                fullHtml = "";
             }
             finally
             {
                 if(result != null)
                     result.Close();
-                if (SqlHelper != null)
-                    SqlHelper.Dispose();
+                if (sqlHelper != null)
+                    sqlHelper.Dispose();
             }
             return success;
         }
@@ -50,15 +50,15 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// Delete old record(if present) and add a new one
         /// </summary>
         /// <param name="nodeId">The ID of the node</param>
-        /// <param name="nodeHTML">The HTML generated when the page is viewed</param>
+        /// <param name="nodeHtml">The HTML generated when the page is viewed</param>
         /// <returns>bool indicating success/failure</returns>
-        public static bool UpdateRecord(int nodeId, ref string nodeHTML)
+        public static bool UpdateRecord(int nodeId, ref string nodeHtml)
         {
             if (nodeId < 1)
                 return false;
             
             if(DeleteRecord(nodeId))
-                if (AddRecord(nodeId, ref nodeHTML))
+                if (AddRecord(nodeId, ref nodeHtml))
                     return true;
 
             return false;
@@ -68,23 +68,20 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// Add a record to the database containing full HTML for given node
         /// </summary>
         /// <param name="nodeId">The ID of the node</param>
-        /// <param name="nodeHTML">The HTML generated when the page is viewed</param>
+        /// <param name="nodeHtml">The HTML generated when the page is viewed</param>
         /// <returns>bool indicating success/failure</returns>
-        public static bool AddRecord(int nodeId, ref string nodeHTML)
+        public static bool AddRecord(int nodeId, ref string nodeHtml)
         {
             if (nodeId < 1)
                 return false;
 
-            Dictionary<string,object> parameters = new Dictionary<string,object>();
-            string sqlQuery = @"INSERT INTO fullTextCache (nodeId,fullHTML) VALUES (@nodeId,@fullHTML)";
+            var parameters = new Dictionary<string,object>();
+            const string sqlQuery = @"INSERT INTO fullTextCache (nodeId,fullHTML) VALUES (@nodeId,@fullHTML)";
             parameters.Add("@nodeId",nodeId);
-            parameters.Add("@fullHTML",nodeHTML);
+            parameters.Add("@fullHTML",nodeHtml);
             // we need to see rows added to indicate success
-            int? res = nonQuery(sqlQuery,parameters);
-            if( res != null && res > 0)
-                return true;
-
-            return false;
+            var res = NonQuery(sqlQuery,parameters);
+            return res != null && res > 0;
         }
         /// <summary>
         /// Remove a record from the fullText cache.
@@ -96,21 +93,17 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             if (nodeId < 1)
                 return false;
 
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            string sqlQuery = @"DELETE FROM fullTextCache WHERE nodeId = @nodeId";
+            var parameters = new Dictionary<string, object>();
+            const string sqlQuery = @"DELETE FROM fullTextCache WHERE nodeId = @nodeId";
             parameters.Add("@nodeId",nodeId);
             // only a SQL error counts as failure here. No rows deleted is fine (there might not be any)
-            int? res = nonQuery(sqlQuery, parameters);
-            if(res != null)
-                return true;
-            return false;
+            var res = NonQuery(sqlQuery, parameters);
+            return res != null;
         }
         public static bool ExecuteNonQuery(string query)
         {
-            int? res = nonQuery(query, new Dictionary<string, object>());
-            if (res != null)
-                return true;
-            return false;
+            var res = NonQuery(query, new Dictionary<string, object>());
+            return res != null;
         }
         /// <summary>
         /// Wrapper around umbraco's sqlHelper.ExecuteNonQuery that handles a few exceptions
@@ -118,38 +111,38 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// <param name="query">The SQL Query to execute</param>
         /// <param name="parameters">Dictionary mapping parameter name to parameter value</param>
         /// <returns>The number of rows affected, or -1 on failure</returns>
-        private static int? nonQuery(string query, Dictionary<string,object> parameters)
+        private static int? NonQuery(string query, Dictionary<string,object> parameters)
         {
-            int? numRows = null;
-            ISqlHelper SqlHelper = null;
+            int? numRows;
+            ISqlHelper sqlHelper = null;
             try
             {
-                SqlHelper = DataLayerHelper.CreateSqlHelper(umbraco.GlobalSettings.DbDSN);
-                int numParams = parameters.Count;
+                sqlHelper = DataLayerHelper.CreateSqlHelper(umbraco.GlobalSettings.DbDSN);
+                var numParams = parameters.Count;
                 if (numParams < 1)
                 {
-                    numRows = SqlHelper.ExecuteNonQuery(query);
+                    numRows = sqlHelper.ExecuteNonQuery(query);
                 }
                 else
                 {
-                    IParameter[] sqlParameters = new IParameter[numParams];
-                    int i = 0;
-                    foreach (KeyValuePair<string, object> parameter in parameters)
+                    var sqlParameters = new IParameter[numParams];
+                    var i = 0;
+                    foreach (var parameter in parameters)
                     {
-                        sqlParameters[i++] = SqlHelper.CreateParameter(parameter.Key, parameter.Value);
+                        sqlParameters[i++] = sqlHelper.CreateParameter(parameter.Key, parameter.Value);
                     }
-                    numRows = SqlHelper.ExecuteNonQuery(query,sqlParameters);
+                    numRows = sqlHelper.ExecuteNonQuery(query,sqlParameters);
                 }
             }
             catch (umbraco.UmbracoException ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error In Database Query to fullTextCache: (" + ex.ToString() + ")");
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error In Database Query to fullTextCache: (" + ex + ")");
                 numRows = null;
             }
             finally
             {
-                if (SqlHelper != null)
-                    SqlHelper.Dispose();
+                if (sqlHelper != null)
+                    sqlHelper.Dispose();
             }
             return numRows;
         }

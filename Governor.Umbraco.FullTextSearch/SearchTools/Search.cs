@@ -16,13 +16,13 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <summary>
         /// There's a lot of parameters, this is the container object
         /// </summary>
-        protected SearchParameters parameters;
+        protected SearchParameters Parameters;
         
-        const string indexTypePropertyName = "__IndexType";
+        const string IndexTypePropertyName = "__IndexType";
         
         public Search(SearchParameters parameters)
         {
-            this.parameters = parameters;
+            Parameters = parameters;
         }
 
         /// <summary>
@@ -38,29 +38,29 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <returns></returns>
         public ISearchResults ResultsMultiRelevance()
         {
-            StringBuilder query = new StringBuilder();
+            var query = new StringBuilder();
             // We formulate the query differently depending on the input.
-            if (parameters.SearchTerm.Contains('"'))
+            if (Parameters.SearchTerm.Contains('"'))
             {
                 // If the user has enetered double quotes we don't bother 
                 // searching for the full string
-                query.Append(queryAllPropertiesOr(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm), 1));
+                query.Append(QueryAllPropertiesOr(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm), 1));
             }
-            else if (!parameters.SearchTerm.Contains('"') && !parameters.SearchTerm.Contains(' '))
+            else if (!Parameters.SearchTerm.Contains('"') && !Parameters.SearchTerm.Contains(' '))
             {
                 // if there's no spaces or quotes we don't need to get the quoted term and boost it
-                query.Append(queryAllPropertiesOr(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm), 1));
+                query.Append(QueryAllPropertiesOr(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm), 1));
             }
             else
             {
                 // otherwise we search first for the entire query in quotes, 
                 // then for each term in the query OR'd together.
                 query.AppendFormat("({0} OR {1})",
-                    queryAllPropertiesOr(SearchUtilities.getSearchTermQuoted(parameters.SearchTerm), 2)
-                    , queryAllPropertiesOr(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm), 1)
+                    QueryAllPropertiesOr(SearchUtilities.GetSearchTermQuoted(Parameters.SearchTerm), 2)
+                    , QueryAllPropertiesOr(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm), 1)
                 );
             }
-            return executeSearch(wrapQuery(query));
+            return ExecuteSearch(WrapQuery(query));
         }
 
         /// <summary>
@@ -71,29 +71,29 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <returns></returns>
         public ISearchResults ResultsMultiAnd()
         {
-            StringBuilder query = new StringBuilder();
+            var query = new StringBuilder();
 
-            if (parameters.SearchTerm.Contains('"'))
+            if (Parameters.SearchTerm.Contains('"'))
             {
                 // If the user has enetered double quotes we don't bother 
                 // searching for the full string
-                query.Append(queryAllPropertiesAnd(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm), 1.0));
+                query.Append(QueryAllPropertiesAnd(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm), 1.0));
             }
-            else if (!parameters.SearchTerm.Contains('"') && !parameters.SearchTerm.Contains(' '))
+            else if (!Parameters.SearchTerm.Contains('"') && !Parameters.SearchTerm.Contains(' '))
             {
                 // if there's no spaces or quotes we don't need to get the quoted term and boost it
-                query.Append(queryAllPropertiesAnd(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm), 1));
+                query.Append(QueryAllPropertiesAnd(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm), 1));
             }
             else
             {
                 // otherwise we search first for the entire query in quotes, 
                 // then for each term in the query OR'd together.
                 query.AppendFormat("{0} OR {1}",
-                    queryAllPropertiesAnd(SearchUtilities.getSearchTermQuoted(parameters.SearchTerm), 2)
-                    , queryAllPropertiesAnd(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm), 1)
+                    QueryAllPropertiesAnd(SearchUtilities.GetSearchTermQuoted(Parameters.SearchTerm), 2)
+                    , QueryAllPropertiesAnd(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm), 1)
                 );
             }
-            return executeSearch(wrapQuery(query));
+            return ExecuteSearch(WrapQuery(query));
         }
         /// <summary>
         /// Simple search for any term in the query. Make this simpler so it executes faster
@@ -101,9 +101,9 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <returns></returns>
         public ISearchResults ResultsSimpleOr()
         {
-            StringBuilder query = new StringBuilder();
-            query.Append(queryAllProperties(SearchUtilities.getSearchTermsSplit(parameters.SearchTerm),1.0,"OR",true));
-            return executeSearch(wrapQuery(query));
+            var query = new StringBuilder();
+            query.Append(QueryAllProperties(SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm),1.0,"OR",true));
+            return ExecuteSearch(WrapQuery(query));
         }
         /// <summary>
         /// Run a quoted query 
@@ -111,9 +111,9 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <returns></returns>
         public ISearchResults ResultsAsEntered()
         {
-            StringBuilder query = new StringBuilder();
-            query.Append(queryAllPropertiesAnd(SearchUtilities.getSearchTermQuoted(parameters.SearchTerm), 1.0));
-            return executeSearch(wrapQuery(query));
+            var query = new StringBuilder();
+            query.Append(QueryAllPropertiesAnd(SearchUtilities.GetSearchTermQuoted(Parameters.SearchTerm), 1.0));
+            return ExecuteSearch(WrapQuery(query));
         }
 
         /// <summary>
@@ -121,15 +121,15 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// </summary>
         /// <param name="toWrap">Query to wrap</param>
         /// <returns>query</returns>
-        protected StringBuilder wrapQuery(StringBuilder toWrap)
+        protected StringBuilder WrapQuery(StringBuilder toWrap)
         {
-            StringBuilder query = new StringBuilder();
+            var query = new StringBuilder();
             // first check add the required index type to the query
-            StringBuilder indexTypesQuery = queryIndexTypes();
+            var indexTypesQuery = QueryIndexTypes();
             if (indexTypesQuery != null)
                 query.AppendFormat("{0} AND ", indexTypesQuery );
             // now check the node has a parent in the supplied root node list, blank means search all 
-            StringBuilder rootNodeQuery = queryRootNodes();
+            var rootNodeQuery = QueryRootNodes();
             if (rootNodeQuery != null && rootNodeQuery.Length > 0)
                 query.AppendFormat("{0} AND (", rootNodeQuery);
             else
@@ -139,21 +139,21 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
             query.Append(")");
             return query;
         }
+
         /// <summary>
         /// Get the lucene query to pick out only nodes that have a parent in the list of root nodes
         /// </summary>
-        /// <param name="rootNodes"></param>
         /// <returns></returns>
-        protected StringBuilder queryRootNodes()
+        protected StringBuilder QueryRootNodes()
         {
-            if (parameters.RootNodes == null || parameters.RootNodes.Count < 1 || parameters.RootNodes.Contains(-1))// -1 is uber root node of site
+            if (Parameters.RootNodes == null || Parameters.RootNodes.Count < 1 || Parameters.RootNodes.Contains(-1))// -1 is uber root node of site
                 return null;
-            StringBuilder query = new StringBuilder();
+            var query = new StringBuilder();
 
             query.Append("+(");
-            int i = 0;
-            string pathName = Config.Instance.GetPathPropertyName();
-            foreach (int node in parameters.RootNodes)
+            var i = 0;
+            var pathName = Config.Instance.GetPathPropertyName();
+            foreach (var node in Parameters.RootNodes)
             {
                 if (i++ > 0)
                     query.Append(" OR ");
@@ -162,19 +162,19 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
             query.Append(")");
             return query;
         }
-        protected StringBuilder queryIndexTypes()
+        protected StringBuilder QueryIndexTypes()
         {
-            if (parameters.IndexTypes == null || parameters.IndexTypes.Count < 1)
+            if (Parameters.IndexTypes == null || Parameters.IndexTypes.Count < 1)
                 return null;
-            StringBuilder query = new StringBuilder();
+            var query = new StringBuilder();
 
             query.Append("+(");
-            int i = 0;
-            foreach (string indexType in parameters.IndexTypes)
+            var i = 0;
+            foreach (var indexType in Parameters.IndexTypes)
             {
                 if (i++ > 0)
                     query.Append(" OR ");
-                query.AppendFormat("{0}:\"{1}\"", indexTypePropertyName, QueryParser.Escape(indexType));
+                query.AppendFormat("{0}:\"{1}\"", IndexTypePropertyName, QueryParser.Escape(indexType));
             }
             query.Append(")");
             return query;
@@ -187,12 +187,12 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <param name="searchTerms">A list of fully escaped search terms</param>
         /// <param name="boostAll">all terms are boosted by this amount, multiplied by the amount in the property/boost dictionary</param>
         /// <returns>a query fragment</returns>
-        protected StringBuilder queryAllPropertiesOr(ICollection<string> searchTerms, double boostAll)
+        protected StringBuilder QueryAllPropertiesOr(ICollection<string> searchTerms, double boostAll)
         {
             if (searchTerms == null || searchTerms.Count < 1)
                 return new StringBuilder();
 
-            return queryAllProperties(searchTerms, boostAll, "OR");
+            return QueryAllProperties(searchTerms, boostAll, "OR");
         }
         /// <summary>
         /// AND's together all the passed search terms into a query
@@ -201,13 +201,14 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <param name="searchTerms">A list of fully escaped search terms</param>
         /// <param name="boostAll">all terms are boosted by this amount, multiplied by the amount in the property/boost dictionary</param>
         /// <returns>a query fragment</returns>
-        protected StringBuilder queryAllPropertiesAnd(ICollection<string> searchTerms, double boostAll)
+        protected StringBuilder QueryAllPropertiesAnd(ICollection<string> searchTerms, double boostAll)
         {
             if (searchTerms == null || searchTerms.Count < 1)
                 return new StringBuilder();
 
-            return queryAllProperties(searchTerms, boostAll, "AND");
+            return QueryAllProperties(searchTerms, boostAll, "AND");
         }
+
         /// <summary>
         /// Called by queryAllPropertiesOr, queryAllPropertiesAnd
         /// Creates a somewhat convuleted lucene query string.
@@ -223,29 +224,28 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// <param name="searchTerms">A list of fully escaped search terms</param>
         /// <param name="boostAll">Boost all terms by this amount</param>
         /// <param name="joinWith">Join terms with this string, should be AND/OR</param>
+        /// <param name="simplify"></param>
         /// <returns></returns>
-        protected StringBuilder queryAllProperties(ICollection<string> searchTerms, double boostAll, string joinWith, bool simplify = false)
+        protected StringBuilder QueryAllProperties(ICollection<string> searchTerms, double boostAll, string joinWith, bool simplify = false)
         {
-            List<StringBuilder> queryBuilder = new List<StringBuilder>();
-            foreach (string term in searchTerms)
+            var queryBuilder = new List<StringBuilder>();
+            foreach (var term in searchTerms)
             {
-                StringBuilder termQuery = new StringBuilder();
-                foreach (UmbracoProperty property in parameters.SearchProperties)
+                var termQuery = new StringBuilder();
+                foreach (var property in Parameters.SearchProperties)
                 {
-                    if(simplify)
-                        termQuery.Append(querySingleItemSimple(term, property));
-                    else
-                        termQuery.Append(querySingleItem(term, property, boostAll));
-                    
+                    termQuery.Append(simplify
+                                         ? QuerySingleItemSimple(term, property)
+                                         : QuerySingleItem(term, property, boostAll));
                 }
                 if (termQuery.Length > 0)
                     queryBuilder.Add(termQuery);
             }
-            StringBuilder query = new StringBuilder();
-            int count = queryBuilder.Count;
+            var query = new StringBuilder();
+            var count = queryBuilder.Count;
             if (count < 1)
                 return query;
-            int i = 0;
+            var i = 0;
             for (; ; )
             {
                 query.AppendFormat(" ({0}) ", queryBuilder[i]);
@@ -255,16 +255,16 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
             }
             return query;
         }
-        protected string querySingleItem(string term, UmbracoProperty property, double boostAll)
+        protected string QuerySingleItem(string term, UmbracoProperty property, double boostAll)
         {
-            double boost = property.BoostMultiplier * boostAll;
-            string boostString = string.Empty;
+            var boost = property.BoostMultiplier * boostAll;
+            var boostString = string.Empty;
             if (boost != 1.0)
             {
                 boostString = "^" + boost;
             }
-            string fuzzyString = string.Empty;
-            string wildcardQuery = string.Empty;
+            var fuzzyString = string.Empty;
+            var wildcardQuery = string.Empty;
             if (!term.Contains('"'))
             {
                 // wildcard queries get lower relevance than exact matches, and ignore fuzzieness
@@ -277,16 +277,16 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                     double fuzzyLocal = property.FuzzyMultiplier;
                     if (fuzzyLocal < 1.0 && fuzzyLocal > 0.0)
                     {
-                        fuzzyString = "~" + fuzzyLocal.ToString();
+                        fuzzyString = "~" + fuzzyLocal;
                     }
                 }
             }
             return string.Format("{0}:{1}{2}{3} {4}", property.PropertyName, term, fuzzyString, boostString, wildcardQuery);
         }
-        protected string querySingleItemSimple(string term, UmbracoProperty property)
+        protected string QuerySingleItemSimple(string term, UmbracoProperty property)
         {
-            string fuzzyString = string.Empty;
-            string wildcard = string.Empty;
+            var fuzzyString = string.Empty;
+            var wildcard = string.Empty;
             if (!term.Contains('"'))
             {
                 if (property.Wildcard)
@@ -295,10 +295,10 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                 }
                 else
                 {
-                    double fuzzyLocal = property.FuzzyMultiplier;
+                    var fuzzyLocal = property.FuzzyMultiplier;
                     if (fuzzyLocal < 1.0 && fuzzyLocal > 0.0)
                     {
-                        fuzzyString = "~" + fuzzyLocal.ToString();
+                        fuzzyString = "~" + fuzzyLocal;
                     }
                 }
             }
@@ -310,15 +310,13 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
         /// </summary> 
         /// <param name="query">query to execute</param>
         /// <returns>ISearchResults object or null</returns>
-        protected ISearchResults executeSearch(StringBuilder query)
+        protected ISearchResults ExecuteSearch(StringBuilder query)
         {
-            var provider = ExamineManager.Instance.SearchProviderCollection[parameters.SearchProvider];
+            var provider = ExamineManager.Instance.SearchProviderCollection[Parameters.SearchProvider];
             if (provider == null)
                 throw new ArgumentException("Supplied search provider not found. Check FullTextSearch.config");
             var filter = provider.CreateSearchCriteria().RawQuery(query.ToString());
-            if (filter != null)
-                return provider.Search(filter);
-            return null;
+            return filter != null ? provider.Search(filter) : null;
         }
     }
 }

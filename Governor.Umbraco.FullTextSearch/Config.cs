@@ -13,22 +13,22 @@ namespace Governor.Umbraco.FullTextSearch
     public sealed class Config
     {
         // configuration cache
-        private XmlDocument configDocument = null;
+        private XmlDocument _configDocument;
         private XmlDocument config
         {
             get
             {
-                checkReadConfig();
-                return configDocument;
+                CheckReadConfig();
+                return _configDocument;
             }
         }
 
-        private string filePath;
-        private Dictionary<string, string> singleCache;
-        private DateTime lastModified;
+        private string _filePath;
+        private Dictionary<string, string> _singleCache;
+        private DateTime _lastModified;
         private Config()
         {
-            singleCache = new Dictionary<string, string>();
+            _singleCache = new Dictionary<string, string>();
         }
         /// <summary>
         /// singleton
@@ -52,17 +52,17 @@ namespace Governor.Umbraco.FullTextSearch
         /// <returns>value</returns>
         public string GetByKey(string key)
         {
-            checkReadConfig();
-            if (singleCache.ContainsKey(key))
-                return singleCache[key];
+            CheckReadConfig();
+            if (_singleCache.ContainsKey(key))
+                return _singleCache[key];
             key = Regex.Replace(key, @"[^A-Za-z0-9_\-]", string.Empty);
-            XmlNode node = config.SelectSingleNode("/FullTextSearch/" + key);
+            var node = config.SelectSingleNode("/FullTextSearch/" + key);
             if (node != null)
             {
-                singleCache.Add(key, node.InnerText);
+                _singleCache.Add(key, node.InnerText);
                 return node.InnerText;
             }
-            singleCache.Add(key, string.Empty);
+            _singleCache.Add(key, string.Empty);
             return string.Empty;
         }
         /// <summary>
@@ -72,11 +72,11 @@ namespace Governor.Umbraco.FullTextSearch
         /// <returns>list of strings</returns>
         public List<string> GetMultiByKey(string key)
         {
-            List<string> values = new List<string>();
+            var values = new List<string>();
             key = Regex.Replace(key, @"[^A-Za-z0-9_\-]", string.Empty);
             foreach (XmlNode node in config.SelectNodes("/FullTextSearch/"+key+"/add"))
             {
-                string name = node.Attributes["name"].Value.ToString();
+                var name = node.Attributes["name"].Value;
                 if (!string.IsNullOrEmpty(name))
                     values.Add(name);
             }
@@ -88,15 +88,13 @@ namespace Governor.Umbraco.FullTextSearch
         /// <returns>true on enabled</returns>
         public bool GetBooleanByKey(string key)
         {
-            string s = GetByKey(key);
-            if (!string.IsNullOrWhiteSpace(s) && (s == "1" || s.ToLower() == "true"))
-                return true;
-            return false;
+            var s = GetByKey(key);
+            return !string.IsNullOrWhiteSpace(s) && (s == "1" || s.ToLower() == "true");
         }
         public double? GetDoubleByKey(string key)
         {
             double d;
-            string s = GetByKey(key);
+            var s = GetByKey(key);
             if (string.IsNullOrEmpty(s) || !double.TryParse(s, out d))
             {
                 return null;
@@ -106,26 +104,20 @@ namespace Governor.Umbraco.FullTextSearch
         /// <summary>
         /// return the name of the lucene field we fill with the full text
         /// </summary>
-        public string GetLuceneFTField()
+        public string GetLuceneFtField()
         {
-            string value = GetByKey("LuceneFTField");
-            if (string.IsNullOrEmpty(value))
-                return "FullTextSearch";
-            return value;
+            var value = GetByKey("LuceneFTField");
+            return string.IsNullOrEmpty(value) ? "FullTextSearch" : value;
         }
         public double GetSearchFuzzieness()
         {
-            double? fuzz = GetDoubleByKey("SearchFuzzieness");
-            if (fuzz == null)
-                fuzz = 1.0;
-            return (double)fuzz;
+            var fuzz = GetDoubleByKey("SearchFuzzieness") ?? 1.0;
+            return fuzz;
         }
         public double GetSearchTitleBoost()
         {
-            double? boost = GetDoubleByKey("SearchTitleBoost");
-            if (boost == null)
-                boost = 10.0;
-            return (double)boost;
+            var boost = GetDoubleByKey("SearchTitleBoost") ?? 10.0;
+            return boost;
         }
         /// <summary>
         /// Needs to be kept track of, but not really changed.
@@ -138,33 +130,30 @@ namespace Governor.Umbraco.FullTextSearch
         /// Check if the config file has been loaded, if not read it into memory
         /// </summary>
         /// <returns>bool indicating sucessfull/unsucessfull load</returns>
-        private bool checkReadConfig()
+        private bool CheckReadConfig()
         {
-            if (configDocument == null || string.IsNullOrEmpty(filePath) || File.GetLastWriteTime(filePath).CompareTo(lastModified) > 0)
+            if (_configDocument == null || string.IsNullOrEmpty(_filePath) || File.GetLastWriteTime(_filePath).CompareTo(_lastModified) > 0)
             {
-                configDocument = new XmlDocument();
-                if(HttpContext.Current != null)
-                    filePath = HttpContext.Current.Server.MapPath("/config/FullTextSearch.config");
-                else
-                    filePath = System.Web.Hosting.HostingEnvironment.MapPath("/config/FullTextSearch.config");
+                _configDocument = new XmlDocument();
+                _filePath = HttpContext.Current != null ? HttpContext.Current.Server.MapPath("/config/FullTextSearch.config") : System.Web.Hosting.HostingEnvironment.MapPath("/config/FullTextSearch.config");
                 try
                 {
-                    configDocument.Load(filePath);
-                    lastModified = File.GetLastWriteTime(filePath);
-                    singleCache = new Dictionary<string, string>();
+                    _configDocument.Load(_filePath);
+                    _lastModified = File.GetLastWriteTime(_filePath);
+                    _singleCache = new Dictionary<string, string>();
                     return true;
                 }
                 catch (IOException ex)
                 {
-                    configDocument = null;
-                    filePath = string.Empty;
-                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error loading configuration in FullTextSearch: (" + ex.ToString() + ")");
+                    _configDocument = null;
+                    _filePath = string.Empty;
+                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error loading configuration in FullTextSearch: (" + ex + ")");
                 }
                 catch (XmlException ex)
                 {
-                    configDocument = null;
-                    filePath = string.Empty;
-                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error parsing configuration in FullTextSearch: (" + ex.ToString() + ")");
+                    _configDocument = null;
+                    _filePath = string.Empty;
+                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error parsing configuration in FullTextSearch: (" + ex + ")");
                 }
                 return false;
             }

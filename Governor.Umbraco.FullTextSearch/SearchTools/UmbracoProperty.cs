@@ -11,12 +11,12 @@
         public bool Wildcard { get; set; }
         public UmbracoProperty(string propertyName, double boostMultipler = 1.0, double fuzzyMultipler = 1.0, bool wildcard = false)
         {
-            PropertyName = cleanName(propertyName);
+            PropertyName = CleanName(propertyName);
             BoostMultiplier = boostMultipler;
             FuzzyMultiplier = fuzzyMultipler;
             Wildcard = wildcard;
         }
-        private string cleanName(string name)
+        private string CleanName(string name)
         {
             return umbraco.cms.helpers.Casing.SafeAlias(name);
         }

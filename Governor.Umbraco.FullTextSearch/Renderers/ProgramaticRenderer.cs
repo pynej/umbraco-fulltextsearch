@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Governor.Umbraco.FullTextSearch.Interfaces;
 using Governor.Umbraco.FullTextSearch.Utilities;
 using umbraco.NodeFactory;
@@ -15,21 +14,21 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
     /// </summary>
     public class ProgramaticRenderer : IDocumentRenderer
     {
-        protected int nodeId;
-        protected int templateId;
-        protected string nodeTypeAlias;
+        protected int NodeId;
+        protected int TemplateId;
+        protected string NodeTypeAlias;
 
-        private object currentNodeOrDocumentBacking;
-        protected object currentNodeOrDocument
+        private object _currentNodeOrDocumentBacking;
+        protected object CurrentNodeOrDocument
         {
             get
             {
-                return currentNodeOrDocumentBacking;
+                return _currentNodeOrDocumentBacking;
             }
             set
             {
                 if (value is Document || value is Node)
-                    currentNodeOrDocumentBacking = value;
+                    _currentNodeOrDocumentBacking = value;
                 else
                     throw new ArgumentException("currentNodeOrDocument must be umbraco nodefactory or cms.businesslogic.web.Document object");
             }
@@ -51,87 +50,74 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
             }
             catch(Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error creating nodefactory node in renderer: (" + ex.ToString() + ")");
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error creating nodefactory node in renderer: (" + ex + ")");
                 if (Library.IsCritical(ex))
                     throw;
             }
             fullHtml = "";
             if (currentNode == null || currentNode.Id < 1)
                 return false;
-            this.nodeId = nodeId;
-            this.templateId = currentNode.template;
-            this.nodeTypeAlias = currentNode.NodeTypeAlias;
-            this.currentNodeOrDocument = currentNode;
-            if (!pageBelongsInIndex())
-                return false;
-
-            if (retrieveHTML(ref fullHtml))
-                return true;
-
-            return false;
-
+            NodeId = nodeId;
+            TemplateId = currentNode.template;
+            NodeTypeAlias = currentNode.NodeTypeAlias;
+            CurrentNodeOrDocument = currentNode;
+            return PageBelongsInIndex() && RetrieveHtml(ref fullHtml);
         }
         /// <summary>
         /// Check whether this page should have the full text read for indexing
         /// </summary>
         /// <returns>true/false</returns>
-        protected virtual bool pageBelongsInIndex()
+        protected virtual bool PageBelongsInIndex()
         {
             // only index nodes with a template
-            if (templateId < 1)
+            if (TemplateId < 1)
                 return false;
 
             // check if the config specifies we shouldn't index this
-            if (isDisallowedNodeType())
+            if (IsDisallowedNodeType())
             {
                 return false;
             }
             // or if there's a property (e.g. umbracoNaviHide)
             // that is keeping this page out of the index
-            if (isSearchHideActive())
-            {
-                return false;
-            }
-            return true;
+            return !IsSearchHideActive();
         }
         /// <summary>
         /// check the node type of currentNode against those listed in the config file
         /// to see if this page has full text indexing disabled
         /// </summary>
         /// <returns></returns>
-        protected virtual bool isDisallowedNodeType()
+        protected virtual bool IsDisallowedNodeType()
         {
-            Config config = Config.Instance;
+            var config = Config.Instance;
 
-            List<string> NoFullTextNodeTypes = config.GetMultiByKey("NoFullTextNodeTypes");
-            if (NoFullTextNodeTypes != null && NoFullTextNodeTypes.Contains(nodeTypeAlias))
-                return true;
-            return false;
+            var noFullTextNodeTypes = config.GetMultiByKey("NoFullTextNodeTypes");
+            return noFullTextNodeTypes != null && noFullTextNodeTypes.Contains(NodeTypeAlias);
         }
         /// <summary>
         /// Check the properties of currentNode against thost listed in the config file to see if this page
         /// has been hidden from the search index
         /// </summary>
         /// <returns></returns>
-        protected virtual bool isSearchHideActive()
+        protected virtual bool IsSearchHideActive()
         {
-            return Library.IsSearchDisabledByProperty(currentNodeOrDocument);
+            return Library.IsSearchDisabledByProperty(CurrentNodeOrDocument);
         }
         /// <summary>
         /// Calls our custom Rendertemplate, sets up some parameters to pass to the child page
         /// </summary>
-        protected virtual bool retrieveHTML(ref string fullHtml)
+        protected virtual bool RetrieveHtml(ref string fullHtml)
         {
             
-            Dictionary<string,string> queryStringCollection = Library.getQueryStringCollection();
+            var queryStringCollection = Library.GetQueryStringCollection();
             try
             {
-                fullHtml = global::Governor.Umbraco.FullTextSearch.Utilities.Library.RenderTemplate(nodeId, templateId, queryStringCollection);
+                fullHtml = Library.RenderTemplate(NodeId, TemplateId, queryStringCollection);
                 return true;
             }
             catch (Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error rendering page in FullTextSearch: (" + ex.ToString() + ")");
+                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, NodeId, "Error rendering page in FullTextSearch: (" + ex + ")");
                 if (Library.IsCritical(ex))
                     throw;
                 fullHtml = "";

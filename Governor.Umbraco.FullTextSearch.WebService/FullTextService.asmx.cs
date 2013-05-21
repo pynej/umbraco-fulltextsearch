@@ -23,12 +23,12 @@ namespace Governor.Umbraco.FullTextSearch.WebService
         }
         // Standard umbraco web service method
         [WebMethod]
-        public string getWebservicesVersion(string username, string password)
+        public string GetWebservicesVersion(string username, string password)
         {
             // We check if services are enabled and user has access
             Authenticate(username, password);
 
-            Version thisVersion = new Version(0, 9);
+            var thisVersion = new Version(0, 9);
             return Convert.ToString(thisVersion);
         }
         /// <summary>
@@ -56,7 +56,7 @@ namespace Governor.Umbraco.FullTextSearch.WebService
             Authenticate(username, password);
             if (nodes != null && nodes.Length > 0)
             {
-                AdminActions.ReindexFullTextNodes(nodes.ToList<int>());
+                AdminActions.ReindexFullTextNodes(nodes.ToList());
             }
         }
         /// <summary>

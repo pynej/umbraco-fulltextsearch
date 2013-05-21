@@ -7,35 +7,35 @@ namespace Governor.Umbraco.FullTextSearch
     /// the string passed to CreateNew then decides which implementation gets instanciated and 
     /// passed back to the caller.
     /// </summary>
-    /// <typeparam name="Interface"></typeparam>
-    public class GenericFactory<Interface>
+    /// <typeparam name="TInterface"></typeparam>
+    public class GenericFactory<TInterface>
     {
-        private Dictionary<string,CreateDelegate> mapping;
-        private CreateDelegate defaultClass;
-        private delegate Interface CreateDelegate();
+        private Dictionary<string,CreateDelegate> _mapping;
+        private CreateDelegate _defaultClass;
+        private delegate TInterface CreateDelegate();
         /// <summary>
         /// Register Class to be created when key is passed to CreateNew
         /// </summary>
-        /// <typeparam name="Class">Any Class Implementing Interface</typeparam>
+        /// <typeparam name="TClass">Any Class Implementing Interface</typeparam>
         /// <param name="key">the string to identify Class by</param>
-        public void Register<Class>(string key) where Class : Interface, new()
+        public void Register<TClass>(string key) where TClass : TInterface, new()
         {
-            if (mapping == null)
-                mapping = new Dictionary<string, CreateDelegate>();
+            if (_mapping == null)
+                _mapping = new Dictionary<string, CreateDelegate>();
 
-            CreateDelegate createme = CreateFunction<Class>;
-            if(! mapping.ContainsKey(key) )
-                mapping.Add(key,createme);
+            CreateDelegate createme = CreateFunction<TClass>;
+            if(! _mapping.ContainsKey(key) )
+                _mapping.Add(key,createme);
         }
         /// <summary>
         /// Register the class that will be returned when no string "key" is found
         /// in the dictionary by CreateNew
         /// </summary>
-        /// <typeparam name="Class">Any Class Implementing Interface</typeparam>
-        public void RegisterDefault<Class>() where Class : Interface, new()
+        /// <typeparam name="TClass">Any Class Implementing Interface</typeparam>
+        public void RegisterDefault<TClass>() where TClass : TInterface, new()
         {
-            CreateDelegate createme = CreateFunction<Class>;
-            defaultClass = createme;
+            CreateDelegate createme = CreateFunction<TClass>;
+            _defaultClass = createme;
         }
         /// <summary>
         /// Instanciate the class regestered for key and return the object.
@@ -43,18 +43,18 @@ namespace Governor.Umbraco.FullTextSearch
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public Interface CreateNew(string key)
+        public TInterface CreateNew(string key)
         {
             CreateDelegate createme;
-            if (mapping != null && mapping.ContainsKey(key))
-                createme = mapping[key];
+            if (_mapping != null && _mapping.ContainsKey(key))
+                createme = _mapping[key];
             else
-                createme = defaultClass;
+                createme = _defaultClass;
             return createme();
         }
-        private Interface CreateFunction<Class>() where Class : Interface, new()
+        private TInterface CreateFunction<TClass>() where TClass : TInterface, new()
         {
-            return new Class();
+            return new TClass();
         }
     }
 }

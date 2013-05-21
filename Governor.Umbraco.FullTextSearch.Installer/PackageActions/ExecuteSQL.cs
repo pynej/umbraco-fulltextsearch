@@ -8,7 +8,7 @@ namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
     /// This just executes a SQL statement. It's used by the installer to set up 
     /// database tables. 
     /// </summary>
-    public class ExecuteSQL : IPackageAction
+    public class ExecuteSql : IPackageAction
     {
         public string Alias()
         {
@@ -17,17 +17,17 @@ namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
 
         public bool Execute(string packageName, System.Xml.XmlNode xmlData)
         {
-            string query = xmlData.SelectSingleNode("//mssql").InnerText;
+            var query = xmlData.SelectSingleNode("//mssql").InnerText;
             if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("datalayer=mysql"))
             {
                 throw new NotImplementedException("mysql support not implemented yet. Feel free to add it");
             }
-            else if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("vistadb,vistadb"))
+            if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("vistadb,vistadb"))
             {
                 throw new NotImplementedException("vistadb support not implemented yet. Feel free to add it");
             }
             // If we're here we assume we're using MS SQL server
-            if (DBAccess.ExecuteNonQuery(query))
+            if (DbAccess.ExecuteNonQuery(query))
             {
                 return true;
             }

@@ -7,7 +7,6 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Highlight;
 using Lucene.Net.Search;
 using Lucene.Net.Index;
-using Examine.Providers;
 using Examine.LuceneEngine.Providers;
 using Lucene.Net.QueryParsers;
 using System.IO;
@@ -26,36 +25,37 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         /// The highlighter will need to access lucene directly. 
         /// These objects cache some state
         /// </summary>
-        Analyzer analyzer;
-        Formatter formatter;
-        IndexSearcher searcher;
-        IndexReader reader;
+        readonly Analyzer _analyzer;
+
+        readonly Formatter _formatter;
+        readonly IndexSearcher _searcher;
+        readonly IndexReader _reader;
 
         /// <summary>
         /// This speeds up higlighting, we create the highligter for each field once and cache it for
         /// the whole results set.
         /// </summary>
-        protected Dictionary<string, Highlighter> highlighterCache = new Dictionary<string, Highlighter>();
+        protected Dictionary<string, Highlighter> HighlighterCache = new Dictionary<string, Highlighter>();
 
-        private Plain plainSummariser;
+        private readonly Plain _plainSummariser;
 
         public Highlight(SummariserParameters parameters)
             : base(parameters)
         {
-            BaseSearchProvider searchProvider = ExamineManager.Instance.SearchProviderCollection[parameters.SearchProvider];
-            if (searchProvider != null && searchProvider is LuceneSearcher)
+            var searchProvider = ExamineManager.Instance.SearchProviderCollection[parameters.SearchProvider];
+            if (searchProvider is LuceneSearcher)
             {
-                this.searcher = (searchProvider as LuceneSearcher).GetSearcher();
-                this.analyzer = (searchProvider as LuceneSearcher).IndexingAnalyzer;
-                this.reader = this.searcher.GetIndexReader();
+                _searcher = (searchProvider as LuceneSearcher).GetSearcher();
+                _analyzer = (searchProvider as LuceneSearcher).IndexingAnalyzer;
+                _reader = _searcher.GetIndexReader();
             }
             else
             {
                 throw new ArgumentException("Supplied search provider not found, or is not a valid LuceneSearcher");
             }
-            this.formatter = new SimpleHTMLFormatter(parameters.HighlightPreTag, parameters.HighlightPostTag);
+            _formatter = new SimpleHTMLFormatter(parameters.HighlightPreTag, parameters.HighlightPostTag);
             // fall back to plain summary if no highlight found
-            plainSummariser = new Plain(parameters);
+            _plainSummariser = new Plain(parameters);
         }
 
         /// <summary>
@@ -65,18 +65,16 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         /// <param name="summary"></param>
         public override void GetSummary(SearchResult result, out string summary)
         {
-            foreach (UmbracoProperty prop in parameters.BodySummaryProperties)
+            foreach (var prop in Parameters.BodySummaryProperties.Where(prop => result.Fields.ContainsKey(prop.PropertyName)))
             {
-                if (result.Fields.ContainsKey(prop.PropertyName))
+                if (LuceneHighlightField(result, prop, out summary))
                 {
-                    if (luceneHighlightField(result, prop, out summary))
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
-            plainSummariser.GetSummary(result, out summary);
+            _plainSummariser.GetSummary(result, out summary);
         }
+
         /// <summary>
         /// Retrieve highlighted title
         /// </summary>
@@ -84,19 +82,16 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         /// <param name="title"></param>
         public override void GetTitle(SearchResult result, out string title)
         {
-            foreach (UmbracoProperty prop in parameters.TitleLinkProperties)
+            foreach (var prop in Parameters.TitleLinkProperties.Where(prop => result.Fields.ContainsKey(prop.PropertyName)))
             {
-                if (result.Fields.ContainsKey(prop.PropertyName))
+                if (LuceneHighlightField(result, prop, out title))
                 {
-                    if (luceneHighlightField(result, prop, out title))
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
-            plainSummariser.GetTitle(result, out title);
-            return;
+            _plainSummariser.GetTitle(result, out title);
         }
+
         /// <summary>
         /// highlight the search term in the supplied result
         /// </summary>
@@ -104,36 +99,35 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         /// <param name="umbracoProperty"></param>
         /// <param name="summary"></param>
         /// <returns></returns>
-        protected bool luceneHighlightField(SearchResult result, UmbracoProperty umbracoProperty, out string summary)
+        protected bool LuceneHighlightField(SearchResult result, UmbracoProperty umbracoProperty, out string summary)
         {
             summary = string.Empty;
-            string fieldName = umbracoProperty.PropertyName;
+            var fieldName = umbracoProperty.PropertyName;
             if (!string.IsNullOrEmpty(result.Fields[fieldName]))
             {
-
                 Highlighter highlighter;
-                if (highlighterCache.ContainsKey(fieldName))
+                if (HighlighterCache.ContainsKey(fieldName))
                 {
-                    highlighter = highlighterCache[fieldName];
+                    highlighter = HighlighterCache[fieldName];
                 }
                 else
                 {
-                    List<string> searchTerms = SearchUtilities.getSearchTermsSplit(parameters.SearchTerm);
-                    string luceneQuery = queryHighlight(umbracoProperty, searchTerms);
-                    QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, fieldName, analyzer);
+                    var searchTerms = SearchUtilities.GetSearchTermsSplit(Parameters.SearchTerm);
+                    var luceneQuery = QueryHighlight(umbracoProperty, searchTerms);
+                    var parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_29, fieldName, _analyzer);
                     // This is needed to make wildcards highlight correctly
                     if (umbracoProperty.Wildcard)
                         parser.SetMultiTermRewriteMethod(MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE);
-                    Query query = parser.Parse(luceneQuery);
-                    query = query.Rewrite(reader);
-                    QueryScorer scorer = new QueryScorer(query);
-                    highlighter = new Highlighter(formatter, scorer);
-                    highlighter.SetTextFragmenter(new SimpleFragmenter(parameters.SummaryLength));
-                    highlighterCache.Add(fieldName, highlighter);
+                    var query = parser.Parse(luceneQuery);
+                    query = query.Rewrite(_reader);
+                    var scorer = new QueryScorer(query);
+                    highlighter = new Highlighter(_formatter, scorer);
+                    highlighter.SetTextFragmenter(new SimpleFragmenter(Parameters.SummaryLength));
+                    HighlighterCache.Add(fieldName, highlighter);
                 }
-                using (StringReader sr = new StringReader(result.Fields[fieldName]))
+                using (var sr = new StringReader(result.Fields[fieldName]))
                 {
-                    TokenStream tokenstream = analyzer.TokenStream(fieldName, sr);
+                    var tokenstream = _analyzer.TokenStream(fieldName, sr);
                     summary = highlighter.GetBestFragment(tokenstream, result.Fields[fieldName]);
                     if (!string.IsNullOrEmpty(summary))
                     {
@@ -150,12 +144,12 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
         /// <param name="umbracoProperty"></param>
         /// <param name="searchTerms"></param>
         /// <returns></returns>
-        protected string queryHighlight(UmbracoProperty umbracoProperty, List<string> searchTerms)
+        protected string QueryHighlight(UmbracoProperty umbracoProperty, List<string> searchTerms)
         {
-            StringBuilder query = new StringBuilder();
-            foreach (string term in searchTerms)
+            var query = new StringBuilder();
+            foreach (var term in searchTerms)
             {
-                string fuzzyString = string.Empty;
+                var fuzzyString = string.Empty;
                 if (!term.Contains('"'))
                 {
                     // wildcard queries get lower relevance than exact matches, and ignore fuzzieness
@@ -165,10 +159,10 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
                     }
                     else
                     {
-                        double fuzzyLocal = umbracoProperty.FuzzyMultiplier;
+                        var fuzzyLocal = umbracoProperty.FuzzyMultiplier;
                         if (fuzzyLocal < 1.0 && fuzzyLocal > 0.0)
                         {
-                            fuzzyString = "~" + fuzzyLocal.ToString();
+                            fuzzyString = "~" + fuzzyLocal;
                         }
                     }
                 }

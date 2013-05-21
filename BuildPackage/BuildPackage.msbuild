@@ -8,11 +8,11 @@
 
 	<!-- PROPERTIES -->
 	<PropertyGroup>
-		<VersionMajor>0</VersionMajor>
-		<VersionMinor>2</VersionMinor>
-		<VersionPatch>5</VersionPatch>
+		<VersionMajor>4</VersionMajor>
+		<VersionMinor>7</VersionMinor>
+		<VersionPatch>0</VersionPatch>
 		<VersionSuffix></VersionSuffix>
-		<UmbracoVersion>3.0.0</UmbracoVersion>    
+		<UmbracoVersion>4.7.0</UmbracoVersion>    
 	</PropertyGroup>
 
 	<PropertyGroup>

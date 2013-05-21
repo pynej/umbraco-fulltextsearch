@@ -20,3 +20,7 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 Governor.Umbraco.FullTextSearch.Console/bin/
+Governor.Umbraco.FullTextSearch.dll
+Governor.Umbraco.FullTextSearch.UI.dll
+Governor.Umbraco.FullTextSearch.Installer.dll
+Governor.Umbraco.FullTextSearch.WebService.dll

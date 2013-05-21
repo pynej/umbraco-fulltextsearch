@@ -208,9 +208,6 @@
     <Compile Include="Extensions\GeneralExtension.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="FullTextSearch.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>

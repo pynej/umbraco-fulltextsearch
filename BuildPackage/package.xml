@@ -1,65 +1,65 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <umbPackage>
   <files />
-    <info>
-        <package>
-            <name>Full Text Search</name>
-            <version>0.0.0</version>
-            <license url="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
-            <url>http://fulltextsearch.dev.textor.com/intro.html</url>
-            <requirements>
-                <major>0</major>
-                <minor>0</minor>
-                <patch>0</patch>
-            </requirements>
-        </package>
-        <author>
-            <name>Governor Technology</name>
-            <website>http://www.governor.co.uk</website>
-        </author>
-        <readme><![CDATA[]]></readme>
-    </info>
-    <DocumentTypes>
-        <DocumentType>
-            <Info>
-                <Name>Full Text Search Page</Name>
-                <Alias>FullTextSearchPage</Alias>
-                <Icon>.sprTreeDoc</Icon>
-                <Thumbnail>doc.png</Thumbnail>
-                <Description>Auto Added by FullTextSearch</Description>
-                <AllowedTemplates>
-                    <Template>FullTextSearchPage</Template>
-                </AllowedTemplates>
-                <DefaultTemplate>FullTextSearchPage</DefaultTemplate>
-            </Info>
-            <Structure />
-            <GenericProperties>
-                <GenericProperty>
-                    <Name>Body Text</Name>
-                    <Alias>bodyText</Alias>
-                    <Type>5e9b75ae-face-41c8-b47e-5f4b0fd82f83</Type>
-                    <Definition>ca90c950-0aff-4e72-b976-a30b1ac57dad</Definition>
-                    <Tab>Content</Tab>
-                    <Mandatory>False</Mandatory>
-                    <Validation>
-                    </Validation>
-                    <Description><![CDATA[]]></Description>
-                </GenericProperty>
-            </GenericProperties>
-            <Tabs>
-                <Tab>
-                    <Id>9</Id>
-                    <Caption>Content</Caption>
-                </Tab>
-            </Tabs>
-        </DocumentType>
-    </DocumentTypes>
-    <Templates>
-        <Template>
-            <Name>Full Text Search Page</Name>
-            <Alias>FullTextSearchPage</Alias>
-            <Design>
-                <![CDATA[<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
+  <info>
+    <package>
+      <name>Full Text Search</name>
+      <version>0.0.0</version>
+      <license url="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
+      <url>http://fulltextsearch.dev.textor.com/intro.html</url>
+      <requirements>
+        <major>0</major>
+        <minor>0</minor>
+        <patch>0</patch>
+      </requirements>
+    </package>
+    <author>
+      <name>Governor Technology</name>
+      <website>http://www.governor.co.uk</website>
+    </author>
+    <readme><![CDATA[]]></readme>
+  </info>
+  <DocumentTypes>
+    <DocumentType>
+      <Info>
+        <Name>Full Text Search Page</Name>
+        <Alias>FullTextSearchPage</Alias>
+        <Icon>.sprTreeDoc</Icon>
+        <Thumbnail>doc.png</Thumbnail>
+        <Description>Auto Added by FullTextSearch</Description>
+        <AllowedTemplates>
+          <Template>FullTextSearchPage</Template>
+        </AllowedTemplates>
+        <DefaultTemplate>FullTextSearchPage</DefaultTemplate>
+      </Info>
+      <Structure />
+      <GenericProperties>
+        <GenericProperty>
+          <Name>Body Text</Name>
+          <Alias>bodyText</Alias>
+          <Type>5e9b75ae-face-41c8-b47e-5f4b0fd82f83</Type>
+          <Definition>ca90c950-0aff-4e72-b976-a30b1ac57dad</Definition>
+          <Tab>Content</Tab>
+          <Mandatory>False</Mandatory>
+          <Validation>
+          </Validation>
+          <Description><![CDATA[]]></Description>
+        </GenericProperty>
+      </GenericProperties>
+      <Tabs>
+        <Tab>
+          <Id>9</Id>
+          <Caption>Content</Caption>
+        </Tab>
+      </Tabs>
+    </DocumentType>
+  </DocumentTypes>
+  <Templates>
+    <Template>
+      <Name>Full Text Search Page</Name>
+      <Alias>FullTextSearchPage</Alias>
+      <Design>
+        <![CDATA[<%@ Master Language="C#" MasterPageFile="~/umbraco/masterpages/default.master" AutoEventWireup="true" %>
 <asp:Content ContentPlaceHolderID="ContentPlaceHolderDefault" runat="server">
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"[]> 
 <!-- 
@@ -95,16 +95,16 @@
   </body>
 </html> 
 </asp:Content>]]>
-            </Design>
-        </Template>
-    </Templates>
-    <Stylesheets>
-        <Stylesheet>
-            <Name>FullTextSearch</Name>
-            <FileName>
-            </FileName>
-            <Content>
-                <![CDATA[/* Default styles for FullTextSearch */
+      </Design>
+    </Template>
+  </Templates>
+  <Stylesheets>
+    <Stylesheet>
+      <Name>FullTextSearch</Name>
+      <FileName>
+      </FileName>
+      <Content>
+        <![CDATA[/* Default styles for FullTextSearch */
 
 .fulltextsearch { 
   margin:0; 
@@ -174,92 +174,92 @@
  background-color: #fdfddb;
 }
 ]]>
-            </Content>
-        </Stylesheet>
-    </Stylesheets>
-    <Macros>
-        <macro>
-            <name>FullTextSearch</name>
-            <alias>FullTextSearch</alias>
-            <scriptType>
-            </scriptType>
-            <scriptAssembly>
-            </scriptAssembly>
-            <xslt></xslt>
-            <useInEditor>False</useInEditor>
-            <refreshRate>0</refreshRate>
-            <scriptingFile>FullTextSearch.cshtml</scriptingFile>
-            <properties>
-                <property name="Query Type" alias="queryType" show="False" propertyType="text" />
-                <property name="Title Properties" alias="titleProperties" show="False" propertyType="text" />
-                <property name="Body Properties" alias="bodyProperties" show="False" propertyType="text" />
-                <property name="Summary Properties" alias="summaryProperties" show="False" propertyType="text" />
-                <property name="Title Link Properties" alias="titleLinkProperties" show="False" propertyType="text" />
-                <property name="Root Nodes" alias="rootNodes" show="False" propertyType="text" />
-                <property name="Context Highlighting" alias="contextHighlighting" show="False" propertyType="bool" />
-                <property name="Summary Text Length" alias="summaryLength" show="False" propertyType="number" />
-                <property name="Page Length" alias="pageLength" show="False" propertyType="number" />
-                <property name="Fuzzy Matching Level" alias="fuzzyness" show="False" propertyType="number" />
-                <property name="Use Wildcards" alias="useWildcards" show="False" propertyType="bool" />
-            </properties>
-        </macro>
-    </Macros>
-    <DictionaryItems>
-        <DictionaryItem Key="FullTextSearch">
-            <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Full Text Search]]></Value>
-            <DictionaryItem Key="FullTextSearch__NavNext">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Next >]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__NavPrevious">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[< Previous]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__NoPage">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[There are no results for this search on page {1}]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__NoResults">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Your search for '{0}' did not match any documents.]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__NoSummary">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Read More...]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__NoTerms">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[ ]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__NoTitle">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Unknown Page]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__SearchButton">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Search]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__SearchResultsFor">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Search Results For: '{0}']]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__SummaryInfoFormat">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Showing {0}-{1} of {2} results. Search completed in {3} seconds.]]></Value>
-            </DictionaryItem>
-            <DictionaryItem Key="FullTextSearch__UnknownError">
-                <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[An unknown search error has occurred. Please try again with different terms, or contact the system administrator.]]></Value>
-            </DictionaryItem>
-        </DictionaryItem>
-    </DictionaryItems>
-    <Languages />
-    <DataTypes />
-    <Actions>
-        <Action runat="install" alias="addDashboardSection" dashboardAlias="FullTextSearchDashboardSection">
-            <section>
-                <areas>
-                    <area>developer</area>
-                </areas>
-                <tab caption="Full Text Search">
-                    <control showOnce="true" addPanel="true" panelCaption="">
-                      /umbraco/plugins/FullTextSearch/Dashboard.ascx
-                    </control>
-                </tab>
-            </section>
-        </Action>
-        <Action runat="install" alias="FullTextSearch_ExecuteSQL">
-            <mssql>
-                <![CDATA[
+      </Content>
+    </Stylesheet>
+  </Stylesheets>
+  <Macros>
+    <macro>
+      <name>FullTextSearch</name>
+      <alias>FullTextSearch</alias>
+      <scriptType>
+      </scriptType>
+      <scriptAssembly>
+      </scriptAssembly>
+      <xslt></xslt>
+      <useInEditor>False</useInEditor>
+      <refreshRate>0</refreshRate>
+      <scriptingFile>FullTextSearch.cshtml</scriptingFile>
+      <properties>
+        <property name="Query Type" alias="queryType" show="False" propertyType="text" />
+        <property name="Title Properties" alias="titleProperties" show="False" propertyType="text" />
+        <property name="Body Properties" alias="bodyProperties" show="False" propertyType="text" />
+        <property name="Summary Properties" alias="summaryProperties" show="False" propertyType="text" />
+        <property name="Title Link Properties" alias="titleLinkProperties" show="False" propertyType="text" />
+        <property name="Root Nodes" alias="rootNodes" show="False" propertyType="text" />
+        <property name="Context Highlighting" alias="contextHighlighting" show="False" propertyType="bool" />
+        <property name="Summary Text Length" alias="summaryLength" show="False" propertyType="number" />
+        <property name="Page Length" alias="pageLength" show="False" propertyType="number" />
+        <property name="Fuzzy Matching Level" alias="fuzzyness" show="False" propertyType="number" />
+        <property name="Use Wildcards" alias="useWildcards" show="False" propertyType="bool" />
+      </properties>
+    </macro>
+  </Macros>
+  <DictionaryItems>
+    <DictionaryItem Key="FullTextSearch">
+      <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Full Text Search]]></Value>
+      <DictionaryItem Key="FullTextSearch__NavNext">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Next >]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__NavPrevious">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[< Previous]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__NoPage">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[There are no results for this search on page {1}]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__NoResults">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Your search for '{0}' did not match any documents.]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__NoSummary">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Read More...]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__NoTerms">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[ ]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__NoTitle">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Unknown Page]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__SearchButton">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Search]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__SearchResultsFor">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Search Results For: '{0}']]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__SummaryInfoFormat">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[Showing {0}-{1} of {2} results. Search completed in {3} seconds.]]></Value>
+      </DictionaryItem>
+      <DictionaryItem Key="FullTextSearch__UnknownError">
+        <Value LanguageId="1" LanguageCultureAlias="en-US"><![CDATA[An unknown search error has occurred. Please try again with different terms, or contact the system administrator.]]></Value>
+      </DictionaryItem>
+    </DictionaryItem>
+  </DictionaryItems>
+  <Languages />
+  <DataTypes />
+  <Actions>
+    <Action runat="install" alias="addDashboardSection" dashboardAlias="FullTextSearchDashboardSection">
+      <section>
+        <areas>
+          <area>developer</area>
+        </areas>
+        <tab caption="Full Text Search">
+          <control showOnce="true" addPanel="true" panelCaption="">
+            /umbraco/plugins/FullTextSearch/Dashboard.ascx
+          </control>
+        </tab>
+      </section>
+    </Action>
+    <Action runat="install" alias="FullTextSearch_ExecuteSQL">
+      <mssql>
+        <![CDATA[
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fullTextCache]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[fullTextCache](
@@ -278,7 +278,7 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_fullTextCache] ON [dbo].[fullTextCache]
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 END
 ]]>
-            </mssql>
-        </Action>
-    </Actions>
+      </mssql>
+    </Action>
+  </Actions>
 </umbPackage>

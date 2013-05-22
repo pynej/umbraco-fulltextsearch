@@ -7,26 +7,26 @@
 <h4>Preventing Common Content from Appearing in the Index</h4>
 
 <p>
-	On most sites you won't want menus, common titles etc. appearing in the search results. 
+    On most sites you won't want menus, common titles etc. appearing in the search results. 
 	As we index the full page HTML that can happen here, so we've provided a few methods to prevent that. 
 </p>
 <p><strong>For Macros:</strong></p>
 <p>
-	There's an XSLT Helper function that allows you to determine whether or not the page is being 
+    There's an XSLT Helper function that allows you to determine whether or not the page is being 
 	called by the search indexer. Simply call fulltextsearch.search:IsIndexingActive() from your XSLT. 
 	This doesn't do anything particularly sophisticated. It simply checks for a parameter that can be passed
 	by query string or cookie, by default that parameter is called FullTextActive, this can be changed
 	in the FullTextSearch.config file.
 	
-	To prevent your macros from outputting if search is active simply wrap them in the following if block...<br/>
-	&lt;xsl:if test="not(fulltextsearch.search:IsIndexingActive())"&gt;<br/>
-		...macro...<br/>
-	&lt;/xsl:if&gt;<br/>
+	To prevent your macros from outputting if search is active simply wrap them in the following if block...<br />
+    &lt;xsl:if test="not(fulltextsearch.search:IsIndexingActive())"&gt;<br />
+    ...macro...<br />
+    &lt;/xsl:if&gt;<br />
 </p>
 <p><strong>More generally...</strong></p>
 <p>
-	The indexer can also be configured to strip out defined parts of the HTML from the page output.<br/>
-	This is controlled by the &lt;TagsToRemove&gt; and &lt;IdsToRemove&gt; settings in the FullTextSearch.config file.
+    The indexer can also be configured to strip out defined parts of the HTML from the page output.<br />
+    This is controlled by the &lt;TagsToRemove&gt; and &lt;IdsToRemove&gt; settings in the FullTextSearch.config file.
 	So, for example, by default any HTML element with an ID of "mainNavigation" and all it's children are
 	stripped from the output and will not appear in the index. This is a quick and simple way to prevent
 	certain content from appearing in search results. 
@@ -35,44 +35,44 @@
 <h4>Preventing Certain Document Types from Appearing in the Index</h4>
 
 <p>
-	This can be accomplished in a couple of ways. Adding the node type alias to ExcludeNodeTypes in 
-	the ExamineIndex.config file disables all indexing for a specific node type. <br />
-	Adding the node type alias to the &lt;NoFullTextNodeTypes&gt; list in FullTextSearch.config 
+    This can be accomplished in a couple of ways. Adding the node type alias to ExcludeNodeTypes in 
+	the ExamineIndex.config file disables all indexing for a specific node type.
+    <br />
+    Adding the node type alias to the &lt;NoFullTextNodeTypes&gt; list in FullTextSearch.config 
 	will prevent the page HTML from being rendered and included in the index, but not prevent any other
 	node properties from being included. 
 </p>
 
 <h4>Preventing Certain Pages from Appearing in the Index</h4>
 <p>
-	It's common practice in Umbraco to have a Property "umbracoNaviHide" that prevents pages from showing up in 
+    It's common practice in Umbraco to have a Property "umbracoNaviHide" that prevents pages from showing up in 
 	the main navigation. We've adapted this, and any page with a property of "umbracoSearchHide" won't show up in the
 	index or search results. So this is a useful way to prevent individual pages from being searched. The name(s) of
 	the property(s) that disable indexing for a page are specified in FullTextSearch.config under &lt;DisableSearchPropertyNames&gt;
 </p>
 <h4>Changing the indexing method</h4>
-<p>FullTextSearch has two ways in which it indexes pages. 
+<p>
+    FullTextSearch has two ways in which it indexes pages. 
 	<ol>
-		<li>
-			HTTP Renderer(default)<br/>
-			This fires off web requests to an address and hostname specified in FullTextSearch.config.
-		</li>
-		<li>
-			Programmatic Renderer<br/>
-			This uses a .net Server.Execute command to render page content. This means it can only be run
+        <li>HTTP Renderer(default)<br />
+            This fires off web requests to an address and hostname specified in FullTextSearch.config.
+        </li>
+        <li>Programmatic Renderer<br />
+            This uses a .net Server.Execute command to render page content. This means it can only be run
 			with an active HTTP Context (i.e. synchronously while publishing is taking place). It's 
 			theoretically neater, and was initially intended to be the only renderer, but the requirement
 			that it run synchronously can make publishing painfully slow on large sites. 
-		</li>
-	</ol>
+        </li>
+    </ol>
 </p>
 <p>
-	Generally the default HTTP Renderer should work well enough, if you're having problems with it switch it 
+    Generally the default HTTP Renderer should work well enough, if you're having problems with it switch it 
 	for the Programmatic renderer in the FullTextSearch.config file, remembering to also set PublishEventRendering to  
 	true to ensure there is an active HTTP Context for it to work with. 
 </p>
 <h4>Further Customisation</h4>
 <p>
-	It's possible to override the default renderers from you own code, as well as hook into several indexing
+    It's possible to override the default renderers from you own code, as well as hook into several indexing
 	events, in order to customise the indexing process to your needs. Have a look at the advanced customisation 
 	instructions.
 </p>
@@ -80,87 +80,98 @@
 
 <h4>Macro Parameters</h4>
 <p>
-	There's a lot of macro parameters to the FullTextSearch.xslt file, they control how the index is searched, 
+    There's a lot of macro parameters to the FullTextSearch.xslt file, they control how the index is searched, 
 	and how the results are output. A list of them, and their use follows...
 </p>
 <p><u>queryType</u></p>
-<p>Type of search to perform. Possible values are:<br />
-MultiRelevance -><br />
-The default.
-The index is searched for, in order of decreasing relevance<br/>
-<ol>
-<li>the exact phrase entered in any of the title properties</li>
-<li>any of the terms entered in any of the title properties</li>
-<li>a fuzzy match for any of the terms entered in any of the title properties</li>
-<li>the exact phrase entered in any of the body properties</li>
-<li>any of the terms entered in any of the body properties</li>
-<li>a fuzzy match for any of the terms entered in any of the body properties</li>
-</ol>
-<br/>
-MultiAnd -><br/>
-Similar to MultiRelevance, but requires all terms be present<br/>
-<br/>
-SimpleOr-><br/>
-Similar to MultiRelevance again, but the exact phrase does not<br/>
-get boosted, we just search for any term<br/>
-<br/>
-AsEntered-><br/>
-Search for the exact phrase entered, if more than one term is present<br/>
+<p>
+    Type of search to perform. Possible values are:<br />
+    MultiRelevance -><br />
+    The default.
+The index is searched for, in order of decreasing relevance<br />
+    <ol>
+        <li>the exact phrase entered in any of the title properties</li>
+        <li>any of the terms entered in any of the title properties</li>
+        <li>a fuzzy match for any of the terms entered in any of the title properties</li>
+        <li>the exact phrase entered in any of the body properties</li>
+        <li>any of the terms entered in any of the body properties</li>
+        <li>a fuzzy match for any of the terms entered in any of the body properties</li>
+    </ol>
+    <br />
+    MultiAnd -><br />
+    Similar to MultiRelevance, but requires all terms be present<br />
+    <br />
+    SimpleOr-><br />
+    Similar to MultiRelevance again, but the exact phrase does not<br />
+    get boosted, we just search for any term<br />
+    <br />
+    AsEntered-><br />
+    Search for the exact phrase entered, if more than one term is present<br />
 </p>
 <p>Note that quoted queries are correctly processed in all search modes except AsEntered.</p>
 <p>Other special query types (Boolean, wildcard, etc), are not supported as yet.</p>
 <p><u>titleProperties</u></p>
-<p>A comma separated list of properties that are part of the page title,
+<p>
+    A comma separated list of properties that are part of the page title,
 these will have their relevance boosted by a factor of 10
-defaults to nodeName. Set to "ignore" not to search titles.</p>
+defaults to nodeName. Set to "ignore" not to search titles.
+</p>
 <p><u>bodyProperties</u></p>
 
-<p> A comma separated list of properties that are part of the page body. These 
-properties and the titleProperties will be searched. <br/> defaults to using the 
-full text index (FullTextSearch by default) only </p>
+<p>
+    A comma separated list of properties that are part of the page body. These 
+properties and the titleProperties will be searched.
+    <br />
+    defaults to using the 
+full text index (FullTextSearch by default) only
+</p>
 
 <p><u>summaryProperties</u></p>
 
-<p>The list of properties, comma separated, in order of preference,
+<p>
+    The list of properties, comma separated, in order of preference,
 that you wish to use to create the summary to appear under
 the title. All properties selected must be in the index, cos that's
 where we pull the data from.
-<br/>
-Defaults to Full Text
+    <br />
+    Defaults to Full Text
 </p>
 <p><u>titleLinkProperties</u></p>
 
 <p>
-	The list of properties, comma separated, in order of preference,that you
+    The list of properties, comma separated, in order of preference,that you
 	wish to use to create the title link for each search result.
-	<br/>
-	Defaults to titleProperties, or if that isn't set nodeName
+	<br />
+    Defaults to titleProperties, or if that isn't set nodeName
 </p>
 
 <p><u>rootNodes</u></p>
 
-<p>Comma separated list of root node ids
+<p>
+    Comma separated list of root node ids
 Only nodes which have one of these nodes as a parent will be returned.
-<br/>
-Default is to search all nodes
+    <br />
+    Default is to search all nodes
 </p>
 
 
 <p><u>contextHighlighting</u></p>
 
-<p>Set this to false to disable context highlighting
+<p>
+    Set this to false to disable context highlighting
 in the summary/title. You may wish to do this if you are having
 performance issues as context highlighting is (relatively)
 slow.
-<br/>
-Defaults to on.
+    <br />
+    Defaults to on.
 </p>
 
 
 <p><u>summaryLength</u></p>
 
-<p>The maximum number of characters to show in the summary.<br/>
-Defaults to 300
+<p>
+    The maximum number of characters to show in the summary.<br />
+    Defaults to 300
 </p>
 
 <p><u>pageLength</u></p>
@@ -169,29 +180,31 @@ Defaults to 300
 
 <p><u>fuzzyness</u></p>
 
-<p>Lucene Queries can be "fuzzy" or exact.<br/>
-A fuzzy query will match close variations of the search terms, such as
+<p>
+    Lucene Queries can be "fuzzy" or exact.<br />
+    A fuzzy query will match close variations of the search terms, such as
 plurals etc. This sets how close the search term must be to a term in
 the index. Values from zero to one. 1.0 = exact matching.
 Note that fuzzy matching is slow compared to exact or even wildcard
 matching, if you're having performance issues this is the first thing
 to switch off.
-<br/>
-Defaults to 0.8
+    <br />
+    Defaults to 0.8
 </p>
 
 <p><u>useWildcards</u></p>
 
-<p>Add a wildcard "*" to the end of every search term to make it match
+<p>
+    Add a wildcard "*" to the end of every search term to make it match
 anything starting with the search term. This is a slightly faster, but
 less accurate way of achieving the same ends as fuzzy matching.
 Note that fuzzyness is automatically set to 1.0 if a wildcards are enabled.
-<br/>
-Defaults to off
+    <br />
+    Defaults to off
 </p>
 <h4>Further customisation</h4>
 <p>
-	If the existing macro isn't flexible enough for you, have a look at the advanced customisation file, 
+    If the existing macro isn't flexible enough for you, have a look at the advanced customisation file, 
 	which contains some information on how to control output. There's an event that's called just
 	before output which allows you to modify search results from your own code, or you can call
 	the search functions from your own user controls rather than rely on the XSLT Helper. 

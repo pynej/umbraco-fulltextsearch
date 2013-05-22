@@ -1,19 +1,21 @@
 ﻿<h1>Umbraco Full Text Search Package</h1>
 
 <p>
-	Full Text Search is a search package for Umbraco that indexes the full content of Umbraco HTML pages and
+    Full Text Search is a search package for Umbraco that indexes the full content of Umbraco HTML pages and
 	allows for fast and easy searching. 
 </p>
 <p>
-	The principle is quite simple. When a page is published the HTML produced is read, tags 
+    The principle is quite simple. When a page is published the HTML produced is read, tags 
 	are stripped out, and the result is sent to be indexed by Umbraco Examine/Lucene.net. 
 </p>
-<p>In essence indexing works in a similar fashion to Google, the HTML produced is indexed, rather than the 
+<p>
+    In essence indexing works in a similar fashion to Google, the HTML produced is indexed, rather than the 
 database fields. This makes setting up a search on a site where a lot of content is shared and populated 
 by macros far easier, and is hopefully more of a set it and forget it solution than some of the
-alternatives</p>
+alternatives
+</p>
 <p>
-	As it uses Lucene it should be quick, certainly quicker than XSLT Search on large data sets, 
+    As it uses Lucene it should be quick, certainly quicker than XSLT Search on large data sets, 
 	though probably not as easy to set up. If you need a simple solution for a site with a few dozen pages
 	and little/no content replacement XSLT Search might be better for you. If you're building a site with 
 	half a million pages you might want to look at using Lucene directly. Hopefully if you're building something
@@ -21,18 +23,18 @@ alternatives</p>
 </p>
 
 <p>
-	There are a lot of options that can be used to customise indexing, most these are set in the file
+    There are a lot of options that can be used to customise indexing, most these are set in the file
 	config/FullTextSearch.config. The actual results are returned from the c# back-end as XML and processed
 	into HTML by an XSLT macro (FullTextSearch.xslt) to make editing the HTML structure of the results easier. 
 	The text output by the search page is controlled by several dictionary entries, added under FullTextSearch.
 </p>
 <p>
-	This package should be considered strictly beta quality at the moment. It's not been tested thoroughly enough
+    This package should be considered strictly beta quality at the moment. It's not been tested thoroughly enough
 	to warranty that it won't cause damage to your Umbraco install, mess up your search results, 
 	or indeed cause cats and dogs to become friends and fire to rain from the sky.
 </p>
 
 <p><a href="install.html">Installation Instructions</a></p>
 <p><a href="settings.html">Settings and basic Customisation</a></p>
-<p><a href="advanced.html">Advanced Customisation</a></p>	
+<p><a href="advanced.html">Advanced Customisation</a></p>
 <p><a href="FullTextSearch_025.zip">download</a></p>

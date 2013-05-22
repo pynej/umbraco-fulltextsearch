@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RootDir>$(MSBuildProjectDirectory)\..\Governor.Umbraco.FullTextSearch</RootDir>
+    <RootDir>$(MSBuildProjectDirectory)\..\Governor.Umbraco.FullTextSearch.WebService</RootDir>
     <BuildDir>$(MSBuildProjectDirectory)\_build</BuildDir>
     <BuildUmbDir>$(BuildDir)\_umbraco</BuildUmbDir>
     <BuildNuGetDir>$(BuildDir)\_nuget</BuildNuGetDir>
@@ -52,21 +52,12 @@
 
   <!-- PREPARE FILES -->
   <Target Name="PrepareFiles" DependsOnTargets="Compile">
-    <ItemGroup>
-      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.dll" />
-      <BinFiles Include="$(RootDir)\bin\Release\Highlighter.Net.dll" />
+    <ItemGroup>      
+      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.dll" />
 
-      <DebugFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.pdb" />
-      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.pdb" />
-      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.pdb" />
+      <DebugFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.pdb" />
 
-      <PluginFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\Dashboard\*.ascx" />
-
-      <RazorFiles Include="$(MSBuildProjectDirectory)\Umbraco\macroScripts\FullTextSearch.cshtml" />
-
-      <ConfigFiles Include="$(MSBuildProjectDirectory)\Umbraco\config\FullTextSearch.config" />
+      <AsmxFiles Include="$(RootDir)\FullTextService.asmx" />
 
       <PackageFile Include="$(MSBuildProjectDirectory)\package.xml" />
       <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
@@ -76,17 +67,13 @@
     <!-- COPY FOR UMBRACO PACKAGE -->
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildUmbDir)\bin" />
     <Copy SourceFiles="@(DebugFiles)" DestinationFolder="$(BuildUmbDir)\bin" Condition="'$(VersionSuffix)' != ''" />
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(BuildUmbDir)\umbraco\plugins\FullTextSearch" />
+    <Copy SourceFiles="@(AsmxFiles)" DestinationFolder="$(BuildUmbDir)\umbraco\webservices" />
     <Copy SourceFiles="@(PackageFile)" DestinationFolder="$(BuildUmbDir)" />
-    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(BuildUmbDir)\config" />
-    <Copy SourceFiles="@(RazorFiles)" DestinationFolder="$(BuildUmbDir)\macroScripts" />
     <!-- COPY FOR NUGET PACKAGE -->
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildNuGetDir)\lib\net40" />
     <Copy SourceFiles="@(DebugFiles)" DestinationFolder="$(BuildNuGetDir)\lib\net40" Condition="'$(VersionSuffix)' != ''" />
-    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(BuildNuGetDir)\content\umbraco\plugins\FullTextSearch" />
+    <Copy SourceFiles="@(AsmxFiles)" DestinationFolder="$(BuildNuGetDir)\content\umbraco\webservices" />
     <Copy SourceFiles="@(NuSpecFile)" DestinationFolder="$(BuildNuGetDir)" />
-    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(BuildNuGetDir)\content\config" />
-    <Copy SourceFiles="@(RazorFiles)" DestinationFolder="$(BuildNuGetDir)\content\macroScripts" />
   </Target>
 
   <!-- MANIFEST FOR UMBRACO PACKAGE -->

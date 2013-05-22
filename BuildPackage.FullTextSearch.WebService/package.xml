@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<umbPackage>
+  <files />
+  <info>
+    <package>
+      <name>Full Text Search Web Service</name>
+      <version>0.0.0</version>
+      <license url="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
+      <url>http://fulltextsearch.dev.textor.com/intro.html</url>
+      <requirements>
+        <major>0</major>
+        <minor>0</minor>
+        <patch>0</patch>
+      </requirements>
+    </package>
+    <author>
+      <name>Governor Technology</name>
+      <website>http://www.governor.co.uk</website>
+    </author>
+    <readme>
+      <![CDATA[]]>
+    </readme>
+  </info>
+  <DocumentTypes />
+  <Templates />
+  <Stylesheets />
+  <Macros />
+  <Languages />
+  <DataTypes />
+  <Actions />
+</umbPackage>

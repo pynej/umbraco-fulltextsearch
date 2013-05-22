@@ -25,8 +25,8 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
     public interface FullTextServiceSoap {
         
         // CODEGEN: Generating message contract since element name username from namespace http://umbraco.org/webservices/ is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="http://umbraco.org/webservices/getWebservicesVersion", ReplyAction="*")]
-        Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionResponse getWebservicesVersion(Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequest request);
+        [System.ServiceModel.OperationContractAttribute(Action="http://umbraco.org/webservices/GetWebservicesVersion", ReplyAction="*")]
+        Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionResponse GetWebservicesVersion(Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequest request);
         
         // CODEGEN: Generating message contract since element name username from namespace http://umbraco.org/webservices/ is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://umbraco.org/webservices/RebuildFullTextIndex", ReplyAction="*")]
@@ -60,15 +60,15 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class getWebservicesVersionRequest {
+    public partial class GetWebservicesVersionRequest {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="getWebservicesVersion", Namespace="http://umbraco.org/webservices/", Order=0)]
-        public Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequestBody Body;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetWebservicesVersion", Namespace="http://umbraco.org/webservices/", Order=0)]
+        public Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequestBody Body;
         
-        public getWebservicesVersionRequest() {
+        public GetWebservicesVersionRequest() {
         }
         
-        public getWebservicesVersionRequest(Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequestBody Body) {
+        public GetWebservicesVersionRequest(Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequestBody Body) {
             this.Body = Body;
         }
     }
@@ -77,7 +77,7 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://umbraco.org/webservices/")]
-    public partial class getWebservicesVersionRequestBody {
+    public partial class GetWebservicesVersionRequestBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
         public string username;
@@ -85,10 +85,10 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
         public string password;
         
-        public getWebservicesVersionRequestBody() {
+        public GetWebservicesVersionRequestBody() {
         }
         
-        public getWebservicesVersionRequestBody(string username, string password) {
+        public GetWebservicesVersionRequestBody(string username, string password) {
             this.username = username;
             this.password = password;
         }
@@ -98,15 +98,15 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class getWebservicesVersionResponse {
+    public partial class GetWebservicesVersionResponse {
         
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="getWebservicesVersionResponse", Namespace="http://umbraco.org/webservices/", Order=0)]
-        public Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionResponseBody Body;
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetWebservicesVersionResponse", Namespace="http://umbraco.org/webservices/", Order=0)]
+        public Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionResponseBody Body;
         
-        public getWebservicesVersionResponse() {
+        public GetWebservicesVersionResponse() {
         }
         
-        public getWebservicesVersionResponse(Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionResponseBody Body) {
+        public GetWebservicesVersionResponse(Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionResponseBody Body) {
             this.Body = Body;
         }
     }
@@ -115,16 +115,16 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://umbraco.org/webservices/")]
-    public partial class getWebservicesVersionResponseBody {
+    public partial class GetWebservicesVersionResponseBody {
         
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
-        public string getWebservicesVersionResult;
+        public string GetWebservicesVersionResult;
         
-        public getWebservicesVersionResponseBody() {
+        public GetWebservicesVersionResponseBody() {
         }
         
-        public getWebservicesVersionResponseBody(string getWebservicesVersionResult) {
-            this.getWebservicesVersionResult = getWebservicesVersionResult;
+        public GetWebservicesVersionResponseBody(string GetWebservicesVersionResult) {
+            this.GetWebservicesVersionResult = GetWebservicesVersionResult;
         }
     }
     
@@ -564,17 +564,17 @@ namespace Governor.Umbraco.FullTextSearch.Console.FullTextService {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionResponse Governor.Umbraco.FullTextSearch.Console.FullTextService.FullTextServiceSoap.getWebservicesVersion(Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequest request) {
-            return base.Channel.getWebservicesVersion(request);
+        Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionResponse Governor.Umbraco.FullTextSearch.Console.FullTextService.FullTextServiceSoap.GetWebservicesVersion(Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequest request) {
+            return base.Channel.GetWebservicesVersion(request);
         }
         
-        public string getWebservicesVersion(string username, string password) {
-            Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequest inValue = new Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequest();
-            inValue.Body = new Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionRequestBody();
+        public string GetWebservicesVersion(string username, string password) {
+            Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequest inValue = new Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequest();
+            inValue.Body = new Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionRequestBody();
             inValue.Body.username = username;
             inValue.Body.password = password;
-            Governor.Umbraco.FullTextSearch.Console.FullTextService.getWebservicesVersionResponse retVal = ((Governor.Umbraco.FullTextSearch.Console.FullTextService.FullTextServiceSoap)(this)).getWebservicesVersion(inValue);
-            return retVal.Body.getWebservicesVersionResult;
+            Governor.Umbraco.FullTextSearch.Console.FullTextService.GetWebservicesVersionResponse retVal = ((Governor.Umbraco.FullTextSearch.Console.FullTextService.FullTextServiceSoap)(this)).GetWebservicesVersion(inValue);
+            return retVal.Body.GetWebservicesVersionResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]

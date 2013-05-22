@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx?wsdl" docRef="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx" xmlns:q1="http://umbraco.org/webservices/" binding="q1:FullTextServiceSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx" xmlns:q2="http://umbraco.org/webservices/" binding="q2:FullTextServiceSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="..\Governor.Umbraco.FullTextSearch\Properties\SolutionInfo.cs">
+    <Compile Include="..\Governor.Umbraco.FullTextSearch\Properties\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="..\Governor.Umbraco.FullTextSearch\Properties\VersionInfo.cs">
@@ -65,13 +65,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Service References\FullTextService\FullTextService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\FullTextService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\FullTextService\FullTextService.disco" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\FullTextService\configuration91.svcinfo" />
@@ -80,10 +76,14 @@
     <None Include="Service References\FullTextService\configuration.svcinfo" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Service References\FullTextService\fulltextservice1.wsdl" />
     <None Include="Service References\FullTextService\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\FullTextService\fulltextservice1.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

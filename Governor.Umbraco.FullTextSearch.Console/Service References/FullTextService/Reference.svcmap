@@ -18,11 +18,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:65516/FullTextService.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="FullTextService.disco" MetadataType="Disco" ID="13a14070-b4c4-4f78-9482-d1692756d25b" SourceId="1" SourceUrl="http://localhost:65516/FullTextService.asmx?disco" />
-    <MetadataFile FileName="FullTextService.wsdl" MetadataType="Wsdl" ID="99ada0f2-6e04-4cc6-b730-3f058930d942" SourceId="1" SourceUrl="http://localhost:65516/FullTextService.asmx?wsdl" />
+    <MetadataFile FileName="fulltextservice1.disco" MetadataType="Disco" ID="09cd9208-8ce6-41df-82f9-25c171b93e1f" SourceId="1" SourceUrl="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx?disco" />
+    <MetadataFile FileName="fulltextservice1.wsdl" MetadataType="Wsdl" ID="a153ae60-4b30-47ae-9412-33aa073a600a" SourceId="1" SourceUrl="http://4.7.2.umbraco.local/umbraco/webservices/fulltextservice.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

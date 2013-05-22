@@ -186,10 +186,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FullTextService.asmx" />
-    <Content Include="package.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="nant.build" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

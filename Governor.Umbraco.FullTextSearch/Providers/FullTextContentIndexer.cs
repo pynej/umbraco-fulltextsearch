@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using Examine;
 using System.IO;
+using Lucene.Net.Analysis;
 using UmbracoExamine;
+using UmbracoExamine.DataServices;
 
 namespace Governor.Umbraco.FullTextSearch.Providers
 {
@@ -24,8 +26,12 @@ namespace Governor.Umbraco.FullTextSearch.Providers
         /// </summary>
         /// <param name="indexerData"></param>
         /// <param name="indexPath"></param>
-        public FullTextContentIndexer(IIndexCriteria indexerData, DirectoryInfo indexPath)
-            : base(indexerData, indexPath) { }
+        /// <param name="dataService"></param>
+        /// <param name="analyzer"></param>
+        /// <param name="async"></param>
+        public FullTextContentIndexer(IIndexCriteria indexerData, DirectoryInfo indexPath, IDataService dataService, Analyzer analyzer, bool async)
+            : base(indexerData, indexPath, dataService, analyzer, async) { }
+
         
         /// <summary>
         /// We override this method, do some checks and add some stuff and then just call the base method. 

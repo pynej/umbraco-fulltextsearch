@@ -45,7 +45,7 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
             var searchProvider = ExamineManager.Instance.SearchProviderCollection[parameters.SearchProvider];
             if (searchProvider is LuceneSearcher)
             {
-                _searcher = (searchProvider as LuceneSearcher).GetSearcher();
+                _searcher = (searchProvider as LuceneSearcher).GetSearcher() as IndexSearcher;
                 _analyzer = (searchProvider as LuceneSearcher).IndexingAnalyzer;
                 _reader = _searcher.GetIndexReader();
             }

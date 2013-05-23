@@ -221,10 +221,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Governor.Umbraco.FullTextSearch\Governor.Umbraco.FullTextSearch.csproj">
-      <Project>{9E624C94-25D4-4719-8937-A5EF6069FB6A}</Project>
+      <Project>{FE10CB03-1DBB-4C16-873A-915A5829C0B6}</Project>
       <Name>Governor.Umbraco.FullTextSearch</Name>
     </ProjectReference>
   </ItemGroup>

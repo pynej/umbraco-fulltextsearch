@@ -216,13 +216,13 @@
     <Content Include="FullTextService.asmx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Governor.Umbraco.FullTextSearch\Governor.Umbraco.FullTextSearch.csproj">
-      <Project>{9E624C94-25D4-4719-8937-A5EF6069FB6A}</Project>
-      <Name>Governor.Umbraco.FullTextSearch</Name>
-    </ProjectReference>
+    <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <ProjectReference Include="..\Governor.Umbraco.FullTextSearch\Governor.Umbraco.FullTextSearch.csproj">
+      <Project>{FE10CB03-1DBB-4C16-873A-915A5829C0B6}</Project>
+      <Name>Governor.Umbraco.FullTextSearch</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

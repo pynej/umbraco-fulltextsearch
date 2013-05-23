@@ -11,12 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\settings.html = Documentation\settings.html
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Governor.Umbraco.FullTextSearch", "Governor.Umbraco.FullTextSearch\Governor.Umbraco.FullTextSearch.csproj", "{9E624C94-25D4-4719-8937-A5EF6069FB6A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Governor.Umbraco.FullTextSearch.Console", "Governor.Umbraco.FullTextSearch.Console\Governor.Umbraco.FullTextSearch.Console.csproj", "{D14506BC-FA93-4630-B1CA-281DB377D12D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DD14CF76-AA65-4BE5-BABE-71DBDC30BFCE} = {DD14CF76-AA65-4BE5-BABE-71DBDC30BFCE}
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A} = {9E624C94-25D4-4719-8937-A5EF6069FB6A}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Governor.Umbraco.FullTextSearch.WebService", "Governor.Umbraco.FullTextSearch.WebService\Governor.Umbraco.FullTextSearch.WebService.csproj", "{DD14CF76-AA65-4BE5-BABE-71DBDC30BFCE}"
@@ -71,6 +68,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildPackage.FullTextSearch
 		BuildPackage.FullTextSearch.WebService\readme.txt = BuildPackage.FullTextSearch.WebService\readme.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Governor.Umbraco.FullTextSearch", "Governor.Umbraco.FullTextSearch\Governor.Umbraco.FullTextSearch.csproj", "{FE10CB03-1DBB-4C16-873A-915A5829C0B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,16 +80,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{9E624C94-25D4-4719-8937-A5EF6069FB6A}.Release|x86.ActiveCfg = Release|Any CPU
 		{D14506BC-FA93-4630-B1CA-281DB377D12D}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{D14506BC-FA93-4630-B1CA-281DB377D12D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{D14506BC-FA93-4630-B1CA-281DB377D12D}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -131,6 +120,16 @@ Global
 		{F05C483C-6009-42E8-8AC5-AD06BA6F7807}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F05C483C-6009-42E8-8AC5-AD06BA6F7807}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F05C483C-6009-42E8-8AC5-AD06BA6F7807}.Release|x86.ActiveCfg = Release|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FE10CB03-1DBB-4C16-873A-915A5829C0B6}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

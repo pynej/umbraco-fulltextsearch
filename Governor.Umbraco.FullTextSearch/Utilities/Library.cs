@@ -41,7 +41,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             var firstSeparator = "?";
             if(defaultUrl.Contains('?'))
                 firstSeparator = "&";
-            var url = string.Format("{0}{1}umbPageID={2}", defaultUrl, firstSeparator, pageId);
+            var url = string.Format("{0}{1}umbpageid={2}", defaultUrl, firstSeparator, pageId);
             //get timeout
             int timeout;
             var httpTimeout = config.GetByKey("HttpTimeout");
@@ -114,7 +114,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                     using (var sw = new StringWriter())
                     {
                         context.Server.Execute(
-                            string.Format("/default.aspx?umbPageID={0}&alttemplate={1}&{2}",
+                            string.Format("/default.aspx?umbpageid={0}&alttemplate={1}&{2}",
                             pageId, new template(templateId).TemplateAlias, queryString), sw, false);
                         // update the local page items again
                         UpdateLocalContextItems(items, context);

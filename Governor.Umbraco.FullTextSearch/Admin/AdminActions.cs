@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using Examine;
 using Governor.Umbraco.FullTextSearch.Utilities;
+using Umbraco.Core;
 using umbraco.cms.businesslogic.web;
 using UmbracoExamine;
 using Examine.Providers;
+using Umbraco.Core.Services;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.Admin
 {
@@ -39,18 +42,18 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// </summary>
         public static void ReindexAllFullTextNodes()
         {
-            var documents = Document.GetRootDocuments();
+            var content = new ContentService().GetRootContent();
             var indexer = ExamineManager.Instance.IndexProviderCollection[Config.Instance.GetByKey("IndexProvider")];
-            if (documents != null && indexer != null)
+            if (content != null && indexer != null)
             {
                 if (Config.Instance.GetBooleanByKey("PublishEventRendering"))
                 {
                     Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
                     RenderAllNodesToCache();
                 }
-                foreach (var d in documents)
+                foreach (var c in content)
                 {
-                    RecursiveIndexNodes(indexer, d);
+                    RecursiveIndexNodes(indexer, c);
                 }
             }
         }
@@ -73,9 +76,14 @@ namespace Governor.Umbraco.FullTextSearch.Admin
                 }
                 foreach (var nodeId in nodes)
                 {
-                    if (Document.IsDocument(nodeId))
+                    //TODO: confirm: if(Document.IsDocument(nodeId))
+                    var a = ApplicationContext.Current.Services.ContentService.GetById(nodeId).HasPublishedVersion();
+                    var b = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
+
+
+                    if (ApplicationContext.Current.Services.ContentService.GetById(nodeId) != null)
                     {
-                        var node = new Document(nodeId);
+                        var node = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
                         RecursiveIndexNodes(indexer, node);
                     }
                 }
@@ -107,10 +115,10 @@ namespace Governor.Umbraco.FullTextSearch.Admin
             var indexer = ExamineManager.Instance.IndexProviderCollection[index];
             foreach (var node in nodes)
             {
-                if (Document.IsDocument(node))
+                if (ApplicationContext.Current.Services.ContentService.GetById(node) != null)
                 {
-                    var doc = new Document(node);
-                    ReIndexNode(indexer, doc);
+                    var content = ApplicationContext.Current.Services.ContentService.GetById(node);
+                    ReIndexNode(indexer, content);
                 }
             }
         }
@@ -118,15 +126,14 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// reindex this single document in the supplied index
         /// </summary>
         /// <param name="indexer"></param>
-        /// <param name="doc"></param>
-        protected static void ReIndexNode(BaseIndexProvider indexer, Document doc)
+        /// <param name="content"></param>
+        protected static void ReIndexNode(BaseIndexProvider indexer, IContent content)
         {
-            if (doc != null)
+            if (content != null)
             {
-                var xDocument = doc.ToXDocument(false);
-                if (xDocument != null)
+                var xElement = content.ToXml();
+                if (xElement != null)
                 {
-                    var xElement = xDocument.Root;
                     try
                     {
                         indexer.ReIndexNode(xElement, IndexTypes.Content);
@@ -146,12 +153,12 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// <param name="nodeId"></param>
         public static void RenderNodeToCache(int nodeId)
         {
-            if (Document.IsDocument(nodeId))
+            if (ApplicationContext.Current.Services.ContentService.GetById(nodeId) != null)
             {
-                var doc = new Document(nodeId);
-                if (doc.Published && ! doc.IsTrashed)
+                var content = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
+                if (content.Published && ! content.Trashed)
                 {
-                    RenderNodeToCache(doc);
+                    RenderNodeToCache(content);
                 }
             }
         }
@@ -161,12 +168,12 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// </summary>
         public static void RenderAllNodesToCache()
         {
-            var documents = Document.GetRootDocuments();
-            if (documents != null)
+            var content = ApplicationContext.Current.Services.ContentService.GetRootContent();
+            if (content != null)
             {
-                foreach (var d in documents)
+                foreach (var c in content)
                 {
-                    RenderNodeAndChildrenToCache(d);
+                    RenderNodeAndChildrenToCache(c);
                 }
             }
         }
@@ -179,10 +186,10 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         {
             if (nodeId > 0)
             {
-                if (Document.IsDocument(nodeId))
+                if (ApplicationContext.Current.Services.ContentService.GetById(nodeId) != null)
                 {
-                    var node = new Document(nodeId);
-                    if(node.Published && ! node.IsTrashed)
+                    var node = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
+                    if(node.Published && ! node.Trashed)
                         RenderNodeAndChildrenToCache(node);
                 }
             }
@@ -191,15 +198,15 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// Helper function for ReindexAllFullTextNodes
         /// </summary>
         /// <param name="indexer"></param>
-        /// <param name="document"></param>
-        protected static void RecursiveIndexNodes(BaseIndexProvider indexer, Document document)
+        /// <param name="content"></param>
+        protected static void RecursiveIndexNodes(BaseIndexProvider indexer, IContent content)
         {
-            if (document != null && document.Published && ! document.IsTrashed)
+            if (content != null && content.Published && ! content.Trashed)
             {
-                ReIndexNode(indexer, document);
-                if (document.HasChildren)
+                ReIndexNode(indexer, (Content)content);
+                if (ApplicationContext.Current.Services.ContentService.HasChildren(content.Id))
                 {
-                    foreach (var child in document.Children)
+                    foreach (var child in ApplicationContext.Current.Services.ContentService.GetChildren(content.Id))
                     {
                         RecursiveIndexNodes(indexer, child);
                     }
@@ -210,37 +217,37 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// <summary>
         /// Render a single document to cache
         /// </summary>
-        /// <param name="doc"></param>
-        protected static void RenderNodeToCache(Document doc)
+        /// <param name="content"></param>
+        protected static void RenderNodeToCache(IContent content)
         {
-            if (doc != null && doc.IsTrashed != true && doc.Published)
+            if (content != null && content.Trashed != true && content.Published)
             {
                 /*if (doc.PublishWithResult(user))
                 {
                     umbraco.library.UpdateDocumentCache(doc.Id);
                 }*/
-                var nodeTypeAlias = doc.ContentType.Alias;
+                var nodeTypeAlias = content.ContentType.Alias;
                 var renderer = Manager.Instance.DocumentRendererFactory.CreateNew(nodeTypeAlias);
                 string fullHtml;
-                if (renderer.Render(doc.Id, out fullHtml))
-                    HtmlCache.Store(doc.Id, ref fullHtml);
+                if (renderer.Render(content.Id, out fullHtml))
+                    HtmlCache.Store(content.Id, ref fullHtml);
                 else
-                    HtmlCache.Remove(doc.Id);
+                    HtmlCache.Remove(content.Id);
             }
         }
 
         /// <summary>
         /// Render a document and all it's children to cache
         /// </summary>
-        /// <param name="node"></param>
-        protected static void RenderNodeAndChildrenToCache(Document node)
+        /// <param name="content"></param>
+        protected static void RenderNodeAndChildrenToCache(IContent content)
         {
-            if (node != null && node.Published && ! node.IsTrashed)
+            if (content != null && content.Published && ! content.Trashed)
             {
-                RenderNodeToCache(node);
-                if (node.HasChildren)
+                RenderNodeToCache(content);
+                if (ApplicationContext.Current.Services.ContentService.HasChildren(content.Id))
                 {
-                    foreach (var child in node.Children)
+                    foreach (var child in ApplicationContext.Current.Services.ContentService.GetChildren(content.Id))
                     {
                         RenderNodeAndChildrenToCache(child);
                     }

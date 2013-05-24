@@ -1,38 +1,25 @@
-﻿using Governor.Umbraco.FullTextSearch.Interfaces;
+﻿using System.Linq;
 using Governor.Umbraco.FullTextSearch.Utilities;
+using Umbraco.Core.Services;
 using umbraco;
 using umbraco.cms.businesslogic;
 using umbraco.cms.businesslogic.web;
+using Umbraco.Core;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.EventHandlers
 {
-    public class PublishingHandlers : umbraco.BusinessLogic.ApplicationBase
+    public class PublishingHandlers : IApplicationEventHandler
     {
         /// <summary>
-        /// Constructor subscribes to umbraco publishing events to build a database containing current HTML for
-        /// each page using the umbraco core when publisheventrendering is active
+        /// Used for locking
         /// </summary>
-        public PublishingHandlers()
-        {
-            if (!checkConfig())
-                return;
-            Document.BeforePublish += Document_BeforePublish;
-            content.AfterUpdateDocumentCache += content_AfterUpdateDocumentCache;
-            Document.AfterDelete += Document_AfterDelete;
-            Document.AfterMoveToTrash += Document_AfterMoveToTrash;
-            Document.AfterUnPublish += Document_AfterUnPublish;
-        }
+        private static readonly object LockObj = new object();
 
         /// <summary>
-        /// Republishing all nodes tends to throw timeouts if you have enough of them. This 
-        /// should prevent that without modifying the default for the whole site...
+        /// Indicates if already run
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Document_BeforePublish(Document sender, PublishEventArgs e)
-        {
-            Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
-        }
+        private static bool _ran; 
 
         /// <summary>
         /// The event this handles fires after a document is published in the back office and the cache is updated.
@@ -51,7 +38,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
                 return;
             var id = sender.Id;
             // get config and check we're enabled and good to go
-            if (!checkConfig())
+            if (!CheckConfig())
                 return;
             // this can take a while...
             Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
@@ -67,18 +54,92 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         }
 
         /// <summary>
+        /// Check that the config exists and rendering to cache on publish events is enabled
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckConfig()
+        {
+            var config = Config.Instance;
+            if (config == null)
+                return false;
+            return Config.Instance.GetBooleanByKey("Enabled") && Config.Instance.GetBooleanByKey("PublishEventRendering");
+        }
+
+        /// <summary>
+        /// OnApplicationInitialized handler
+        /// </summary>
+        /// <param name="umbracoApplication"></param>
+        /// <param name="applicationContext"></param>
+        public void OnApplicationInitialized(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
+        {
+            
+        }
+
+        /// <summary>
+        /// OnApplicationStarting handler
+        /// </summary>
+        /// <param name="umbracoApplication"></param>
+        /// <param name="applicationContext"></param>
+        public void OnApplicationStarting(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
+        {
+            
+        }
+
+        /// <summary>
+        /// OnApplicationStarted handler - subscribes to umbraco publishing events to build a database containing current HTML for
+        /// each page using the umbraco core when publisheventrendering is active
+        /// </summary>
+        /// <param name="umbracoApplication"></param>
+        /// <param name="applicationContext"></param>
+        public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
+        {
+            if (!_ran)
+            {
+                lock (LockObj)
+                {
+                    if (!_ran)
+                    {
+                        if (!CheckConfig())
+                            return;
+
+                        ContentService.Publishing += ContentService_Publishing;
+                        content.AfterUpdateDocumentCache += content_AfterUpdateDocumentCache;
+                        ContentService.Deleted += ContentService_Deleted;
+                        ContentService.Trashed += ContentService_Trashed;
+                        ContentService.UnPublished += ContentService_UnPublished;
+
+                        _ran = true;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Republishing all nodes tends to throw timeouts if you have enough of them. This 
+        /// should prevent that without modifying the default for the whole site...
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        void ContentService_Publishing(global::Umbraco.Core.Publishing.IPublishingStrategy sender, global::Umbraco.Core.Events.PublishEventArgs<IContent> e)
+        {
+            Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
+        }
+
+        /// <summary>
         /// Make sure HTML is deleted from storage when the node is
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Document_AfterDelete(Document sender, DeleteEventArgs e)
+        void ContentService_Deleted(IContentService sender, global::Umbraco.Core.Events.DeleteEventArgs<IContent> e)
         {
             //FIXME: what happens when entire trees are deleted? does this get called multiple times?
-            if (!checkConfig())
+            if (!CheckConfig())
                 return;
-            var id = sender.Id;
-            if (id > 0)
-                HtmlCache.Remove(sender.Id);
+
+            foreach (var content in e.DeletedEntities.Where(content => content.Id > 0))
+            {
+                HtmlCache.Remove(content.Id);
+            }
         }
 
         /// <summary>
@@ -86,13 +147,13 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Document_AfterMoveToTrash(Document sender, MoveToTrashEventArgs e)
+        void ContentService_Trashed(IContentService sender, global::Umbraco.Core.Events.MoveEventArgs<IContent> e)
         {
-            if (!checkConfig())
+            if (!CheckConfig())
                 return;
-            var id = sender.Id;
-            if (id > 0)
-                HtmlCache.Remove(sender.Id);
+            
+            if (e.Entity.Id > 0)
+                HtmlCache.Remove(e.Entity.Id);
         }
 
         /// <summary>
@@ -100,25 +161,15 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Document_AfterUnPublish(Document sender, UnPublishEventArgs e)
+        void ContentService_UnPublished(global::Umbraco.Core.Publishing.IPublishingStrategy sender, global::Umbraco.Core.Events.PublishEventArgs<IContent> e)
         {
-            if (!checkConfig())
+            if (!CheckConfig())
                 return;
-            var id = sender.Id;
-            if (id > 0)
-                HtmlCache.Remove(sender.Id);
-        }
 
-        /// <summary>
-        /// Check that the config exists and rendering to cache on publish events is enabled
-        /// </summary>
-        /// <returns></returns>
-        private bool checkConfig()
-        {
-            var config = Config.Instance;
-            if (config == null)
-                return false;
-            return Config.Instance.GetBooleanByKey("Enabled") && Config.Instance.GetBooleanByKey("PublishEventRendering");
+            foreach (var content in e.PublishedEntities.Where(content => content.Id > 0))
+            {
+                HtmlCache.Remove(content.Id);
+            }
         }
     }
 }

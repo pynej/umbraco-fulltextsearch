@@ -1,8 +1,9 @@
 ﻿using System;
 using Governor.Umbraco.FullTextSearch.Interfaces;
 using Governor.Umbraco.FullTextSearch.Utilities;
+using Umbraco.Core.Logging;
 using umbraco.NodeFactory;
-using umbraco.cms.businesslogic.web;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.Renderers
 {
@@ -27,7 +28,7 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
             }
             set
             {
-                if (value is Document || value is Node)
+                if (value is Content || value is Node)
                     _currentNodeOrDocumentBacking = value;
                 else
                     throw new ArgumentException("currentNodeOrDocument must be umbraco nodefactory or cms.businesslogic.web.Document object");
@@ -50,7 +51,7 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
             }
             catch(Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error creating nodefactory node in renderer: (" + ex + ")");
+                LogHelper.Error(GetType(), "Error creating nodefactory node in renderer.", ex);
                 if (Library.IsCritical(ex))
                     throw;
             }
@@ -117,7 +118,7 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
             }
             catch (Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, NodeId, "Error rendering page in FullTextSearch: (" + ex + ")");
+                LogHelper.Error(GetType(), "Error rendering page in FullTextSearch.", ex);
                 if (Library.IsCritical(ex))
                     throw;
                 fullHtml = "";

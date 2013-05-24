@@ -18,11 +18,11 @@ namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
         public bool Execute(string packageName, System.Xml.XmlNode xmlData)
         {
             var query = xmlData.SelectSingleNode("//mssql").InnerText;
-            if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("datalayer=mysql"))
+            if (global::Umbraco.Core.ApplicationContext.Current.DatabaseContext.ConnectionString.ToLower().Contains("datalayer=mysql"))
             {
                 throw new NotImplementedException("mysql support not implemented yet. Feel free to add it");
             }
-            if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("vistadb,vistadb"))
+            if (global::Umbraco.Core.ApplicationContext.Current.DatabaseContext.ConnectionString.ToLower().Contains("vistadb,vistadb"))
             {
                 throw new NotImplementedException("vistadb support not implemented yet. Feel free to add it");
             }

@@ -4,6 +4,7 @@ using System.Web;
 using System.IO;
 using System.Xml;
 using System.Text.RegularExpressions;
+using Umbraco.Core.Logging;
 
 namespace Governor.Umbraco.FullTextSearch
 {
@@ -147,13 +148,13 @@ namespace Governor.Umbraco.FullTextSearch
                 {
                     _configDocument = null;
                     _filePath = string.Empty;
-                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error loading configuration in FullTextSearch: (" + ex + ")");
+                    LogHelper.Error(GetType(), "Error loading configuration in FullTextSearch.", ex);
                 }
                 catch (XmlException ex)
                 {
                     _configDocument = null;
                     _filePath = string.Empty;
-                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error parsing configuration in FullTextSearch: (" + ex + ")");
+                    LogHelper.Error(GetType(), "Error parsing configuration in FullTextSearch.", ex);
                 }
                 return false;
             }

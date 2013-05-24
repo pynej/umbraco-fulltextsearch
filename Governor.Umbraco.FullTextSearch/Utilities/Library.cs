@@ -4,13 +4,14 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
+using Umbraco.Core.Logging;
 using umbraco;
 using System.Text;
 using System.IO;
 using System.Collections;
-using umbraco.cms.businesslogic.web;
 using umbraco.NodeFactory;
 using System.Net;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.Utilities
 {
@@ -81,7 +82,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             }
             catch(WebException ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, pageId, "HTTP error in FullTextSearch retrieval: (" + ex + ")");
+                LogHelper.Error(typeof(Library), "HTTP error in FullTextSearch retrieval.", ex);
                 fullHtml = string.Empty;
             }
             return false;
@@ -103,7 +104,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             {
                 var items = GetCurrentContextItems();
 
-                if (!umbraco.presentation.UmbracoContext.Current.LiveEditingContext.Enabled)
+                if (!UmbracoSettings.EnableCanvasEditing)
                 {
                     var context = HttpContext.Current;
                     foreach (var key in context.Request.QueryString.Cast<object>().Where(key => ! queryStringCollection.ContainsKey(key.ToString())))
@@ -208,14 +209,14 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         /// where this is called from, has a property listed in DisableSearchPropertyNames in the config
         /// file set to true
         /// </summary>
-        /// <param name="documentObject">Must be type Document or type Node</param>
+        /// <param name="contentObject">Must be type Document or type Node</param>
         /// <returns>bool indicating whether this property exists and is enabled</returns>
-        public static bool IsSearchDisabledByProperty(object documentObject)
+        public static bool IsSearchDisabledByProperty(object contentObject)
         {
-            if (documentObject == null)
+            if (contentObject == null)
                 return false;
-            if (!(documentObject is Document || documentObject is Node))
-                throw new ArgumentException("documentObject must be umbraco.cms.businesslogic.web.Document or umbraco.NodeFactory.Node");
+            if (!(contentObject is Content || contentObject is Node))
+                throw new ArgumentException("documentObject must be Umbraco.Core.Models.Content or umbraco.NodeFactory.Node");
             var config = Config.Instance;
             var searchHides = config.GetMultiByKey("DisableSearchPropertyNames");
             if (searchHides != null)
@@ -223,10 +224,10 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                 foreach (var searchHide in searchHides)
                 {
                     var val = "0";
-                    if (documentObject is Document)
+                    if (contentObject is Content)
                     {
-                        var d = documentObject as Document;
-                        var property = d.getProperty(searchHide);
+                        var c = contentObject as Content;
+                        var property = c.Properties[searchHide];
                         if (property != null)
                         {
                             val = property.Value.ToString().ToLower();
@@ -234,7 +235,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                     }
                     else
                     {
-                        var n = documentObject as Node;
+                        var n = contentObject as Node;
                         var property = n.GetProperty(searchHide);
                         if (property != null)
                         {

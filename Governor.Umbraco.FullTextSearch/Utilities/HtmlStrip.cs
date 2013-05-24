@@ -4,6 +4,7 @@ using System.Web;
 using HtmlAgilityPack;
 using System.Text;
 using System.Text.RegularExpressions;
+using Umbraco.Core.Logging;
 
 namespace Governor.Umbraco.FullTextSearch.Utilities
 {
@@ -77,7 +78,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             {
                 if(HttpContext.Current != null)
                     HttpContext.Current.Trace.Warn("Search", "There was an exception cleaning HTML: " + ex);
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "HTML Strip exception: " + ex);
+                LogHelper.Error(GetType(), "HTML Strip exception.", ex);
                 // swallow the exception and run the regex based tag stripper on it anyway. Won't be perfect but better than nothing. 
                 return _continueOnAgilityException ? fullHtml : string.Empty;
             }

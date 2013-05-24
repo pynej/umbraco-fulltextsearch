@@ -9,7 +9,7 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
     {
         protected override bool GetHtml(out string fullHtml)
         {
-            return HtmlCache.Retrieve(CurrentDocument.Id, out fullHtml);
+            return HtmlCache.Retrieve(CurrentContent.Id, out fullHtml);
         }
     }
 }

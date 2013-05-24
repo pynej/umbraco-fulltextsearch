@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Governor.Umbraco.FullTextSearch.Interfaces;
 using Governor.Umbraco.FullTextSearch.Utilities;
-using umbraco.cms.businesslogic.web;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
 {
@@ -10,23 +10,23 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
     /// </summary>
     public class DefaultIndexer : IFullTextIndexer
     {
-        protected Document CurrentDocument;
+        protected IContent CurrentContent;
 
         /// <summary>
         /// Fully process the current node, check whether to cancel indexing, check whether to index the node
         /// retrieve the HTML and add it to the index. Then make a cup of tea. This is tiring. 
         /// </summary>
-        /// <param name="currentDocument"></param>
+        /// <param name="currentContent"></param>
         /// <param name="fields"></param>
         /// <param name="cancelIndexing"></param>
-        public virtual void NodeProcessor(Document currentDocument, Dictionary<string,string> fields, out bool cancelIndexing)
+        public virtual void NodeProcessor(IContent currentContent, Dictionary<string,string> fields, out bool cancelIndexing)
         {
             cancelIndexing = false;
             // this can take a while, if we're running sync this is needed
             Library.SetTimeout(Config.Instance.GetByKey("ScriptTimeout"));
-            if (currentDocument == null)
+            if (currentContent == null)
                 return;
-            CurrentDocument = currentDocument;
+            CurrentContent = currentContent;
             string fullHtml;
             if (CheckCancelIndexing())
             {
@@ -44,7 +44,7 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
         /// <returns></returns>
         protected virtual bool CheckCancelIndexing()
         {
-            return Library.IsSearchDisabledByProperty(CurrentDocument);
+            return Library.IsSearchDisabledByProperty(CurrentContent);
         }
 
         /// <summary>
@@ -54,12 +54,12 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
         /// <returns></returns>
         protected virtual bool IsIndexable()
         {
-            return CurrentDocument != null;
+            return CurrentContent != null;
         }
 
         protected virtual string GetPath()
         {
-            var path = CurrentDocument.Path.Replace(',', ' ');
+            var path = CurrentContent.Path.Replace(',', ' ');
             path = System.Text.RegularExpressions.Regex.Replace(path, @"^-1 ", string.Empty);
             return path;
         }
@@ -71,8 +71,8 @@ namespace Governor.Umbraco.FullTextSearch.FullTextIndexers
         /// <returns></returns>
         protected virtual bool GetHtml(out string fullHtml)
         {
-            var renderer = Manager.Instance.DocumentRendererFactory.CreateNew(CurrentDocument.ContentType.Alias);
-            return renderer.Render(CurrentDocument.Id, out fullHtml);
+            var renderer = Manager.Instance.DocumentRendererFactory.CreateNew(CurrentContent.ContentType.Alias);
+            return renderer.Render(CurrentContent.Id, out fullHtml);
         }
         /// <summary>
         /// Use Html Tag stripper to get text from the passed HTML. Certain tags specified in the

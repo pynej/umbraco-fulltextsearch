@@ -1,6 +1,8 @@
 ﻿using System;
 using Governor.Umbraco.FullTextSearch.Utilities;
-using umbraco.cms.businesslogic.web;
+using Umbraco.Core;
+using Umbraco.Core.Logging;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.Renderers
 {
@@ -18,25 +20,25 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
         /// <returns>Bool indicating whether or not to store the result</returns>
         public override bool Render(int nodeId, out string fullHtml)
         {
-            Document currentDocument = null;
+            IContent currentContent = null;
             try
             {
-                currentDocument = new Document(nodeId);
+                currentContent = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
             }
             catch (Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error creating Document in renderer: (" + ex + ")");
+                LogHelper.Error(GetType(), "Error creating Document in renderer.", ex);
                 if (Library.IsCritical(ex))
                     throw;
             }
             fullHtml = "";
-            if (currentDocument == null || currentDocument.Id < 1)
+            if (currentContent == null || currentContent.Id < 1)
                 return false;
             NodeId = nodeId;
 
-            NodeTypeAlias = currentDocument.ContentType.Alias;
-            TemplateId = currentDocument.Template;
-            CurrentNodeOrDocument = currentDocument;
+            NodeTypeAlias = currentContent.ContentType.Alias;
+            TemplateId = currentContent.Template.Id;
+            CurrentNodeOrDocument = currentContent;
 
             return PageBelongsInIndex() && RetrieveHtml(ref fullHtml);
         }
@@ -53,7 +55,7 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
             }
             catch (Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, NodeId, "Error rendering node using Http Renderer: (" + ex + ")");
+                LogHelper.Error(GetType(), "Error rendering node using Http Renderer.", ex);
                 if (Library.IsCritical(ex))
                     throw;
                 fullHtml = string.Empty;

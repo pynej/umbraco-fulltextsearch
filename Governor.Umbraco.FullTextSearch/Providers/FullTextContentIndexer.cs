@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using Examine;
 using System.IO;
 using Lucene.Net.Analysis;
+using Umbraco.Core;
+using Umbraco.Core.Logging;
 using UmbracoExamine;
 using UmbracoExamine.DataServices;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.Providers
 {
@@ -50,32 +53,32 @@ namespace Governor.Umbraco.FullTextSearch.Providers
                 // running this sync causes HORRIBLE issues when DefaultHttpRender is in use
                 if (RunAsync != true && !Config.Instance.GetBooleanByKey("PublishEventRendering"))
                 {
-                    umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "FullTextSearch Cowardly refusing to break your site by firing up Http Render while indexer is in sync mode. If you see nothing in the index this is why!");
+                    LogHelper.Error(GetType(), "FullTextSearch Cowardly refusing to break your site by firing up Http Render while indexer is in sync mode. If you see nothing in the index this is why!", null);
                 }
                 else
                 {
-                    umbraco.cms.businesslogic.web.Document currentDocument;
+                    IContent currentContent;
                     try
                     {
                         // this seems to have a lot of unidentifiable failure modes...
-                        currentDocument = new umbraco.cms.businesslogic.web.Document(nodeId);
+                        currentContent = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
                     }
                     catch (Exception ex)
                     {
-                        umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, nodeId, "Error getting document: (" + ex + ")");
+                        LogHelper.Error(GetType(), "Error getting document.", ex);
                         if (Utilities.Library.IsCritical(ex))
                             throw;
-                        currentDocument = null;
+                        currentContent = null;
                     }
-                    if (currentDocument != null && currentDocument.Id > 0)
+                    if (currentContent != null && currentContent.Id > 0)
                     {
                         // check if document is protected
-                        var path = currentDocument.Path;
+                        var path = currentContent.Path;
                         if (!DataService.ContentService.IsProtected(nodeId, path))
                         {
                             bool cancel;
-                            var indexer = Manager.Instance.FullTextIndexerFactory.CreateNew(currentDocument.ContentType.Alias);
-                            indexer.NodeProcessor(currentDocument, fields, out cancel);
+                            var indexer = Manager.Instance.FullTextIndexerFactory.CreateNew(currentContent.ContentType.Alias);
+                            indexer.NodeProcessor(currentContent, fields, out cancel);
                             if (cancel)
                                 return;
                         }

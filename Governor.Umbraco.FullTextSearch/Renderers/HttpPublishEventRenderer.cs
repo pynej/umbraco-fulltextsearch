@@ -1,5 +1,6 @@
 ﻿using System;
 using Governor.Umbraco.FullTextSearch.Utilities;
+using Umbraco.Core.Logging;
 
 namespace Governor.Umbraco.FullTextSearch.Renderers
 {
@@ -22,7 +23,7 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
             }
             catch (Exception ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, NodeId, "Error rendering node using Http Renderer: (" + ex + ")");
+                LogHelper.Error(GetType(), "Error rendering node using Http Renderer.", ex);
                 if (Library.IsCritical(ex))
                     throw;
                 fullHtml = string.Empty;

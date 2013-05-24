@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Umbraco.Core.Logging;
 using umbraco.DataLayer;
+using Umbraco.Core.Configuration;
 
 namespace Governor.Umbraco.FullTextSearch.Utilities
 {
@@ -24,7 +26,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             try
             {
                 const string sqlQuery = "SELECT fullHTML FROM fullTextCache WHERE nodeId = @nodeId";
-                sqlHelper = DataLayerHelper.CreateSqlHelper(umbraco.GlobalSettings.DbDSN);
+                sqlHelper = DataLayerHelper.CreateSqlHelper(global::Umbraco.Core.ApplicationContext.Current.DatabaseContext.ConnectionString);
                 result = sqlHelper.ExecuteReader(sqlQuery,sqlHelper.CreateParameter("@nodeId", nodeId));
                 if (result != null && result.HasRecords && result.Read() && result.ContainsField("fullHTML"))
                 {
@@ -34,7 +36,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             }
             catch (umbraco.UmbracoException ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error In Database Query to fullTextCache: (" + ex + ")");
+                LogHelper.Error(typeof(DbAccess), "Error In Database Query to fullTextCache", ex);
                 fullHtml = "";
             }
             finally
@@ -117,7 +119,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             ISqlHelper sqlHelper = null;
             try
             {
-                sqlHelper = DataLayerHelper.CreateSqlHelper(umbraco.GlobalSettings.DbDSN);
+                sqlHelper = DataLayerHelper.CreateSqlHelper(global::Umbraco.Core.ApplicationContext.Current.DatabaseContext.ConnectionString);
                 var numParams = parameters.Count;
                 if (numParams < 1)
                 {
@@ -136,7 +138,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             }
             catch (umbraco.UmbracoException ex)
             {
-                umbraco.BusinessLogic.Log.AddSynced(umbraco.BusinessLogic.LogTypes.Error, 0, 0, "Error In Database Query to fullTextCache: (" + ex + ")");
+                LogHelper.Error(typeof(DbAccess), "Error In Database Query to fullTextCache.", ex);
                 numRows = null;
             }
             finally

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using umbraco.cms.businesslogic.web;
+using Umbraco.Core.Models;
 
 namespace Governor.Umbraco.FullTextSearch.Interfaces
 {
@@ -12,6 +12,6 @@ namespace Governor.Umbraco.FullTextSearch.Interfaces
     /// </summary>
     public interface IFullTextIndexer
     {
-        void NodeProcessor(Document currentDocument, Dictionary<string,string> fields, out bool cancelIndexing);
+        void NodeProcessor(IContent currentContent, Dictionary<string, string> fields, out bool cancelIndexing);
     }
 }

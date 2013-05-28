@@ -112,6 +112,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\UmbracoCms.Core.4.11.8\lib\Our.Umbraco.uGoLive.Checks.dll</HintPath>
     </Reference>
+    <Reference Include="PackageActionsContrib">
+      <HintPath>..\References\PackageActionsContrib.dll</HintPath>
+    </Reference>
     <Reference Include="SQLCE4Umbraco">
       <HintPath>..\packages\UmbracoCms.Core.4.11.8\lib\SQLCE4Umbraco.dll</HintPath>
     </Reference>

@@ -280,5 +280,28 @@ END
 ]]>
       </mssql>
     </Action>
+    <Action runat="install" undo="false" alias="AddXmlFragment" file="~/config/ExamineIndex.config" xpath="//ExamineLuceneIndexSets" position="end">
+      <IndexSet SetName="FullTextIndexSet" IndexPath="~/App_Data/TEMP/ExamineIndexes/FullText/">
+        <IndexAttributeFields>
+          <add Name="id" />
+          <add Name="nodeName"/>
+          <add Name="nodeTypeAlias"/>
+        </IndexAttributeFields>
+        <IndexUserFields>
+          <add Name="bodyText" />
+        </IndexUserFields>
+        <IncludeNodeTypes/>
+        <ExcludeNodeTypes />
+      </IndexSet>
+    </Action>
+    <Action runat="install" undo="false" alias="AddXmlFragment" file="~/config/ExamineSettings.config" xpath="//ExamineIndexProviders//providers" position="end">
+      <add name="FullTextIndexer" type="Governor.Umbraco.FullTextSearch.Providers.FullTextContentIndexer, Governor.Umbraco.FullTextSearch" runAsync="true" supportUnpublished="false" supportProtected="false" interval="10" analyzer="Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net" enableDefaultEventHandler="true" indexSet="FullTextIndexSet"/>
+    </Action>
+    <Action runat="install" undo="false" alias="AddXmlFragment" file="~/config/ExamineSettings.config" xpath="//ExamineSearchProviders//providers" position="end">
+      <add name="FullTextSearcher" type="UmbracoExamine.UmbracoExamineSearcher, UmbracoExamine" analyzer="Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net" indexSet="FullTextIndexSet"/>
+    </Action>
+    <Action runat="uninstall" alias="RemoveXmlFragment" file="~/config/ExamineIndex.config" xpath="//ExamineLuceneIndexSets/IndexSet[@SetName='FullTextIndexSet']" />
+    <Action runat="uninstall" alias="RemoveXmlFragment" file="~/config/ExamineSettings.config" xpath="//ExamineIndexProviders//providers/add[@name='FullTextIndexer']" />
+    <Action runat="uninstall" alias="RemoveXmlFragment" file="~/config/ExamineSettings.config" xpath="//ExamineSearchProviders//providers/add[@name='FullTextSearcher']" />
   </Actions>
 </umbPackage>

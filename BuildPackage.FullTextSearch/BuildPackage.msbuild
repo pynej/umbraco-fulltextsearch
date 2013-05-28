@@ -57,6 +57,7 @@
       <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Governor.Umbraco.FullTextSearch.Installer.dll" />
       <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Governor.Umbraco.FullTextSearch.UI.dll" />
       <BinFiles Include="$(RootDir)\bin\Highlighter.Net.dll" />
+      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\PackageActionsContrib.dll" />
 
       <DebugFiles Include="$(RootDir)\bin\Governor.Umbraco.FullTextSearch.pdb" />
       <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Governor.Umbraco.FullTextSearch.Installer.pdb" />

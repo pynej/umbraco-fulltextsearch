@@ -32,7 +32,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// whereas this event always should, hence this method rather than doing both rendering and indexing
         /// in the same thread
         /// </remarks>
-        private void content_AfterUpdateDocumentCache(Document sender, DocumentCacheEventArgs e)
+        private void ContentAfterUpdateDocumentCache(Document sender, DocumentCacheEventArgs e)
         {
             if (sender == null || sender.Id < 1)
                 return;
@@ -103,10 +103,10 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
                             return;
 
                         ContentService.Publishing += ContentService_Publishing;
-                        content.AfterUpdateDocumentCache += content_AfterUpdateDocumentCache;
-                        ContentService.Deleted += ContentService_Deleted;
-                        ContentService.Trashed += ContentService_Trashed;
-                        ContentService.UnPublished += ContentService_UnPublished;
+                        content.AfterUpdateDocumentCache += ContentAfterUpdateDocumentCache;
+                        ContentService.Deleted += ContentServiceDeleted;
+                        ContentService.Trashed += ContentServiceTrashed;
+                        ContentService.UnPublished += ContentServiceUnPublished;
 
                         _ran = true;
                     }
@@ -130,7 +130,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ContentService_Deleted(IContentService sender, global::Umbraco.Core.Events.DeleteEventArgs<IContent> e)
+        void ContentServiceDeleted(IContentService sender, global::Umbraco.Core.Events.DeleteEventArgs<IContent> e)
         {
             //FIXME: what happens when entire trees are deleted? does this get called multiple times?
             if (!CheckConfig())
@@ -147,7 +147,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ContentService_Trashed(IContentService sender, global::Umbraco.Core.Events.MoveEventArgs<IContent> e)
+        void ContentServiceTrashed(IContentService sender, global::Umbraco.Core.Events.MoveEventArgs<IContent> e)
         {
             if (!CheckConfig())
                 return;
@@ -161,7 +161,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        void ContentService_UnPublished(global::Umbraco.Core.Publishing.IPublishingStrategy sender, global::Umbraco.Core.Events.PublishEventArgs<IContent> e)
+        void ContentServiceUnPublished(global::Umbraco.Core.Publishing.IPublishingStrategy sender, global::Umbraco.Core.Events.PublishEventArgs<IContent> e)
         {
             if (!CheckConfig())
                 return;

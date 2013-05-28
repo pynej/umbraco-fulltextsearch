@@ -76,11 +76,6 @@ namespace Governor.Umbraco.FullTextSearch.Admin
                 }
                 foreach (var nodeId in nodes)
                 {
-                    //TODO: confirm: if(Document.IsDocument(nodeId))
-                    var a = ApplicationContext.Current.Services.ContentService.GetById(nodeId).HasPublishedVersion();
-                    var b = ApplicationContext.Current.Services.ContentService.GetById(nodeId);
-
-
                     if (ApplicationContext.Current.Services.ContentService.GetById(nodeId) != null)
                     {
                         var node = ApplicationContext.Current.Services.ContentService.GetById(nodeId);

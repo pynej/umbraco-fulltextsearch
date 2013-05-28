@@ -227,10 +227,9 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                     if (contentObject is Content)
                     {
                         var c = contentObject as Content;
-                        var property = c.Properties[searchHide];
-                        if (property != null)
+                        if (c.HasProperty(searchHide))
                         {
-                            val = property.Value.ToString().ToLower();
+                            val = c.Properties[searchHide].Value.ToString().ToLower();
                         }
                     }
                     else

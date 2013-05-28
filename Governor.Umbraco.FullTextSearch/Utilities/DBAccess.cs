@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Umbraco.Core.Logging;
 using umbraco.DataLayer;
-using Umbraco.Core.Configuration;
 
 namespace Governor.Umbraco.FullTextSearch.Utilities
 {

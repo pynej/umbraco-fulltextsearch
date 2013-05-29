@@ -25,7 +25,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,7 +33,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -227,9 +227,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\App_Browsers.dll" />
     <Content Include="bin\businesslogic.dll" />
     <Content Include="bin\ClientDependency.Core.dll" />
+    <Content Include="bin\ClientDependency.Core.Mvc.dll" />
     <Content Include="bin\cms.dll" />
     <Content Include="bin\controls.dll" />
     <Content Include="bin\CookComputing.XmlRpcV2.dll" />
@@ -238,31 +238,45 @@
     <Content Include="bin\Governor.Umbraco.FullTextSearch.pdb" />
     <Content Include="bin\Governor.Umbraco.FullTextSearch.UI.dll" />
     <Content Include="bin\Governor.Umbraco.FullTextSearch.UI.pdb" />
-    <Content Include="bin\Highlighter.Net.dll" />
     <Content Include="bin\HtmlAgilityPack.dll" />
     <Content Include="bin\ICSharpCode.SharpZipLib.dll" />
     <Content Include="bin\interfaces.dll" />
+    <Content Include="bin\log4net.dll" />
+    <Content Include="bin\Lucene.Net.Contrib.Highlighter.dll" />
+    <Content Include="bin\Lucene.Net.Contrib.Highlighter.xml" />
     <Content Include="bin\Lucene.Net.dll" />
     <Content Include="bin\Microsoft.ApplicationBlocks.Data.dll" />
     <Content Include="bin\Microsoft.Web.Helpers.dll" />
     <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Microsoft.Web.Mvc.FixedDisplayModes.dll" />
     <Content Include="bin\MySql.Data.dll" />
     <Content Include="bin\Our.Umbraco.uGoLive.47x.dll" />
     <Content Include="bin\Our.Umbraco.uGoLive.Checks.dll" />
     <Content Include="bin\Our.Umbraco.uGoLive.dll" />
+    <Content Include="bin\ServiceStack.Text.dll" />
+    <Content Include="bin\ServiceStack.Text.xml" />
+    <Content Include="bin\SQLCE4Umbraco.dll" />
+    <Content Include="bin\System.Data.SqlServerCe.dll" />
+    <Content Include="bin\System.Data.SqlServerCe.Entity.dll" />
     <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Mvc.xml" />
     <Content Include="bin\System.Web.Razor.dll" />
     <Content Include="bin\System.Web.WebPages.Deployment.dll" />
     <Content Include="bin\System.Web.WebPages.dll" />
     <Content Include="bin\System.Web.WebPages.Razor.dll" />
     <Content Include="bin\TidyNet.dll" />
+    <Content Include="bin\Umbraco.Core.dll" />
+    <Content Include="bin\Umbraco.Core.xml" />
     <Content Include="bin\umbraco.DataLayer.dll" />
     <Content Include="bin\umbraco.dll" />
     <Content Include="bin\umbraco.editorControls.dll" />
-    <Content Include="bin\umbraco.Linq.Core.dll" />
     <Content Include="bin\umbraco.MacroEngines.dll" />
     <Content Include="bin\umbraco.macroRenderings.dll" />
     <Content Include="bin\umbraco.providers.dll" />
+    <Content Include="bin\Umbraco.Web.UI.dll" />
+    <Content Include="bin\umbraco.webservices.dll" />
+    <Content Include="bin\umbraco.webservices.xml" />
     <Content Include="bin\umbraco.XmlSerializers.dll" />
     <Content Include="bin\UmbracoExamine.dll" />
     <Content Include="bin\UrlRewritingNet.UrlRewriter.dll" />

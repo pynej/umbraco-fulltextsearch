@@ -55,8 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Governor.Umbraco.FullTextSe
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{62B26787-6BA9-42E9-B59B-626665C2EB3A}"
 	ProjectSection(SolutionItems) = preProject
-		References\Highlighter.Net.dll = References\Highlighter.Net.dll
-		References\umbraco.webservices.dll = References\umbraco.webservices.dll
+		References\PackageActionsContrib.dll = References\PackageActionsContrib.dll
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildPackage.FullTextSearch.WebService", "BuildPackage.FullTextSearch.WebService", "{5CD3D6F2-A663-4E11-8DBA-CE7F25F2ABA0}"

@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,6 +70,14 @@
     <WCFMetadataStorage Include="Service References\FullTextService\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="bin\Debug\Governor.Umbraco.FullTextSearch.Console.exe.config" />
+    <None Include="bin\Debug\Governor.Umbraco.FullTextSearch.Console.vshost.exe.config" />
+    <None Include="bin\Governor.Umbraco.FullTextSearch.Console.exe.config" />
+    <None Include="bin\Governor.Umbraco.FullTextSearch.Console.vshost.exe.config" />
+    <None Include="bin\Governor.Umbraco.FullTextSearch.Console.vshost.exe.manifest" />
+    <None Include="bin\Release\Governor.Umbraco.FullTextSearch.Console.exe.config" />
+    <None Include="bin\Release\Governor.Umbraco.FullTextSearch.Console.vshost.exe.config" />
+    <None Include="bin\Release\Governor.Umbraco.FullTextSearch.Console.vshost.exe.manifest" />
     <None Include="Service References\FullTextService\configuration91.svcinfo" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +92,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\FullTextService\fulltextservice1.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\Governor.Umbraco.FullTextSearch.Console.exe" />
+    <Content Include="bin\Debug\Governor.Umbraco.FullTextSearch.Console.pdb" />
+    <Content Include="bin\Debug\Governor.Umbraco.FullTextSearch.Console.vshost.exe" />
+    <Content Include="bin\Release\Governor.Umbraco.FullTextSearch.Console.exe" />
+    <Content Include="bin\Release\Governor.Umbraco.FullTextSearch.Console.pdb" />
+    <Content Include="bin\Release\Governor.Umbraco.FullTextSearch.Console.vshost.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

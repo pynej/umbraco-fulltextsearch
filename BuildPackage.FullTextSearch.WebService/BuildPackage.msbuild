@@ -53,9 +53,9 @@
   <!-- PREPARE FILES -->
   <Target Name="PrepareFiles" DependsOnTargets="Compile">
     <ItemGroup>      
-      <BinFiles Include="$(RootDir)\bin\Governor.Umbraco.FullTextSearch.WebService.dll" />
+      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.dll" />
 
-      <DebugFiles Include="$(RootDir)\bin\Governor.Umbraco.FullTextSearch.WebService.pdb" />
+      <DebugFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.pdb" />
 
       <AsmxFiles Include="$(RootDir)\FullTextService.asmx" />
 

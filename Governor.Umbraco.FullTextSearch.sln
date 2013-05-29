@@ -56,6 +56,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "References", "References", "{62B26787-6BA9-42E9-B59B-626665C2EB3A}"
 	ProjectSection(SolutionItems) = preProject
 		References\Highlighter.Net.dll = References\Highlighter.Net.dll
+		References\PackageActionsContrib.dll = References\PackageActionsContrib.dll
 		References\umbraco.webservices.dll = References\umbraco.webservices.dll
 	EndProjectSection
 EndProject

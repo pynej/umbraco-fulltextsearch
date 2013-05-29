@@ -53,15 +53,15 @@
   <!-- PREPARE FILES -->
   <Target Name="PrepareFiles" DependsOnTargets="Compile">
     <ItemGroup>
-      <BinFiles Include="$(RootDir)\bin\Governor.Umbraco.FullTextSearch.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Governor.Umbraco.FullTextSearch.Installer.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Governor.Umbraco.FullTextSearch.UI.dll" />
-      <BinFiles Include="$(RootDir)\bin\Highlighter.Net.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\PackageActionsContrib.dll" />
+      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.dll" />
+      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.dll" />
+      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.dll" />
+      <BinFiles Include="$(RootDir)\bin\Release\Highlighter.Net.dll" />
+      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\PackageActionsContrib.dll" />
 
-      <DebugFiles Include="$(RootDir)\bin\Governor.Umbraco.FullTextSearch.pdb" />
-      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Governor.Umbraco.FullTextSearch.Installer.pdb" />
-      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Governor.Umbraco.FullTextSearch.UI.pdb" />
+      <DebugFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.pdb" />
+      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.pdb" />
+      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.pdb" />
 
       <PluginFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\Dashboard\*.ascx" />
 

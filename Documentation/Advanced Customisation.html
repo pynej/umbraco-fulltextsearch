@@ -1,0 +1,105 @@
+﻿<h2>Advanced Customisation</h2>
+<p>For projects where the default configuration options are not sufficient several methods have been provided to allow you to customise the package from your own code.</p>
+<h3>Events</h3>
+<h4>Examine Indexing Events</h4>
+<p>You can hook into any of the Umbraco examine events from your own code in the usual fashion. This allows control over the indexing process. For example you can edit the rendered HTML before it gets indexed, or cancel indexing on certain pages.</p>
+<p>
+    Firstly you'll need to subscribe to the events. This means running some code at Umbraco start-up, the usual way to accomplish this is in the constructor of a class that extends umbraco.BusinessLogic.ApplicationBase.<br />
+    So, very very briefly, start an empty visual studio web app project, reference the relevant Umbraco dlls, examine dlls and the Governor.Umbraco.FullTextSearch dll, then create something like the below, build it, and stick the dll in your Umbraco bin directory. Consult the Umbraco  site for better documentation on this that took more than 5 minutes to write...
+</p>
+<blockquote>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;namespace MyAddon<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public class MyEvents : umbraco.BusinessLogic.ApplicationBase<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public MyEvents()<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BaseIndexProvider indexer = ExamineManager.Instance.IndexProviderCollection["FullTextIndexer"];<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indexer.NodeIndexing += new EventHandler(indexer_NodeIndexing);<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    <br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void indexer_NodeIndexing(object sender, IndexingNodeEventArgs e)<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// do stuff<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+</blockquote>
+<p>&nbsp;</p>
+<p>Depending on your version of Umbraco, umbraco.BusinessLogic.ApplicationBase might be deprecated and you'll need to use the appropriate method.</p>
+<p>There are a number of events built into examine, documentation doesn't seem to be readily available, but you can look through the code, or just use intellisense to pick them out. If you want to edit the rendered HTML or cancel indexing then NodeIndexing  is the one to use.</p>
+<h4>Search Results Event</h4>
+<p>
+    There's an event in the search helper that's fired once for every search result.
+    <br />
+    You can access this at SearchExtension.ResultOutput . This will allow you to change/add/delete any of the content that's about to be pushed out to the Razor, giving you more flexibility in what to display.
+</p>
+<h3>Swapping Indexers and Renderers</h3>
+<p>It's also possible to override the way FullTextSearch renders, and then indexes pages completely, or just for a certain node type.</p>
+<p>To get a sense of the way it works you'll probably need to look over the code-base for FullTextSearch. But some basic information is included here that should be enough to get you started.</p>
+<p>
+    To clarify, the renderer reads the page's full HTML and returns it.
+    <br />
+    The indexer controls which pages get indexed and how the HTML is stripped.
+    <br />
+    When the renderer runs is determined by the PublishEventRendering setting in FullTextSearch.config, if this is set to true it will run immediately after publishing, and a page publish won't return until the renderer does. If PublishEventRendering is set to  false (this is the default setting) then the default indexer will call the renderer during the indexing phase, and page publishing doesn't have to wait for the renderer to return.
+</p>
+<h4>Renderers</h4>
+<p>FullTextSearch can use any class that implements the interface IDocumentRenderer to render documents. You can replace the default renderer entirely, inherit and extend/override it, and do either of these conditional on the type of node being rendered. An  example will probably make this easier to understand...</p>
+<p><em>Override Renderer for node type "umbHomepage" to add the text "Dummy Homepage Text" onto the end of the full text index</em></p>
+<blockquote>
+    &nbsp;&nbsp;&nbsp;public class MyEvents : umbraco.BusinessLogic.ApplicationBase<br />
+    &nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public MyEvents()<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FullTextSearch.Manager.Instance.DocumentRendererFactory.Register&lt;MyRenderer&gt;("umbHomepage");<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;&nbsp;public class MyRenderer : DefaultHttpRenderer
+    <br />
+    &nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;public override bool Render(int nodeId, out string fullHtml)<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (base.Render(nodeId, out fullHtml)) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fullHtml += "Dummy Homepage Text";<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;&nbsp;}<br />
+</blockquote>
+<p><em>Override renderer for all node types</em></p>
+<blockquote>&nbsp;&nbsp;&nbsp;FullTextSearch.Manager.Instance.DocumentRendererFactory.RegisterDefault&lt;MyRenderer&gt;();</blockquote>
+<p>&nbsp;</p>
+<p>Have a look at the code to get a better idea of how it works. One thing to bear in mind is that you can only use the Umbraco node factory API if PublishEventRendering is set to true in the FullTextSearch.config file. Otherwise you'll need to use the Document  API.</p>
+<h4>Indexers</h4>
+<p>Indexers can be overridden in much the same way as renderers. e.g.</p>
+<blockquote>&nbsp;&nbsp;&nbsp;FullTextSearch.Manager.Instance.FullTextIndexerFactory.Register&lt;MyIndexer&gt;("someNodeTypeAlias");</blockquote>
+<p>
+    <br />
+    The class "MyIndexer" will need to implement IFullTextIndexer.
+</p>
+<p>&nbsp;</p>
+<p>Bear in mind that if PublishEventRendering is not active your indexer will need to handle calling the appropriate renderer, or just inherit the existing DefaultIndexer class.</p>
+<h3>Scheduled Indexing</h3>
+<p>In the event that content on your site changes regularly without any nodes being published a web service is provided which allows you to</p>
+<ol>
+    <li>Trigger a full re-creation of the site index </li>
+    <li>Re-index a list of nodes </li>
+</ol>
+<p>It is envisaged that this service be called by means of a scheduled task of some kind. No mechanism for doing this is currently provided, though a console application may be added in future.</p>
+<p>&nbsp;</p>
+<p>The web service is provided in a separate package to the main FullTextSearch. You can download it from the downloads page.</p>
+<p>It requires the file umbraco.webservices.dll, which is not present by default on some umbraco installations. If your install lacks this file you can build it yourself from the umbraco source, or download it from the downloads page for Umbraco 4.7.0</p>
+<p>The web service is located at /umbraco/webservices/FullTextService.asmx . There are four methods of interest:</p>
+<p>RebuildFullTextIndex(string username, string password) : Trigger a full re-indexing of the site. Be warned that this deletes the current index completely. So search will be unavailable until re-indexing is completed, which happens at a rate of about 5 pages/sec  on my development box.</p>
+<p>ReindexFullTextNodes(string username, string password, int[] nodes) : Re-index the supplied list of nodes</p>
+<p>ReindexFullTextNodesAndChildren(string username, string password, int[] nodes) : Re-index the supplied list of nodes and all their children.</p>
+<p>ReindexAllFullTextNodes(string username, string password) : Re-index all nodes one-by-one.</p>
+<p>You can also trigger these actions from your own code using the FullTextSearch.Admin.AdminActions class</p>
+<br />
+<br />
+<p><a href="http://fulltextsearch.codeplex.com/documentation">Intro</a></p>
+<p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Installation%20Instructions">Installation Instructions</a></p>
+<p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Settings%20and%20Basic%20Customisation">Settings and basic Customisation</a></p>
+<p><a href="http://fulltextsearch.codeplex.com/releases">Download</a></p>

@@ -1,0 +1,33 @@
+﻿<p>
+    <strong>Project Description</strong><br />
+    <br />
+    Full Text Search is a fast, powerful and easy to set up search solution for Umbraco web sites.
+    <br />
+    <br />
+    <strong>Yes, but why?</strong><br />
+    In working for clients, we found that XLST Search didn&rsquo;t handle content replacement and wasn&rsquo;t flexible enough.  The main alternative, Examine, required a fair amount of work and know-how to integrate into our sites.  So, we decided to write something that can index an entire web page, in the same way that Google does, and allow searching that index with minimal setup and no additional code.<br />
+    <br />
+    <strong>OK, tell me more</strong><br />
+    Full Text Search indexes the full content of published Umbraco pages, including any macros or shared content.
+    <br />
+    Out of the box, it allows searching of this index using fuzzy matching, quoted queries, context highlighting and more - all without you having to write a single line of code.  It&rsquo;s intended to fill the gap between the ease of use of XSLT Search and the relative complexity of writing your own solution using Examine.<br />
+    <br />
+    <strong>What are the specifics?</strong>
+</p>
+<ul>
+    <li>Indexing is approached in a fashion similar to a search engine crawler: the full HTML produced by a page is read after publishing, tag stripped and added to the index. There are options to allow common content (menus, footers etc) to be excluded from the index. </li>
+    <li>An Razor macro is used to format and display search results. This allows for easy modification of the display format of search results, again without having to touch any of the code. </li>
+    <li>For more advanced users, there are options to customise search through various configuration options, as well as to modify indexing and result retrieval behaviour from your own code. </li>
+</ul>
+<p>
+    As a result of using Full Text Search, search should be lightning quick, even on sites with large amounts of content.  This is because the package is essentially just an intelligent front end to Umbraco&rsquo;s Examine/Lucene.<br />
+    <br />
+    <strong>Anything you&rsquo;re hiding from me that is going to screw-up my day?</strong><br />
+    Happily, no.  But because we&rsquo;re honest people and like doing things properly, we will tell you that Full Text Search is technically beta quality.  We love it and are confident about what it can do, but it hasn&rsquo;t been tested on enough sites to be considered completely bug free or stable yet.
+</p>
+<br />
+<br />
+<p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Installation%20Instructions&amp;referringTitle=Home">Installation Instructions</a></p>
+<p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Settings%20and%20basic%20Customisation&amp;referringTitle=Home">Settings and basic Customisation</a></p>
+<p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Advanced%20Customisation&amp;referringTitle=Home">Advanced Customisation</a></p>
+<p><a href="http://fulltextsearch.codeplex.com/releases/view/68026">Download</a></p>

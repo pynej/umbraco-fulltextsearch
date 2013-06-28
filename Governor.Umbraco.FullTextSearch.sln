@@ -5,10 +5,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{09D34B06-9C7C-4CC5-A8C2-CD6D7DDB7048}"
 	ProjectSection(SolutionItems) = preProject
-		Documentation\advanced.html = Documentation\advanced.html
-		Documentation\install.html = Documentation\install.html
-		Documentation\intro.html = Documentation\intro.html
-		Documentation\settings.html = Documentation\settings.html
+		Documentation\Advanced Customisation.html = Documentation\Advanced Customisation.html
+		Documentation\Documentation Intro.html = Documentation\Documentation Intro.html
+		Documentation\Home.html = Documentation\Home.html
+		Documentation\Installation Instructions.html = Documentation\Installation Instructions.html
+		Documentation\Settings and Basic Customisation.html = Documentation\Settings and Basic Customisation.html
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Governor.Umbraco.FullTextSearch.Console", "Governor.Umbraco.FullTextSearch.Console\Governor.Umbraco.FullTextSearch.Console.csproj", "{D14506BC-FA93-4630-B1CA-281DB377D12D}"

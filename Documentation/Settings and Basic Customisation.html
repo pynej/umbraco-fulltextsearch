@@ -3,12 +3,17 @@
 <h4>Preventing Common Content from Appearing in the Index</h4>
 <p>On most sites you won't want menus, common titles etc. appearing in the search results. As we index the full page HTML that can happen here, so we've provided a few methods to prevent that.</p>
 <p><strong>For Macros:</strong></p>
-<p>
-    There's a GeneralExtensions helper function that allows you to determine whether or not the page is being called by the search indexer. Simply call GeneralExtensions.IsIndexingActive() from your Razor. This doesn't do anything particularly sophisticated. It simply  checks for a parameter that can be passed by query string or cookie, by default that parameter is called FullTextActive, this can be changed in the FullTextSearch.config file. To prevent your macros from outputting if search is active simply wrap them in the  following if block...<br />
-    if (GeneralExtensions.IsIndexingActive()){<br />
-    ...macro...<br />
-    }
-</p>
+<p>There's a GeneralExtensions helper function that allows you to determine whether or not the page is being called by the search indexer. Simply call GeneralExtensions.IsIndexingActive() from your Razor. This doesn't do anything particularly sophisticated.  It simply checks for a parameter that can be passed by query string or cookie, by default that parameter is called FullTextActive, this can be changed in the FullTextSearch.config file. To prevent your macros from outputting if search is active simply wrap  them in the following if block...</p>
+<p><span style="font-family: Consolas,'Courier New',Courier,monospace; font-size: 1em;">&nbsp;</span></p>
+<div style="color: black; background-color: white;">
+    <pre><span style="color: blue;">if</span> (GeneralExtensions.IsIndexingActive())
+{
+	<span style="color: green;">//macro</span>
+}
+</pre>
+</div>
+<p><span style="font-family: Consolas,'Courier New',Courier,monospace;">&nbsp;</span></p>
+<p>&nbsp;</p>
 <p><strong>More generally...</strong></p>
 <p>
     The indexer can also be configured to strip out defined parts of the HTML from the page output.<br />
@@ -30,7 +35,6 @@
     <li>Programmatic Renderer<br />
         This uses a .net Server.Execute command to render page content. This means it can only be run with an active HTTP Context (i.e. synchronously while publishing is taking place). It's theoretically neater, and was initially intended to be the only renderer, but  the requirement that it run synchronously can make publishing painfully slow on large sites. </li>
 </ol>
-<p>&nbsp;</p>
 <p>Generally the default HTTP Renderer should work well enough, if you're having problems with it switch it for the Programmatic renderer in the FullTextSearch.config file, remembering to also set PublishEventRendering to true to ensure there is an active HTTP  Context for it to work with.</p>
 <h4>Further Customisation</h4>
 <p>It's possible to override the default renderers from you own code, as well as hook into several indexing events, in order to customise the indexing process to your needs. Have a look at the advanced customisation instructions.</p>
@@ -40,9 +44,10 @@
 <p><span style="text-decoration: underline;">queryType</span></p>
 <p>
     Type of search to perform. Possible values are:<br />
-    MultiRelevance -&gt;<br />
-    The default. The index is searched for, in order of decreasing relevance
+    <br />
+    <span style="font-size: 10pt;">MultiRelevance -&gt;</span>
 </p>
+<p>The default. The index is searched for, in order of decreasing relevance</p>
 <ol>
     <li>the exact phrase entered in any of the title properties </li>
     <li>any of the terms entered in any of the title properties </li>
@@ -52,7 +57,6 @@
     <li>a fuzzy match for any of the terms entered in any of the body properties </li>
 </ol>
 <p>
-    <br />
     MultiAnd -&gt;<br />
     Similar to MultiRelevance, but requires all terms be present<br />
     <br />
@@ -63,7 +67,6 @@
     AsEntered-&gt;<br />
     Search for the exact phrase entered, if more than one term is present
 </p>
-<p>&nbsp;</p>
 <p>Note that quoted queries are correctly processed in all search modes except AsEntered.</p>
 <p>Other special query types (Boolean, wildcard, etc), are not supported as yet.</p>
 <p><span style="text-decoration: underline;">titleProperties</span></p>
@@ -120,8 +123,6 @@
 </p>
 <h4>Further customisation</h4>
 <p>If the existing macro isn't flexible enough for you, have a look at the advanced customisation file, which contains some information on how to control output. There's an event that's called just before output which allows you to modify search results from  your own code, or you can call the search functions from your own user controls rather than rely on the Razor Helper.</p>
-<br />
-<br />
 <p><a href="http://fulltextsearch.codeplex.com/documentation">Intro</a></p>
 <p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Installation%20Instructions">Installation Instructions</a></p>
 <p><a href="http://fulltextsearch.codeplex.com/wikipage?title=Advanced%20Customisation">Advanced Customisation</a></p>

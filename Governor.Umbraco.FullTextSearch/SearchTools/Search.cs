@@ -270,7 +270,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                 // wildcard queries get lower relevance than exact matches, and ignore fuzzieness
                 if (property.Wildcard)
                 {
-                    wildcardQuery = string.Format("{0}:{1}*^{2} ", property.PropertyName, term, boost * 0.5);
+                    wildcardQuery = string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}:{1}*^{2} ", property.PropertyName, term, boost * 0.5);
                 }
                 else
                 {
@@ -281,7 +281,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                     }
                 }
             }
-            return string.Format("{0}:{1}{2}{3} {4}", property.PropertyName, term, fuzzyString, boostString, wildcardQuery);
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}:{1}{2}{3} {4}", property.PropertyName, term, fuzzyString, boostString, wildcardQuery);
         }
         protected string QuerySingleItemSimple(string term, UmbracoProperty property)
         {
@@ -302,7 +302,7 @@ namespace Governor.Umbraco.FullTextSearch.SearchTools
                     }
                 }
             }
-            return string.Format("{0}:{1}{2}{3} ", property.PropertyName, term, fuzzyString, wildcard);
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}:{1}{2}{3} ", property.PropertyName, term, fuzzyString, wildcard);
         }
 
         /// <summary>

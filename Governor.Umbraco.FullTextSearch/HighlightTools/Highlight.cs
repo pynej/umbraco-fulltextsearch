@@ -155,7 +155,7 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
                     // wildcard queries get lower relevance than exact matches, and ignore fuzzieness
                     if (umbracoProperty.Wildcard)
                     {
-                        query.AppendFormat("{0}*^{1} ", term, 0.5);
+                        query.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0}*^{1} ", term, 0.5);
                     }
                     else
                     {
@@ -166,7 +166,7 @@ namespace Governor.Umbraco.FullTextSearch.HighlightTools
                         }
                     }
                 }
-                query.AppendFormat("{0}{1} ", term, fuzzyString);
+                query.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "{0}{1} ", term, fuzzyString);
             }
             return query.ToString();
         }

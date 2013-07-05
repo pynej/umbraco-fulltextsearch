@@ -26,6 +26,7 @@ obj/
 [Bb]in
 [Dd]ebug*/
 [Rr]elease*/
+packages/*
 Ankh.NoLoad
 
 #Tooling files

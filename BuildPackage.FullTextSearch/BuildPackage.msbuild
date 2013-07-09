@@ -18,6 +18,7 @@
   <PropertyGroup>
     <RootDir>$(MSBuildProjectDirectory)\..\Governor.Umbraco.FullTextSearch</RootDir>
     <BuildDir>$(MSBuildProjectDirectory)\_build</BuildDir>
+    <ILMergeExe>$(MSBuildProjectDirectory)\MSBuildTasks\ILMerge.exe</ILMergeExe>
     <BuildUmbDir>$(BuildDir)\_umbraco</BuildUmbDir>
     <BuildNuGetDir>$(BuildDir)\_nuget</BuildNuGetDir>
   </PropertyGroup>
@@ -49,26 +50,26 @@
   <Target Name="Compile" DependsOnTargets="UpdateAssemblyInfo">
     <MSBuild Projects="$(RootDir)\..\Governor.Umbraco.FullTextSearch.sln" Properties="Configuration=Release" />
   </Target>
+  
+  <!-- MERGE DLLS -->
+  <Target Name="MergeDlls" DependsOnTargets="Compile">
+    <ItemGroup>
+      <Dlls Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.dll" />
+      <Dlls Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.dll" />
+      <Dlls Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.dll" />
+      <Dlls Include="$(RootDir)\bin\Release\Lucene.Net.Contrib.Highlighter.dll" />
+      <Dlls Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\PackageActionsContrib.dll" />      
+    </ItemGroup>
+    <Exec Command="$(ILMergeExe) /ndebug /targetplatform:v4,C:\Windows\Microsoft.NET\Framework64\v4.0.30319 /out:$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.dll @(Dlls, ' ')" />
+  </Target>
 
   <!-- PREPARE FILES -->
-  <Target Name="PrepareFiles" DependsOnTargets="Compile">
+  <Target Name="PrepareFiles" DependsOnTargets="MergeDlls">
     <ItemGroup>
-      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.dll" />
-      <BinFiles Include="$(RootDir)\bin\Release\Lucene.Net.Contrib.Highlighter.dll" />
-      <BinFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\PackageActionsContrib.dll" />
-
-      <DebugFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.pdb" />
-      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.Installer\bin\Release\Governor.Umbraco.FullTextSearch.Installer.pdb" />
-      <DebugFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\bin\Release\Governor.Umbraco.FullTextSearch.UI.pdb" />
-
+      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.dll" />      
       <PluginFiles Include="$(RootDir)\..\Governor.Umbraco.FullTextSearch.UI\Dashboard\*.ascx" />
-
       <RazorFiles Include="$(MSBuildProjectDirectory)\Umbraco\macroScripts\FullTextSearch.cshtml" />
-
       <ConfigFiles Include="$(MSBuildProjectDirectory)\Umbraco\config\FullTextSearch.config" />
-
       <PackageFile Include="$(MSBuildProjectDirectory)\package.xml" />
       <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
     </ItemGroup>

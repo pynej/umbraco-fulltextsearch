@@ -53,12 +53,8 @@
   <!-- PREPARE FILES -->
   <Target Name="PrepareFiles" DependsOnTargets="Compile">
     <ItemGroup>      
-      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.dll" />
-
-      <DebugFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.pdb" />
-
+      <BinFiles Include="$(RootDir)\bin\Release\Governor.Umbraco.FullTextSearch.WebService.dll" />      
       <AsmxFiles Include="$(RootDir)\FullTextService.asmx" />
-
       <PackageFile Include="$(MSBuildProjectDirectory)\package.xml" />
       <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
     </ItemGroup>

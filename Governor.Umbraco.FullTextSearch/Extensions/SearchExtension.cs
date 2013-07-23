@@ -275,7 +275,7 @@ namespace Governor.Umbraco.FullTextSearch.Extensions
                 rootNode.Add(nodesNode);
                 var summary = new XElement("summary");
                 summary.Add(new XAttribute("numResults", numResults));
-                var numPages = (int)Math.Floor((double)(numResults / pageLength)) + 1;
+                var numPages = numResults%pageLength == 0 ? numResults/pageLength : numResults/pageLength + 1;
                 summary.Add(new XAttribute("numPages", numPages));
                 if (stopwatch != null)
                 {

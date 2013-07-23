@@ -6,9 +6,9 @@
 <h4>Install Package</h4>
 <p>Download the correct package version for your Umbraco installation. The package version number indicates the minimum compatible Umbraco version number for which the package should be installed. Currently, 3 versions are available:</p>
 <ul>
-    <li><strong>Full_Text_Search_4.7.0.zip</strong> for Umbraco 4.7.0 to 4.7.2 </li>
-    <li><strong>Full_Text_Search_4.8.0.zip</strong> for Umbraco 4.8.0 to 4.11.x </li>
-    <li><strong>Full_Text_Search_6.0.0.zip</strong> for Umbraco 6.0.0 to 6.1.x </li>
+    <li><strong>Full_Text_Search_4.7.x.zip</strong> for Umbraco 4.7.0 to 4.7.2 </li>
+    <li><strong>Full_Text_Search_4.8.x.zip</strong> for Umbraco 4.8.0 to 4.11.x </li>
+    <li><strong>Full_Text_Search_6.0.x.zip</strong> for Umbraco 6.0.0 to 6.1.x </li>
 </ul>
 <p>Once downloaded, login to Umbraco, go to the developer tab -&gt; packages -&gt;Install local package, upload the file and go through the installation prompts.</p>
 <h4>Indexing Configuration</h4>
@@ -34,6 +34,7 @@
 <span style="color: blue;">&lt;</span><span style="color: #a31515;">HttpHost</span><span style="color: blue;">&gt;</span>mysite.com<span style="color: blue;">&lt;/</span><span style="color: #a31515;">HttpHost</span><span style="color: blue;">&gt;</span>
 </pre>
 </div>
+<p>If required, HttpUrl and/or HttpHost can also be overridden in the web.config by adding the following app settings respectively: FullTextSearchHttpUrl and FullTextSearchHttpHost.</p>
 <p><span style="font-size: 10pt;">After setting the URL, set &lt;Enabled&gt; to true. There's a lot of other options here, the file is reasonably well commented, and some are described in more detail in the settings and customisation part of this guide.</span></p>
 <p>The package will also automatically add the necessary Umbraco Examine configurations in the ~/config/ExamineSettings.config and ~/config/ExamineIndex.config files. The default settings are basic - if you're familiar with examine feel free to customise to  your taste...</p>
 <p>These are the settings that will be added:</p>

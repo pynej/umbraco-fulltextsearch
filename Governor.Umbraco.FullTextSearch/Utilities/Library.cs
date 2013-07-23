@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -35,7 +36,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         public static bool HttpRenderNode(int pageId, Dictionary<string, string> cookieDictionary, out string fullHtml)
         {
             var config = Config.Instance;
-            var defaultUrl = config.GetByKey("HttpUrl");
+            var defaultUrl = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["FullTextSearchHttpUrl"]) ? ConfigurationManager.AppSettings["FullTextSearchHttpUrl"] : config.GetByKey("HttpUrl");
             if (string.IsNullOrEmpty(defaultUrl))
                 throw new ArgumentException("RenderingURL must be set in FullTextSearch config file to use Http node rendering");
             var firstSeparator = "?";
@@ -51,7 +52,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             }
             timeout *= 1000;
             //get host header
-            var host = config.GetByKey("HttpHost");
+            var host = !string.IsNullOrEmpty(ConfigurationManager.AppSettings["FullTextSearchHttpHost"]) ? ConfigurationManager.AppSettings["FullTextSearchHttpHost"] : config.GetByKey("HttpHost");
             // setup request
             try
             {

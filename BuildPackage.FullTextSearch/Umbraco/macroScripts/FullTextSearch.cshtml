@@ -10,8 +10,7 @@ This script is a slight modified version of Jeremy's.
     /*
                             FullTextSearch.cshtml
     ======================================================================
-                            Full Text Search 
-                                  V0.25
+                            Full Text Search                                   
     ======================================================================
     
     This Razor file sets up queries and sends them off to FullTextSearch's 
@@ -259,7 +258,7 @@ This script is a slight modified version of Jeremy's.
                 </li>
             }
 
-            @for (var curPage = startPage; curPage <= numPages - 1 && curPage < startPage + numNumbers; curPage++)
+            @for (var curPage = startPage; curPage <= numPages && curPage < startPage + numNumbers; curPage++)
             {
                 if (curPage == pageNumber)
                 {
@@ -273,7 +272,7 @@ This script is a slight modified version of Jeremy's.
                 }
             }
 
-            @if (pageNumber < numPages - 1)
+            @if (pageNumber < numPages)
             {
                 <li class="fulltextsearch_next">
                     <a class="fulltextsearch_pagination_link" href="?@getPostTerms=@searchTermsUrlEncoded&@getPostPage=@(pageNumber + 1)">@langNext</a>

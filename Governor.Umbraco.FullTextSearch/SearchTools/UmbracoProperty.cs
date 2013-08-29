@@ -1,4 +1,6 @@
-﻿namespace Governor.Umbraco.FullTextSearch.SearchTools
+﻿using Umbraco.Core;
+
+namespace Governor.Umbraco.FullTextSearch.SearchTools
 {
     /// <summary>
     /// Some data indicating how to process a given document property from umbraco in search
@@ -18,7 +20,7 @@
         }
         private string CleanName(string name)
         {
-            return umbraco.cms.helpers.Casing.SafeAlias(name);
+            return name.ToSafeAlias();
         }
     }
 }

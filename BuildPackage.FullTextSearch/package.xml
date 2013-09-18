@@ -257,7 +257,7 @@
         </tab>
       </section>
     </Action>
-    <Action runat="install" alias="FullTextSearch_ExecuteSQL">
+    <Action runat="install" undo="false" alias="FullTextSearch_InstallExecuteNonQuery">
       <mssql>
         <![CDATA[
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fullTextCache]') AND type in (N'U'))
@@ -299,6 +299,14 @@ END
     </Action>
     <Action runat="install" undo="false" alias="AddXmlFragment" file="~/config/ExamineSettings.config" xpath="//ExamineSearchProviders//providers" position="end">
       <add name="FullTextSearcher" type="UmbracoExamine.UmbracoExamineSearcher, UmbracoExamine" analyzer="Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net" indexSet="FullTextIndexSet"/>
+    </Action>
+    <Action runat="install" undo="true" alias="FullTextSearch_UninstallExecuteNonQuery">
+      <mssql>
+        <![CDATA[
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[fullTextCache]') AND type in (N'U'))
+DROP TABLE [dbo].[fullTextCache]
+]]>
+      </mssql>
     </Action>
     <Action runat="uninstall" alias="RemoveXmlFragment" file="~/config/ExamineIndex.config" xpath="//ExamineLuceneIndexSets/IndexSet[@SetName='FullTextIndexSet']" />
     <Action runat="uninstall" alias="RemoveXmlFragment" file="~/config/ExamineSettings.config" xpath="//ExamineIndexProviders//providers/add[@name='FullTextIndexer']" />

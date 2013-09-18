@@ -235,7 +235,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PackageActions\ExecuteSQL.cs" />
+    <Compile Include="PackageActions\UninstallExecuteNonQuery.cs" />
+    <Compile Include="PackageActions\InstallExecuteNonQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Governor.Umbraco.FullTextSearch\Properties\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>

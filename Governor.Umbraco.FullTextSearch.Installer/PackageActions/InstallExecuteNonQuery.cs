@@ -5,14 +5,13 @@ using umbraco.interfaces;
 namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
 {
     /// <summary>
-    /// This just executes a SQL statement. It's used by the installer to set up 
-    /// database tables. 
+    /// This just executes a SQL statement. It's used by the installer to set up database tables. 
     /// </summary>
-    public class ExecuteSql : IPackageAction
+    public class InstallExecuteNonQuery : IPackageAction
     {
         public string Alias()
         {
-            return "FullTextSearch_ExecuteSQL";
+            return "FullTextSearch_InstallExecuteNonQuery";
         }
 
         public bool Execute(string packageName, System.Xml.XmlNode xmlData)
@@ -41,7 +40,7 @@ namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
 
         public bool Undo(string packageName, System.Xml.XmlNode xmlData)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }

@@ -27,11 +27,11 @@ namespace Governor.Umbraco.FullTextSearch.Installer.PackageActions
         public bool Undo(string packageName, System.Xml.XmlNode xmlData)
         {
             var query = xmlData.SelectSingleNode("//mssql").InnerText;
-            if (global::Umbraco.Core.ApplicationContext.Current.DatabaseContext.ConnectionString.ToLower().Contains("datalayer=mysql"))
+            if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("datalayer=mysql"))
             {
                 throw new NotImplementedException("mysql support not implemented yet. Feel free to add it");
             }
-            if (global::Umbraco.Core.ApplicationContext.Current.DatabaseContext.ConnectionString.ToLower().Contains("vistadb,vistadb"))
+            if (umbraco.GlobalSettings.DbDSN.ToLower().Contains("vistadb,vistadb"))
             {
                 throw new NotImplementedException("vistadb support not implemented yet. Feel free to add it");
             }

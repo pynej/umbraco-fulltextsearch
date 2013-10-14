@@ -30,7 +30,7 @@ namespace Governor.Umbraco.FullTextSearch.Renderers
                     throw;
             }
             fullHtml = "";
-            if (currentDocument == null || currentDocument.Id < 1)
+            if (currentDocument == null || currentDocument.Id < 1 || currentDocument.Template == 0)
                 return false;
             NodeId = nodeId;
 

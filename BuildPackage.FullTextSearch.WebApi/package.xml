@@ -3,7 +3,7 @@
   <files />
   <info>
     <package>
-      <name>Full Text Search Web Service</name>
+      <name>Full Text Search Web API</name>
       <version>0.0.0</version>
       <license url="http://www.opensource.org/licenses/mit-license.php">MIT license</license>
       <url>https://fulltextsearch.codeplex.com/</url>

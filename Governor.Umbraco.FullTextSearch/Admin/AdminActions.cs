@@ -13,6 +13,14 @@ namespace Governor.Umbraco.FullTextSearch.Admin
 {
     public class AdminActions
     {
+        private static ServiceContext Services
+        {
+            get
+            {
+                return ApplicationContext.Current.Services;
+            }
+        }
+
         /// <summary>
         /// Rebuild the entire full text index. Re-render nodes if necessary
         /// </summary>
@@ -42,7 +50,7 @@ namespace Governor.Umbraco.FullTextSearch.Admin
         /// </summary>
         public static void ReindexAllFullTextNodes()
         {
-            var content = new ContentService().GetRootContent();
+            var content = Services.ContentService.GetRootContent();
             var indexer = ExamineManager.Instance.IndexProviderCollection[Config.Instance.GetByKey("IndexProvider")];
             if (content != null && indexer != null)
             {

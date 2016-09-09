@@ -104,28 +104,21 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
             if (UmbracoSettings.UseAspNetMasterPages)
             {
                 var items = GetCurrentContextItems();
-
-                if (!UmbracoSettings.EnableCanvasEditing)
+                
+                var context = HttpContext.Current;
+                foreach (var key in context.Request.QueryString.Cast<object>().Where(key => ! queryStringCollection.ContainsKey(key.ToString())))
                 {
-                    var context = HttpContext.Current;
-                    foreach (var key in context.Request.QueryString.Cast<object>().Where(key => ! queryStringCollection.ContainsKey(key.ToString())))
-                    {
-                        queryStringCollection.Add(key.ToString(),context.Request.QueryString[key.ToString()]);
-                    }
-                    var queryString = QueryStringBuilder(queryStringCollection);
-                    using (var sw = new StringWriter())
-                    {
-                        context.Server.Execute(
-                            string.Format("/default.aspx?umbpageid={0}&alttemplate={1}&{2}",
-                            pageId, new template(templateId).TemplateAlias, queryString), sw, false);
-                        // update the local page items again
-                        UpdateLocalContextItems(items, context);
-                        return sw.ToString();
-                    }
+                    queryStringCollection.Add(key.ToString(),context.Request.QueryString[key.ToString()]);
                 }
-                else
+                var queryString = QueryStringBuilder(queryStringCollection);
+                using (var sw = new StringWriter())
                 {
-                    return "RenderTemplate not supported in Canvas";
+                    context.Server.Execute(
+                        string.Format("/default.aspx?umbpageid={0}&alttemplate={1}&{2}",
+                        pageId, new template(templateId).TemplateAlias, queryString), sw, false);
+                    // update the local page items again
+                    UpdateLocalContextItems(items, context);
+                    return sw.ToString();
                 }
             }
             else

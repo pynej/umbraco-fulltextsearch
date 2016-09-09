@@ -6,10 +6,19 @@ using umbraco.cms.businesslogic;
 using umbraco.cms.businesslogic.web;
 using Umbraco.Core;
 using Umbraco.Core.Models;
+using Umbraco.Web.UI.JavaScript;
+using System.Web;
+using System;
+using System.Web.Routing;
+using System.Collections.Generic;
+using Governor.Umbraco.FullTextSearch.Controllers;
+using Umbraco.Core.Logging;
+using System.Web.Mvc;
+using Umbraco.Web;
 
 namespace Governor.Umbraco.FullTextSearch.EventHandlers
 {
-    public class PublishingHandlers : IApplicationEventHandler
+    public class PublishingHandlers : ApplicationEventHandler
     {
         /// <summary>
         /// Used for locking
@@ -66,32 +75,12 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         }
 
         /// <summary>
-        /// OnApplicationInitialized handler
-        /// </summary>
-        /// <param name="umbracoApplication"></param>
-        /// <param name="applicationContext"></param>
-        public void OnApplicationInitialized(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
-        {
-            
-        }
-
-        /// <summary>
-        /// OnApplicationStarting handler
-        /// </summary>
-        /// <param name="umbracoApplication"></param>
-        /// <param name="applicationContext"></param>
-        public void OnApplicationStarting(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
-        {
-            
-        }
-
-        /// <summary>
         /// OnApplicationStarted handler - subscribes to umbraco publishing events to build a database containing current HTML for
         /// each page using the umbraco core when publisheventrendering is active
         /// </summary>
         /// <param name="umbracoApplication"></param>
         /// <param name="applicationContext"></param>
-        public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
+        protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
             if (!_ran)
             {
@@ -107,11 +96,24 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
                         ContentService.Deleted += ContentServiceDeleted;
                         ContentService.Trashed += ContentServiceTrashed;
                         ContentService.UnPublished += ContentServiceUnPublished;
+                        ServerVariablesParser.Parsing += ServerVariablesParser_Parsing;  
 
                         _ran = true;
                     }
                 }
             }
+        }
+
+        private void ServerVariablesParser_Parsing(object sender, System.Collections.Generic.Dictionary<string, object> e)
+        {
+            if (HttpContext.Current == null) throw new InvalidOperationException("HttpContext is null");
+
+            var urlHelper = new UrlHelper(new RequestContext(new HttpContextWrapper(HttpContext.Current), new RouteData()));
+
+            ((Dictionary<string, object>)e["umbracoUrls"]).Add("linkedContentApiBaseUrl",
+                urlHelper.GetUmbracoApiServiceBaseUrl<FullTextApiController>(controller => controller.IsAvailable()));
+
+            LogHelper.Info<FullTextApiController>("Api Service Added");
         }
 
         /// <summary>
@@ -132,12 +134,12 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// <param name="e"></param>
         void ContentServiceDeleted(IContentService sender, global::Umbraco.Core.Events.DeleteEventArgs<IContent> e)
         {
-            //FIXME: what happens when entire trees are deleted? does this get called multiple times?
             if (!CheckConfig())
                 return;
 
             foreach (var content in e.DeletedEntities.Where(content => content.Id > 0))
             {
+                LogHelper.Info<PublishingHandlers>("Document {0} purged on {1} event.", () => content.Id, () => "ContentService.Deleted");
                 HtmlCache.Remove(content.Id);
             }
         }
@@ -151,9 +153,12 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         {
             if (!CheckConfig())
                 return;
-            
-            if (e.Entity.Id > 0)
-                HtmlCache.Remove(e.Entity.Id);
+
+            foreach (var content in e.MoveInfoCollection.Where(content => content.Entity.Id > 0))
+            {
+                LogHelper.Info<PublishingHandlers>("Document {0} purged on {1} event.", () => content.Entity.Id, () => "ContentService.Trashed");
+                HtmlCache.Remove(content.Entity.Id);
+            }
         }
 
         /// <summary>
@@ -168,6 +173,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
 
             foreach (var content in e.PublishedEntities.Where(content => content.Id > 0))
             {
+                LogHelper.Info<PublishingHandlers>("Document {0} purged on {1} event.", () => content.Id, () => "ContentService.UnPublished");
                 HtmlCache.Remove(content.Id);
             }
         }

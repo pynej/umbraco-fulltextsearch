@@ -8,6 +8,10 @@ using Umbraco.Core.Logging;
 using UmbracoExamine;
 using UmbracoExamine.DataServices;
 using Umbraco.Core.Models;
+using Umbraco.Core.Services;
+using IContentService = Umbraco.Core.Services.IContentService;
+using IMediaService = Umbraco.Core.Services.IMediaService;
+
 
 namespace Governor.Umbraco.FullTextSearch.Providers
 {
@@ -32,10 +36,19 @@ namespace Governor.Umbraco.FullTextSearch.Providers
         /// <param name="dataService"></param>
         /// <param name="analyzer"></param>
         /// <param name="async"></param>
+        [Obsolete("Use the overload that specifies the Umbraco services")]
         public FullTextContentIndexer(IIndexCriteria indexerData, DirectoryInfo indexPath, IDataService dataService, Analyzer analyzer, bool async)
             : base(indexerData, indexPath, dataService, analyzer, async) { }
 
-        
+        [Obsolete("Use the overload that specifies the Umbraco services")]
+        public FullTextContentIndexer(IIndexCriteria indexerData, Lucene.Net.Store.Directory luceneDirectory, IDataService dataService, Analyzer analyzer, bool async)
+            : base(indexerData, luceneDirectory, dataService, analyzer, async) { }
+
+
+        public FullTextContentIndexer(IIndexCriteria indexerData, Lucene.Net.Store.Directory luceneDirectory, IDataService dataService, IContentService contentService, IMediaService mediaService, IDataTypeService dataTypeService, IUserService userService, Analyzer analyzer, bool async)
+            : base(indexerData, luceneDirectory, dataService, contentService, mediaService, dataTypeService, userService, analyzer, async) { }
+
+
         /// <summary>
         /// We override this method, do some checks and add some stuff and then just call the base method. 
         /// We could do this from an event, but we want the full text renderer/retriever

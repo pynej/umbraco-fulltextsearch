@@ -13,11 +13,22 @@ using System.Collections;
 using umbraco.NodeFactory;
 using System.Net;
 using Umbraco.Core.Models;
+using Umbraco.Core.Configuration;
+using Umbraco.Core.Services;
+using Umbraco.Core;
 
 namespace Governor.Umbraco.FullTextSearch.Utilities
 {
     public class Library
     {
+        private static ServiceContext Services
+        {
+            get
+            {
+                return ApplicationContext.Current.Services;
+            }
+        }
+
         /// <summary>
         /// Use Http Web Requests to render a node to a string
         /// </summary>
@@ -101,7 +112,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
         public static string RenderTemplate(int pageId, int templateId, Dictionary<string,string> queryStringCollection)
         {
 
-            if (UmbracoSettings.UseAspNetMasterPages)
+            if (UmbracoConfig.For.UmbracoSettings().Templates.UseAspNetMasterPages)
             {
                 var items = GetCurrentContextItems();
                 
@@ -115,7 +126,7 @@ namespace Governor.Umbraco.FullTextSearch.Utilities
                 {
                     context.Server.Execute(
                         string.Format("/default.aspx?umbpageid={0}&alttemplate={1}&{2}",
-                        pageId, new template(templateId).TemplateAlias, queryString), sw, false);
+                        pageId, Services.FileService.GetTemplate(templateId).Alias, queryString), sw, false);
                     // update the local page items again
                     UpdateLocalContextItems(items, context);
                     return sw.ToString();

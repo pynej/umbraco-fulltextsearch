@@ -15,21 +15,12 @@ using Governor.Umbraco.FullTextSearch.Controllers;
 using Umbraco.Core.Logging;
 using System.Web.Mvc;
 using Umbraco.Web;
+using Governor.Umbraco.FullTextSearch.Admin;
 
 namespace Governor.Umbraco.FullTextSearch.EventHandlers
 {
     public class PublishingHandlers : ApplicationEventHandler
     {
-        /// <summary>
-        /// Used for locking
-        /// </summary>
-        private static readonly object LockObj = new object();
-
-        /// <summary>
-        /// Indicates if already run
-        /// </summary>
-        private static bool _ran; 
-
         /// <summary>
         /// The event this handles fires after a document is published in the back office and the cache is updated.
         /// We render out the page and store it's HTML in the database for retrieval by the indexer.
@@ -82,26 +73,18 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
         /// <param name="applicationContext"></param>
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
-            if (!_ran)
-            {
-                lock (LockObj)
-                {
-                    if (!_ran)
-                    {
-                        if (!CheckConfig())
-                            return;
+            // These events alwayse fire.
+            ServerVariablesParser.Parsing += ServerVariablesParser_Parsing;
 
-                        ContentService.Publishing += ContentService_Publishing;
-                        content.AfterUpdateDocumentCache += ContentAfterUpdateDocumentCache;
-                        ContentService.Deleted += ContentServiceDeleted;
-                        ContentService.Trashed += ContentServiceTrashed;
-                        ContentService.UnPublished += ContentServiceUnPublished;
-                        ServerVariablesParser.Parsing += ServerVariablesParser_Parsing;  
+            if (!CheckConfig())
+                return;
 
-                        _ran = true;
-                    }
-                }
-            }
+            // These events onlt fire is using PublishEventRendering
+            ContentService.Publishing += ContentService_Publishing;
+            content.AfterUpdateDocumentCache += ContentAfterUpdateDocumentCache;
+            ContentService.Deleted += ContentServiceDeleted;
+            ContentService.Trashed += ContentServiceTrashed;
+            ContentService.UnPublished += ContentServiceUnPublished;
         }
 
         private void ServerVariablesParser_Parsing(object sender, System.Collections.Generic.Dictionary<string, object> e)
@@ -110,7 +93,7 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
 
             var urlHelper = new UrlHelper(new RequestContext(new HttpContextWrapper(HttpContext.Current), new RouteData()));
 
-            ((Dictionary<string, object>)e["umbracoUrls"]).Add("linkedContentApiBaseUrl",
+            ((Dictionary<string, object>)e["umbracoUrls"]).Add("fullTextSearchApiBaseUrl",
                 urlHelper.GetUmbracoApiServiceBaseUrl<FullTextApiController>(controller => controller.IsAvailable()));
 
             LogHelper.Info<FullTextApiController>("Api Service Added");
@@ -139,7 +122,6 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
 
             foreach (var content in e.DeletedEntities.Where(content => content.Id > 0))
             {
-                LogHelper.Info<PublishingHandlers>("Document {0} purged on {1} event.", () => content.Id, () => "ContentService.Deleted");
                 HtmlCache.Remove(content.Id);
             }
         }
@@ -156,7 +138,6 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
 
             foreach (var content in e.MoveInfoCollection.Where(content => content.Entity.Id > 0))
             {
-                LogHelper.Info<PublishingHandlers>("Document {0} purged on {1} event.", () => content.Entity.Id, () => "ContentService.Trashed");
                 HtmlCache.Remove(content.Entity.Id);
             }
         }
@@ -173,7 +154,6 @@ namespace Governor.Umbraco.FullTextSearch.EventHandlers
 
             foreach (var content in e.PublishedEntities.Where(content => content.Id > 0))
             {
-                LogHelper.Info<PublishingHandlers>("Document {0} purged on {1} event.", () => content.Id, () => "ContentService.UnPublished");
                 HtmlCache.Remove(content.Id);
             }
         }

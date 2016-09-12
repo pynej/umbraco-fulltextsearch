@@ -1,0 +1,10 @@
+{
+    javascript: [
+        '~/App_Plugins/FullTextSearch/views/dashboard/developer/fulltextsearch.controller.js',
+        '~/App_Plugins/FullTextSearch/common/resources/fulltextsearch.resource.js',
+        '~/App_Plugins/FullTextSearch/lib/angularjs-dropdown-multiselect.js'
+    ],
+	css: [
+		'~/App_Plugins/FullTextSearch/css/fulltextsearch.css'
+	]
+}

@@ -306,6 +306,13 @@
     <Compile Include="Admin\AdminActions.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Controllers\FullTextApiController.cs" />
+    <Compile Include="Dashboard.ascx.cs">
+      <DependentUpon>Dashboard.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Dashboard.ascx.designer.cs">
+      <DependentUpon>Dashboard.ascx</DependentUpon>
+    </Compile>
     <Compile Include="EventHandlers\PublishingHandlers.cs" />
     <Compile Include="Extensions\GeneralExtension.cs" />
     <Compile Include="Extensions\ResultOutputEventArgs.cs" />
@@ -340,7 +347,9 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Dashboard.ascx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

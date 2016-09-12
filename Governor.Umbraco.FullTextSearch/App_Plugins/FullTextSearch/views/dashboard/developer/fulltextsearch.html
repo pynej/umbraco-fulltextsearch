@@ -1,0 +1,16 @@
+﻿<div ng-controller="FullTextSearch.DeveloperController" class="fulltextsearch">
+    
+    <p>This page allows you to trigger the re-indexing of the site.</p>
+    <p>Click here to re-index every node on the site</p>
+
+    <button type="submit" class="btn btn-primary" ng-click="reindex()">
+        <localize key="FullTextSearch_reindex" />
+    </button>
+    <p ng-if="model.isreindexing">Re-Indexing Triggered.</p>
+
+    <p>Click here to delete the index and re-create from scratch. This can be useful if you're having problems.</p>
+    <button type="submit" class="btn btn-primary" ng-click="recreate()">
+        <localize key="FullTextSearch_reindex" />
+    </button>
+    <p ng-if="model.isrebuilding">Index Re-Creation Triggered.</p>
+</div>

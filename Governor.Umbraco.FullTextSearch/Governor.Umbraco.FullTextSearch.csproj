@@ -306,11 +306,11 @@
     <Compile Include="Admin\AdminActions.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Controllers\FullTextApiController.cs" />
-    <Compile Include="Dashboard.ascx.cs">
+    <Compile Include="Legacy\Dashboard.ascx.cs">
       <DependentUpon>Dashboard.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Dashboard.ascx.designer.cs">
+    <Compile Include="Legacy\Dashboard.ascx.designer.cs">
       <DependentUpon>Dashboard.ascx</DependentUpon>
     </Compile>
     <Compile Include="EventHandlers\PublishingHandlers.cs" />
@@ -345,11 +345,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="App_Plugins\FullTextSearch\package.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Dashboard.ascx" />
+    <Content Include="App_Plugins\FullTextSearch\common\resources\fulltextsearch.resource.js" />
+    <Content Include="App_Plugins\FullTextSearch\views\dashboard\developer\fulltextsearch.controller.js" />
+    <Content Include="App_Plugins\FullTextSearch\views\dashboard\developer\fulltextsearch.html" />
+    <Content Include="Legacy\Dashboard.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
